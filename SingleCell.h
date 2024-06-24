@@ -1,0 +1,14 @@
+#pragma once
+
+#include <iostream>
+#include <cstdio>
+#include <vector>
+#include <array>
+#include <cmath>
+#include <chrono>
+
+
+// Need to set up a single cell now knowing that i will be recieving x (rows) and y (columns)
+struct point{
+   double x, y;
+};
