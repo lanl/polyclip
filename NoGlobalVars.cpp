@@ -1,6 +1,6 @@
 
 #include "SingleCell.h"
-//comment
+
 // Finding the normal vector between 2 points ///////////////////////////////////////////
 std::array <double, 2> normV(std::array <std::array<double, 2>,2> &inter){
    // Direction vec
@@ -67,7 +67,7 @@ int main(int argc, const char * argv[]){
 
     std::vector <point> nodes = {{0,0}, {1,0}, {1,1}, {0,1}};
     //vector <point> nodes = {{1,0}, {2,0}, {2,1}, {1,1}};
-    std::array <std::array<double,2>, 2> interface = {{{1, 0.5}, {0, 0.5}}};
+    std::array <std::array<double,2>, 2> interface = {{{.5, 1}, {0, 0.5}}};
    
    // 1) Find the coordinates in a clockwise manner ////////////////
    auto start = std::chrono::high_resolution_clock::now();

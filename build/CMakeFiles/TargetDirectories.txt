@@ -1,0 +1,4 @@
+/Users/mcwalsmith/Desktop/Internship2/polyintersection/build/CMakeFiles/singlecell.dir
+/Users/mcwalsmith/Desktop/Internship2/polyintersection/build/CMakeFiles/noglobal.dir
+/Users/mcwalsmith/Desktop/Internship2/polyintersection/build/CMakeFiles/edit_cache.dir
+/Users/mcwalsmith/Desktop/Internship2/polyintersection/build/CMakeFiles/rebuild_cache.dir

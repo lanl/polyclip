@@ -105,23 +105,23 @@ int main(int argc, const char * argv[]){
        printf("Dot Product of (%.1lf, %.1lf) and (%.1lf, %.1lf): %.2lf\n", V[0], V[1], normal[0], normal[1], dp);
        
        // Convection of placement
-       if(dp > 0){                             // Over the Line for ths case
-           Bottom[helper] = {point.x, point.y};
+       if(dp < 0){                             // Over the Line for ths case
+           Top[helper] = {point.x, point.y};
            helper++;
        }
        else{                                   // Under the line for this case
-           Top[help] = {point.x, point.y};
+           Bottom[help] = {point.x, point.y};
            help++;
        }
    }
    
    printf("\n");
-   for(int i = 0; i < help; ++i){
-       printf("Positive Convention: (%.2lf, %.2lf)\n", Top[i].first, Top[i].second);
+   for(int i = 0; i < helper; ++i){
+       printf("Top Coordinate: (%.2lf, %.2lf)\n", Top[i].first, Top[i].second);
    }
    printf("\n");
-   for(int i = 0; i < helper; ++i){
-       printf("Negative Convention: (%.2lf, %.2lf)\n", Bottom[i].first, Bottom[i].second);
+   for(int i = 0; i < help; ++i){
+       printf("Bottom Coordinate: (%.2lf, %.2lf)\n", Bottom[i].first, Bottom[i].second);
    }
    printf("\n");
    

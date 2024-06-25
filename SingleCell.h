@@ -1,4 +1,4 @@
-#pragma once
+#pragma once      //prevent headers being used twice
 
 #include <iostream>
 #include <cstdio>
