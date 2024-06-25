@@ -1,6 +1,28 @@
 
 #include "SingleCell.h"
 
+/*
+Goals For todays code:
+    1) Try to firgure out the loop between the coordinates
+        - How you may ask? 
+            * They want the coordinates to not be doubled rather the same coordinates being used to be storage efficient
+            * I have the logic now I just need to use that to help me establish the same coordinates in the stored coordinate array (for now) 
+            * Next I need to get the stored coordinates and establish the cells.
+
+        - What I shouldnt do:
+             * Dont delete the old arrange function it could be useful
+             * Dont keep it all in one for loop but maybe in one fuction should be fine (or not if it deems to be too difficult)
+
+    2) Try to learn all the commands that were shown to you yesterday
+        - Create notes on each of the commands
+            * Notes on darwin
+            * Notes on Git 
+            * Notes on darwin/git
+            
+        - THIS SHOULD BE DONE TODAY!
+*/
+
+
 // Finding the normal vector between 2 points ///////////////////////////////////////////
 std::array <double, 2> normV(std::array <std::array<double, 2>,2> &inter){
    // Direction vec
