@@ -8,6 +8,8 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 add_executable(singlecell)
 add_executable(noglobal)
+add_executable(loop)
 
 target_sources(singlecell PUBLIC SingleCell.cpp)
 target_sources(noglobal PUBLIC NoGlobalVars.cpp)
+target_sources(loop PUBLIC LoopCode.cpp)

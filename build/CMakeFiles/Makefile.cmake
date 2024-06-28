@@ -44,4 +44,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/singlecell.dir/DependInfo.cmake"
   "CMakeFiles/noglobal.dir/DependInfo.cmake"
+  "CMakeFiles/loop.dir/DependInfo.cmake"
   )

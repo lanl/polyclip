@@ -142,6 +142,43 @@ noglobal/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/noglobal.dir/build.make CMakeFiles/noglobal.dir/build
 .PHONY : noglobal/fast
 
+#=============================================================================
+# Target rules for targets named loop
+
+# Build rule for target.
+loop: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 loop
+.PHONY : loop
+
+# fast build rule for target.
+loop/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/loop.dir/build.make CMakeFiles/loop.dir/build
+.PHONY : loop/fast
+
+LoopCode.o: LoopCode.cpp.o
+.PHONY : LoopCode.o
+
+# target to build an object file
+LoopCode.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/loop.dir/build.make CMakeFiles/loop.dir/LoopCode.cpp.o
+.PHONY : LoopCode.cpp.o
+
+LoopCode.i: LoopCode.cpp.i
+.PHONY : LoopCode.i
+
+# target to preprocess a source file
+LoopCode.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/loop.dir/build.make CMakeFiles/loop.dir/LoopCode.cpp.i
+.PHONY : LoopCode.cpp.i
+
+LoopCode.s: LoopCode.cpp.s
+.PHONY : LoopCode.s
+
+# target to generate assembly for a file
+LoopCode.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/loop.dir/build.make CMakeFiles/loop.dir/LoopCode.cpp.s
+.PHONY : LoopCode.cpp.s
+
 NoGlobalVars.o: NoGlobalVars.cpp.o
 .PHONY : NoGlobalVars.o
 
@@ -198,8 +235,12 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... loop"
 	@echo "... noglobal"
 	@echo "... singlecell"
+	@echo "... LoopCode.o"
+	@echo "... LoopCode.i"
+	@echo "... LoopCode.s"
 	@echo "... NoGlobalVars.o"
 	@echo "... NoGlobalVars.i"
 	@echo "... NoGlobalVars.s"

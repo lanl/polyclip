@@ -65,6 +65,7 @@ CMAKE_BINARY_DIR = /Users/mcwalsmith/Desktop/Internship2/polyintersection/build
 # The main recursive "all" target.
 all: CMakeFiles/singlecell.dir/all
 all: CMakeFiles/noglobal.dir/all
+all: CMakeFiles/loop.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -74,6 +75,7 @@ preinstall:
 # The main recursive "clean" target.
 clean: CMakeFiles/singlecell.dir/clean
 clean: CMakeFiles/noglobal.dir/clean
+clean: CMakeFiles/loop.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -83,7 +85,7 @@ clean: CMakeFiles/noglobal.dir/clean
 CMakeFiles/singlecell.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/singlecell.dir/build.make CMakeFiles/singlecell.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/singlecell.dir/build.make CMakeFiles/singlecell.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mcwalsmith/Desktop/Internship2/polyintersection/build/CMakeFiles --progress-num=3,4 "Built target singlecell"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mcwalsmith/Desktop/Internship2/polyintersection/build/CMakeFiles --progress-num=5,6 "Built target singlecell"
 .PHONY : CMakeFiles/singlecell.dir/all
 
 # Build rule for subdir invocation for target.
@@ -109,7 +111,7 @@ CMakeFiles/singlecell.dir/clean:
 CMakeFiles/noglobal.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/noglobal.dir/build.make CMakeFiles/noglobal.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/noglobal.dir/build.make CMakeFiles/noglobal.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mcwalsmith/Desktop/Internship2/polyintersection/build/CMakeFiles --progress-num=1,2 "Built target noglobal"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mcwalsmith/Desktop/Internship2/polyintersection/build/CMakeFiles --progress-num=3,4 "Built target noglobal"
 .PHONY : CMakeFiles/noglobal.dir/all
 
 # Build rule for subdir invocation for target.
@@ -127,6 +129,32 @@ noglobal: CMakeFiles/noglobal.dir/rule
 CMakeFiles/noglobal.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/noglobal.dir/build.make CMakeFiles/noglobal.dir/clean
 .PHONY : CMakeFiles/noglobal.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/loop.dir
+
+# All Build rule for target.
+CMakeFiles/loop.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/loop.dir/build.make CMakeFiles/loop.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/loop.dir/build.make CMakeFiles/loop.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/mcwalsmith/Desktop/Internship2/polyintersection/build/CMakeFiles --progress-num=1,2 "Built target loop"
+.PHONY : CMakeFiles/loop.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/loop.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/mcwalsmith/Desktop/Internship2/polyintersection/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/loop.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/mcwalsmith/Desktop/Internship2/polyintersection/build/CMakeFiles 0
+.PHONY : CMakeFiles/loop.dir/rule
+
+# Convenience name for target.
+loop: CMakeFiles/loop.dir/rule
+.PHONY : loop
+
+# clean rule for target.
+CMakeFiles/loop.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/loop.dir/build.make CMakeFiles/loop.dir/clean
+.PHONY : CMakeFiles/loop.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

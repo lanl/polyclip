@@ -1,35 +1,22 @@
 
 #include "SingleCell.h"
+#include <map>
+#include <utility>
 
 /*
-Goals For todays code:
-    1) Try to firgure out the loop between the coordinates
-        - How you may ask? 
-            * They want the coordinates to not be doubled rather the same coordinates being used to be storage efficient
-            * I have the logic now I just need to use that to help me establish the same coordinates in the stored coordinate array (for now) 
-            * Next I need to get the stored coordinates and establish the cells.
-
-        - What I shouldnt do:
-             * Dont delete the old arrange function it could be useful
-             * Dont keep it all in one for loop but maybe in one fuction should be fine (or not if it deems to be too difficult)
-
-    2) Try to learn all the commands that were shown to you yesterday
-        - Create notes on each of the commands
-            * Notes on darwin
-            * Notes on Git 
-            * Notes on darwin/git
-            
-        - THIS SHOULD BE DONE TODAY!
+New Goals For the Code:
+    1) Store the convention of each node (check)
+    2) Map out Pi and Pj (check) 
+    3) Now check if its below the line (Kinda check)
 */
 
-
 // Finding the normal vector between 2 points ///////////////////////////////////////////
-std::array <double, 2> normV(std::array <std::array<double, 2>,2> &inter){
+std::array <double, 2> normVec(std::array <std::array<double, 2>,2> &inter){
    // Direction vec
    double dx = inter[1][0] - inter[0][0];     // x2 - x1
    double dy = inter[1][1] - inter[0][1];     // y2 - y1
    
-   // Normal vec and normalized
+   // Normal vec
    std::array <double, 2> normal = {dy, -dx};
    return normal;
 }
@@ -40,30 +27,8 @@ double dotProduct(std::array <double, 2> v , std::array<double,2> &n){
    return product;
 }
 
-// Trying to figure out the loop to eventually store Cell points ////////////////////////
-void arrange(int cols, int rows){
-   int cell = 0, loop = 0;
-   for (int i = 0; i < (cols - 1); ++i){               // 1) Total amount of cells in columns
-       for(int j = 0; j < (rows - 1) ; ++j){           // 2) Total amount of cells in rows
-           printf("Cell %d: ", cell);
-           for(int y = i; y < (i + 2); ++y){           // 3) going through the points (x,y)
-               for(int x = j + loop; x < (j + 2) + loop; ++x){
-                   printf("(%d, %d) ", x, y);
-                   if(loop == 1){                      // Note: This will help keep track of loop
-                       x -= 2;
-                       loop = -1;
-                   }
-               }
-              loop++;
-           }
-           printf("\n");
-           cell++;
-       }
-   }
-}
-
 // Print the normal vector //////////////////////////////////////////////////////////////
-void printN(std::array <double, 2> normal){
+void printNorm(std::array <double, 2> normal){
    printf("Normal: ");
    for(int i = 0; i < 2; ++i){
        printf("%.1lf ", normal[i]);
@@ -71,67 +36,98 @@ void printN(std::array <double, 2> normal){
    printf("\n");
 }
 
-
 // Point Vector /////////////////////////////////////////////////////////////////////////
 std::array <double, 2> pointVec(const point &p, std::array <std::array<double,2>,2> inter){
-   double dx = inter[0][0] - p.x;
-   double dy = inter[0][1] - p.y;
+   double dx = p.x - inter[0][0];
+   double dy = p.y - inter[0][1];
    
    std::array <double, 2> point = {dx, dy};
    return point;
 }
 
+// Below the Line ////////////////////////////////////////////////////////////////////////
+void below(std::vector<std::pair<double,double>> &edges, std::array<int,4> sign, std::map<std::pair<int, int>, int>  location, std::vector<std::pair<double,double>> &belowline){
+    int i, j, loop = 0;                                                                                                                               
+    for(const auto& edge : edges){
+        i = edge.first;
+        j = edge.second;
+        std::cout << "Iterate: (" << i << ", " << j << ")" << std::endl; 
+
+        // Will stop before looping through the interface id's
+        if(loop == 4){
+            break;
+        }
+
+        // Checking all possibilities 
+        if(sign[i] == sign[j] && sign[i] < 0){ 
+            belowline.emplace_back(i,j);    
+        }
+        else if(sign[i] < 0){
+            belowline.emplace_back(i, location[{i,j}]);
+        }
+        else if(sign[j] < 0){
+            belowline.emplace_back(location[{i,j}], j);  // Fix the Flip
+        }
+
+        loop++;
+    }
+}
+
 
 int main(int argc, const char * argv[]){
-   int helper = 0, help = 0;
-   std::pair <double,double> Top[100], Bottom[100];
-   std::array <double, 2> V;
+    int index = 0;
+    //std::array<double, 2> Pi = 12, Pj = {0, 0.5}; //this used to only be an integer
+    std::array<int, 4> signs;
+    std::array<double, 2> V;
+    
+    // Cell nodes, Interface, and Map of Pi and Pj
+    std::vector<point> nodes = {{0,0}, {1,0}, {1,1}, {0,1}};
+    std::array<std::array<double,2>, 2> interface = {{{1, 0.5}, {0, 0.5}}}; // value points were actually in here
+    std::map<std::pair<int, int>, int > locationP; 
+    std::vector<std::pair<double,double>> edges = {{0,1}, {1,2}, {2,3}, {3,0}, {1,0.5}, {0,0.5}}, belowLine; // intiallized with edges
+   
+    // 1) Loop around the cell coordinates ////////////////////////////////////
 
-    std::vector <point> nodes = {{0,0}, {1,0}, {1,1}, {0,1}};
-    //vector <point> nodes = {{1,0}, {2,0}, {2,1}, {1,1}};
-    std::array <std::array<double,2>, 2> interface = {{{.5, 1}, {0, 0.5}}};
+    /* This will be completed later, Dont worry about it for now */
+
+    ////// 1a) Map out Pi and Pj
+    locationP[{1,2}] = 4;      // Placeholder = 4, since edges[4] = {1, 0.5}
+    locationP[{3,0}] = 5;      // Placeholder = 5, since edges[5] = {0, 0.5}
+
+    // 2) Deduce the normal vector of the cutting line ////////////////////////
+    std::array <double, 2> normal = normVec(interface);
+    printNorm(normal);
+    printf("\n");
    
-   // 1) Find the coordinates in a clockwise manner ////////////////
-   auto start = std::chrono::high_resolution_clock::now();
-   arrange(2,2);   // Ignore for now, fix this to be more general
-   auto end = std::chrono::high_resolution_clock::now();
-   printf("\n");
-   std::chrono::duration<double> time = end - start;
-   printf("Time: %lf\n", time.count());
-   
-   // 2) Deduce the normal vector of the cutting line //////////////
-   std::array <double, 2> normal = normV(interface);
-   printN(normal);
-   printf("\n");
-   
-   // 3) Deduce the sign of every node using the dot product ///////
-   for(const auto& point : nodes){
-       // Vector of Node
-       V = pointVec(point, interface);
+    // 3) Deduce the sign of every node using the dot product /////////////////
+    for(const auto& point : nodes){
+        // Vector of Node
+        V = pointVec(point, interface);
        
-       // Dot Product of normal and node vector
-       double dp = dotProduct(V , normal);
-       printf("Dot Product of (%.1lf, %.1lf) and (%.1lf, %.1lf): %.2lf\n", V[0], V[1], normal[0], normal[1], dp);
+        // Dot Product of normal and node vector
+        double dp = dotProduct(normal, V);
+        printf("Dot Product of (%.1lf, %.1lf) and (%.1lf, %.1lf): %.2lf\n", V[0], V[1], normal[0], normal[1], dp);
        
-       // Convection of placement
-       if(dp > 0){                             // Over the Line for ths case
-           Bottom[helper] = {point.x, point.y};
-           helper++;
-       }
-       else{                                   // Under the line for this case
-           Top[help] = {point.x, point.y};
-           help++;
-       }
-   }
-   
-   printf("\n");
-   for(int i = 0; i < help; ++i){
-       printf("Positive Convention: (%.2lf, %.2lf)\n", Top[i].first, Top[i].second);
-   }
-   printf("\n");
-   for(int i = 0; i < helper; ++i){
-       printf("Negative Convention: (%.2lf, %.2lf)\n", Bottom[i].first, Bottom[i].second);
-   }
-   printf("\n");
-   
+        // Convection of placement with respect to the line
+        signs[index] = (dp < 0) ? -1 : 1;       // Classy :)
+        index++;
+ 
+    }
+    
+    // Printing the orientation
+    printf("\n");
+    for(int i = 0; i < index; ++i){
+        printf("Orientation %d: %d \n", i, signs[i]);
+    }
+    printf("\n");
+
+    // 4) Clipping the values from below //////////////////////////////////////
+    below(edges,signs,locationP,belowLine);
+
+    // Printing the Below values
+    printf("\nNodes of the Line and Below the Line: \n");
+    for(const auto &b : belowLine){ 
+        std::cout << "(" << b.first << ", " << b.second << ")" << std::endl;
+    }
+    printf("\n");
 }
