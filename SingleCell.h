@@ -10,5 +10,6 @@
 
 // Need to set up a single cell now knowing that i will be recieving x (rows) and y (columns)
 struct point{
-   double x, y;
+   double x = 0.;
+   double y = 0.;
 };
