@@ -6,6 +6,10 @@
 #include <array>
 #include <cmath>
 #include <chrono>
+#include <map>
+#include <utility>
+#include <algorithm>
+#include <cmath>
 
 
 // Need to set up a single cell now knowing that i will be recieving x (rows) and y (columns)

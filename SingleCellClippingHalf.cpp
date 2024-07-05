@@ -1,7 +1,5 @@
 
 #include "SingleCell.h"
-#include <map>
-#include <utility>
 
 /*
 New Goals For the Code: 
@@ -10,6 +8,10 @@ New Goals For the Code:
     2) Check the signs are equal to 0 (on the line)
         - if they are then i = Pj (j) and j = reverse map
     3) Below line prints the coordinates using their ID's
+
+    NEW:
+        - I included the a new sorting algorithm 
+        - Used the same algorithm as Sorting.cpp
 */
 
 // Finding the normal vector between 2 points ///////////////////////////////////////////
@@ -55,6 +57,7 @@ std::vector<int> clip_below(std::vector<point> const& nodes,
 
     std::vector<int> belowline;
     int n = nodes.size(), k = intersectPoints.size();
+    std::cout << "SIZE: " << k << std::endl;
 
     int i = 0, j = 1;                                                                                                                               
     do{
@@ -62,21 +65,17 @@ std::vector<int> clip_below(std::vector<point> const& nodes,
         //std::cout << "Iterate: (" << i << ", " << j << ")" << std::endl; 
 
         // Checking all possibilities 
-        if(sign[i] == sign[j] && sign[i] < 0){ // Below the Line
+        if(sign[i] == sign[j] && sign[i] < 0){              // Below the Line
             i = j;
             j = (j + 1) % n;
-            //std::cout << "HELPER: " << i << " " << j << std::endl;
         }
-        else if(sign[i] < 0){       // Detecting intersecting points
+        else if(sign[i] < 0){                               // Detecting intersecting points
             i = intersectPoints.at({i,j});
             j = i + 1;
-            //std::cout << "HELPER: " << i << " " << j << std::endl;
         }
-        else if(sign[i] == sign[j] && sign[i] == 0){      // Detecting on the line
-            i = j;
-            j = reverse_map.at(i).second;
-
-            //belowline.emplace_back(i); // Still need another because j then becomes 0 
+        else if(sign[i] == sign[j] && sign[i] == 0){        // Detecting on the line
+            i = j;  
+            j = reverse_map.at(i).second; 
         }
 
     }
@@ -86,10 +85,46 @@ std::vector<int> clip_below(std::vector<point> const& nodes,
     return belowline;
 }
 
+// NEW PORTION //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Print Current and Updated Sort ///////////////////////////////////////////////////////
+void printPoints(const std::vector<point> &nodes){
+    std::cout << "Sorted Values: ";
+    for(const auto &p : nodes){
+        std::cout << "(" << p.x << ", " << p.y << ") ";  
+    }
+    std::cout << std::endl;
+}
+
+// Sort in Counter Clockwise manner /////////////////////////////////////////////////////
+void sorting(std::vector<point> &nodes, point center){
+    std::sort(nodes.begin(), nodes.end(), [&center](const point& a, const point& b){
+        double a1 = (std::atan2(a.y - center.y, a.x - center.x) * 180 / M_PI + 360) / 360;  
+        double a2 = (std::atan2(b.y - center.y, b.x - center.x) * 180 / M_PI + 360) / 360;  
+
+        return a1 < a2;   
+    });
+}
+
+// Find the Center Coordinate ///////////////////////////////////////////////////////////
+point center(std::vector<point> &nodes){
+    std::vector<point> result;
+    double sumX = 0, sumY = 0;
+
+    // Add up all the coordinates /////
+    for(const auto &p : nodes){
+        sumX += p.x;
+        sumY += p.y;
+    }
+
+    // Store middle coordinates ///////  
+    return {(sumX /= nodes.size()), (sumY /= nodes.size())};
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 int main(int argc, const char * argv[]){
     int index = 0;
-    //std::array<double, 2> Pi = 12, Pj = {0, 0.5}; //this used to only be an integer
     std::array<int, 6> signs;
     std::array<double, 2> V;
     
@@ -97,6 +132,7 @@ int main(int argc, const char * argv[]){
     std::vector<point> nodes = {{0,0}, {1,0}, {1,1}, {0,1}};
     std::array<point, 2> interface = {{{1.0, 0.5}, {0.0, 0.5}}};
     std::map<std::pair<int, int>, int > intersectPoints; 
+    std::vector<int> belowLine;
     //std::vector<std::pair<int,int>> edges = {{0,1}, {1,2}, {2,3}, {3,0}}; // intiallized with edges
    
     // Store all points in a single list
@@ -107,11 +143,9 @@ int main(int argc, const char * argv[]){
     // Reverse mape of the intersecting points
     std::map<int, std::pair<int, int>> reverse_map;
     reverse_map[4] = {1,2};
-    reverse_map[5] = {5,0};
+    reverse_map[5] = {3,0};
 
     // 1) Loop around the cell coordinates ////////////////////////////////////
-
-    /* This will be completed later, Dont worry about it for now */
 
     ////// 1a) Map out Pi and Pj
     intersectPoints[{1,2}] = 4;      // Pi = 4, since allPoints[4] = {1, 0.5}
@@ -121,6 +155,20 @@ int main(int argc, const char * argv[]){
     std::array <double, 2> normal = normVec(interface);
     printNorm(normal);
     printf("\n");
+
+    // NEW PORTION //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Find the center of the cell
+    point centerPoint = center(allPoints);
+    std::cout << "Center Coordinates: (" << centerPoint.x << ", " << centerPoint.y << ") " << std::endl; 
+    std::cout << std::endl;
+
+    // Sort all points
+    sorting(allPoints, centerPoint);
+    printPoints(allPoints);
+    std::cout << std::endl;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    
     // 3) Deduce the sign of every node using the dot product /////////////////
     for(const auto& point : allPoints){
@@ -151,17 +199,28 @@ int main(int argc, const char * argv[]){
     for(int i = 0; i < index; ++i){
         printf("Orientation %d: %d \n", i+1, signs[i]);
     }
-    printf("\n");
 
     // 4) Clipping the values from below //////////////////////////////////////
-    auto const belowLine = clip_below(nodes, signs, intersectPoints, reverse_map);
+    //auto const belowLine = clip_below(nodes, signs, intersectPoints, reverse_map); // NO NEED FOR THIS FUNCTION
+
+    // NEW PORTION //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Storing the element number of the signs below and on the line
+    std::cout << std::endl;
+    for(int p = 0;  p < allPoints.size(); p++){
+        if(signs[p] <= 0){
+            belowLine.emplace_back(p);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Printing the Below values
     printf("\nNodes of the Line and Below the Line: \n");
     for(const auto &b : belowLine){ 
-        //std::cout << "VALUES: (" << b.first << ", " << b.second << ")" << std::endl;
         std::cout << "(" << allPoints[b].x << ", " << allPoints[b].y << ")" << std::endl;
-    }   // Its missing a corrdinate because there were only three edges that this loop covered 
+    } 
     printf("\n");
+
 
 }
