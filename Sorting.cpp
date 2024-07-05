@@ -19,8 +19,8 @@ void printPoints(const std::vector<point> &nodes){
 // Sort in Counter Clockwise manner /////////////////////////////////////////////////////
 void sorting(std::vector<point> &nodes, point center){
     std::sort(nodes.begin(), nodes.end(), [&center](const point& a, const point& b){
-        double a1 = (std::atan2(a.y - center.y, a.x - center.x) * 180 / M_PI + 360) / 360;  
-        double a2 = (std::atan2(b.y - center.y, b.x - center.x) * 180 / M_PI + 360) / 360;  
+        double a1 = (std::atan2(a.y - center.y, a.x - center.x) * (180 / M_PI)) ;  
+        double a2 = (std::atan2(b.y - center.y, b.x - center.x) * (180 / M_PI));  
 
         return a1 < a2;   
     });
