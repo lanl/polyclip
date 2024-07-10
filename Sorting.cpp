@@ -10,6 +10,7 @@ Goal for this Code:
 
 // Print Current and Updated Sort ///////////////////////////////////////////////////////
 void printPoints(const std::vector<point> &nodes){
+    std::cout << "Sorted Points: " ;
     for(const auto &p : nodes){
         std::cout << "(" << p.x << ", " << p.y << ") ";  
     }
@@ -21,6 +22,8 @@ void sorting(std::vector<point> &nodes, point center){
     std::sort(nodes.begin(), nodes.end(), [&center](const point& a, const point& b){
         double a1 = (std::atan2(a.y - center.y, a.x - center.x) * (180 / M_PI)) ;  
         double a2 = (std::atan2(b.y - center.y, b.x - center.x) * (180 / M_PI));  
+
+        //std::cout << "HELPER: "<< a1 << ", " << a2 << std::endl;
 
         return a1 < a2;   
     });
@@ -50,8 +53,9 @@ int main(){
 
 
     // 1) Find the center of the cell /////////////////////////////////////////
+    std::cout << std::endl;
     point centerPoint = center(nodes);
-    std::cout << "(" << centerPoint.x << ", " << centerPoint.y << ") " << std::endl; 
+    std::cout << "Center Point: (" << centerPoint.x << ", " << centerPoint.y << ") " << std::endl; 
     std::cout << std::endl;
 
     // 2) Sorting nodes ///////////////////////////////////////////////////////
@@ -61,8 +65,10 @@ int main(){
 
     // 2a) Sorting all points /////////////////////////////////////////////////
     point centerAllPoint = center(allPoints);
-    std::cout << "(" << centerPoint.x << ", " << centerPoint.y << ") " << std::endl; 
+    std::cout << "Center Point: (" << centerPoint.x << ", " << centerPoint.y << ") " << std::endl << std::endl; 
+
     sorting(allPoints, centerAllPoint);
+    std::cout << std::endl;
     printPoints(allPoints);
 
     // 3) Clip the values below ///////////////////////////////////////////////
@@ -73,9 +79,10 @@ int main(){
         }
     }
 
+    std::cout << "Clipped Below: ";
     for(const auto &b : belowLine){ 
-        std::cout << "(" << allPoints[b].x << ", " << allPoints[b].y << ")" << std::endl;
+        std::cout << "(" << allPoints[b].x << ", " << allPoints[b].y << ") ";
     } 
-    printf("\n");
+    printf("\n\n");
 
 }

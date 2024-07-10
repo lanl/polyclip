@@ -106,6 +106,8 @@ void sorting(std::vector<point> &nodes, point center){
     });
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // Find the Center Coordinate ///////////////////////////////////////////////////////////
 point center(std::vector<point> &nodes){
     std::vector<point> result;
@@ -131,7 +133,7 @@ int main(int argc, const char * argv[]){
     // Cell nodes, Interface, and Map of Pi and Pj
     std::vector<point> nodes = {{0,0}, {1,0}, {1,1}, {0,1}};
     std::array<point, 2> interface = {{{1.0, 0.5}, {0.0, 0.5}}};
-    std::map<std::pair<int, int>, int > intersectPoints; 
+    std::map<std::pair<int, int>, int> intersectPoints; 
     std::vector<int> belowLine;
     //std::vector<std::pair<int,int>> edges = {{0,1}, {1,2}, {2,3}, {3,0}}; // intiallized with edges
    
