@@ -1,7 +1,4 @@
 #include "SingleCell.h"
-#include <map>
-#include <utility>
-
 
 // Finding the normal vector between 2 points ///////////////////////////////////////////
 std::array<double, 2> normVec(std::array<point, 2> const& inter){
