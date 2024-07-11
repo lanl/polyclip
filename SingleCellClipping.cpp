@@ -4,10 +4,14 @@
 #include <utility>
 
 /*
-New Goals For the Code: (Latest Fixes)
-    1) Store the convention of each node (check)
-    2) Map out Pi and Pj (check) 
-    3) Now check if its below the line (check)
+    Code Description:
+        - Calculates the normal vector of the interface.
+        - Calculates the direction vector with respect to (WRT) the normal vector.
+        - Calculates the dot product of the normal and direction vector.
+            - This will indicate the sign of the node. 
+        - Method 1: Clips using edges, compares the sign of every node,
+          and stores as edges
+            * But skips the the interface edge and uses maps.       
 */
 
 // Finding the normal vector between 2 points ///////////////////////////////////////////
@@ -56,7 +60,7 @@ std::vector<std::pair<int, int>> clip_below(std::vector<std::pair<int,int>> cons
     for(const auto& edge : edges){
         i = edge.first;
         j = edge.second;
-        std::cout << "Iterate: (" << i << ", " << j << ")" << std::endl; 
+        //std::cout << "Iterate: (" << i << ", " << j << ")" << std::endl; 
 
         // Checking all possibilities 
         if(sign[i] == sign[j] && sign[i] < 0){ 
@@ -75,28 +79,26 @@ std::vector<std::pair<int, int>> clip_below(std::vector<std::pair<int,int>> cons
 
 int main(int argc, const char * argv[]){
     int index = 0;
-    //std::array<double, 2> Pi = 12, Pj = {0, 0.5}; //this used to only be an integer
     std::array<int, 4> signs;
     std::array<double, 2> V;
     
     // Cell nodes, Interface, and Map of Pi and Pj
     std::vector<point> nodes = {{0,0}, {1,0}, {1,1}, {0,1}};
-    std::array<point, 2> interface = {{{1.0, 0.5}, {0.0, 0.5}}};
+    //std::array<point, 2> interface = {{{1.0, 0.5}, {0.0, 0.5}}};
+    std::array<point, 2> interface = {{{1.0, 0.5}, {0.5, 1}}};
     std::map<std::pair<int, int>, int > intersectPoints; 
     std::vector<std::pair<int,int>> edges = {{0,1}, {1,2}, {2,3}, {3,0}}; // intiallized with edges
    
     // store all points in a single list
-    std::vector<point> allPoints/*(nodes.size() + interface.size())*/;
+    std::vector<point> allPoints;
     allPoints.insert(allPoints.end(), nodes.begin(), nodes.end());
     allPoints.insert(allPoints.end(), interface.begin(), interface.end());
 
-    // 1) Loop around the cell coordinates ////////////////////////////////////
-
-    /* This will be completed later, Dont worry about it for now */
-
+    // 1) Map coordinates to help loop ////////////////////////////////////////
     ////// 1a) Map out Pi and Pj
     intersectPoints[{1,2}] = 4;      // Pi = 4, since allPoints[4] = {1, 0.5}
-    intersectPoints[{3,0}] = 5;      // Pj = 5, since allPoints[5] = {0, 0.5}
+    //intersectPoints[{3,0}] = 5;
+    intersectPoints[{2,3}] = 5;      // Pj = 5, since allPoints[5] = {0, 0.5}
 
     // 2) Deduce the normal vector of the cutting line ////////////////////////
     std::array <double, 2> normal = normVec(interface);
@@ -131,13 +133,9 @@ int main(int argc, const char * argv[]){
     // Printing the Below values
     printf("\nNodes of the Line and Below the Line: \n");
     for(const auto &b : belowLine){ 
-        //std::cout << "VALUES: (" << b.first << ", " << b.second << ")" << std::endl;
-        std::cout << "(" << allPoints[b.first].x << ", " << allPoints[b.first].y << ")" << std::endl;
+        std::cout << "Edges: (" << b.first << ", " << b.second << ")" << std::endl;
+        //std::cout << "(" << allPoints[b.first].x << ", " << allPoints[b.first].y << ")" << std::endl;
     }   // Its missing a corrdinate because there were only three edges that this loop covered 
     printf("\n");
 
-    // for(const auto &p : allPoints){
-    //     std::cout << "(" << p.x << ", " << p.y << ")" << std::endl;
-    // }
-    // printf("\n");
 }

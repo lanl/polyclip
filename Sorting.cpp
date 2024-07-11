@@ -1,11 +1,11 @@
 #include "SingleCell.h"
 
-
 /*
-Goal for this Code:
-    1) Find the middle coordinate of all the nodes 
-    2) Sort by using the node and center diffrence degree
-    3) Clip the coordinate values below
+    Code Description:
+        - Method 3: Finds the center point of all the nodes, calculates 
+          the degree of every node WTR to the center point, and sorts based 
+          on smallest to biggest degree. Uses the sorted value of all points to 
+          compare the signs.
 */
 
 // Print Current and Updated Sort ///////////////////////////////////////////////////////
@@ -17,14 +17,77 @@ void printPoints(const std::vector<point> &nodes){
     std::cout << std::endl;
 }
 
-// Sort in Counter Clockwise manner /////////////////////////////////////////////////////
+// // Sort in Counter Clockwise manner /////////////////////////////////////////////////////
+// void sorting(std::vector<point> &nodes, point center){
+//     std::vector<int> degree(nodes.size());
+//     int index = 0;
+
+//     for(int i = 0; i < nodes.size(); i++){
+//         degree[i] = (std::atan2(nodes[i].y - center.y, nodes[i].x - center.x) * (180 / M_PI));
+//     }
+
+//     std::cout << "Degrees: ";
+//     for(int i = 0; i < degree.size(); i++){
+//         std::cout << degree[i] << "\t";
+//     }
+//     std::cout << std::endl << std::endl;
+
+//     std::sort(nodes.begin(), nodes.end(), [&degree, &nodes](const point& a, const point& b){
+//         std::cout << "Addresses: " << &a << " and " << &nodes[0] << std::endl;
+//         std::cout << "Addresses: " << &b << " and " << &nodes[0] << std::endl;
+
+//         int a1 = (&a - &nodes[0]);
+//         int a2 = (&b - &nodes[0]);
+
+//         std::cout << "Index: " << a1 << " and " << a2 << std::endl;
+//         std::cout << "Degrees: " << degree[a1] << " < " << degree[a2] << std::endl;
+
+//         bool value = degree[a1] < degree[a2];
+//         std::cout << "Result: " << value << std::endl << std::endl;
+
+//         return value;   
+//     });
+
+//     std::cout << std::endl;
+// }
+
+
+// // Sort in Counter Clockwise manner /////////////////////////////////////////////////////
+// void sorting(std::vector<point> &nodes, point center){
+//     std::vector<int> degree(nodes.size());
+//     int index = 0;
+
+//     // Calculate the degree WRT the center point //////////
+//     for(int i = 0; i < nodes.size(); i++){
+//         degree[i] = (std::atan2(nodes[i].y - center.y, nodes[i].x - center.x) * (180 / M_PI));
+//     }
+
+//     // The indices of nodes ///////////////////////////////
+//     std::vector<int> indices(nodes.size());
+//     for(int i = 0; i < nodes.size(); i++){
+//         indices[i] = i;
+//     }
+
+//     // Store indices based on smallest to biggest degree //
+//     std::sort(indices.begin(), indices.end(), [&degree](size_t a, size_t b){
+//         return degree[a] < degree[b];   
+//     });
+
+//     // Rearrange the nodes based on the degree indices //// 
+//     std::vector<point> sortedNodes(nodes.size());
+//     for(int i = 0; i < nodes.size(); i++){
+//         sortedNodes[i] = nodes[indices[i]];
+//     }
+
+//     // Update Nodes ///////////////////////////////////////
+//     nodes = std::move(sortedNodes);
+// }
+
+// Original Sorting Method //////////////////////////////////////////////////////////////
 void sorting(std::vector<point> &nodes, point center){
-    std::sort(nodes.begin(), nodes.end(), [&center](const point& a, const point& b){
-        double a1 = (std::atan2(a.y - center.y, a.x - center.x) * (180 / M_PI)) ;  
+    std::sort(nodes.begin(), nodes.end(), [&center](const point& a, const point& b){        
+        double a1 = (std::atan2(a.y - center.y, a.x - center.x) * (180 / M_PI));  
         double a2 = (std::atan2(b.y - center.y, b.x - center.x) * (180 / M_PI));  
-
-        //std::cout << "HELPER: "<< a1 << ", " << a2 << std::endl;
-
         return a1 < a2;   
     });
 }
@@ -68,7 +131,7 @@ int main(){
     std::cout << "Center Point: (" << centerPoint.x << ", " << centerPoint.y << ") " << std::endl << std::endl; 
 
     sorting(allPoints, centerAllPoint);
-    std::cout << std::endl;
+    //std::cout << std::endl;
     printPoints(allPoints);
 
     // 3) Clip the values below ///////////////////////////////////////////////

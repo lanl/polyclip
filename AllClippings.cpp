@@ -1,5 +1,27 @@
 #include "SingleCell.h"
 
+/*
+    Code Description:
+        - Calculates the normal vector of the interface.
+        - Calculates the direction vector with respect to (WRT) the normal vector.
+        - Calculates the dot product of the normal and direction vector.
+            - This will indicate the sign of the node. 
+        - This code contains 3 different clipping methods.
+            1) Method 1: Clips using edges, compares the sign of every node,
+               and stores as edges
+                * But skips the the interface edge and uses maps.
+
+            2) Method 2: Clips by pointing to the next node based on the sign 
+               comparison.
+                * But it uses a map and a reverse map.
+
+            3) Method 3: Finds the center point of all the nodes, calculates 
+               the degree of every node WTR to the center point, and sorts based 
+               on smallest to biggest degree. Uses the sorted value of all points to 
+               compare the signs.
+
+*/
+
 // Finding the normal vector between 2 points ///////////////////////////////////////////
 std::array<double, 2> normVec(std::array<point, 2> const& inter){
    // Direction vec
@@ -51,7 +73,6 @@ std::array<int, 6> orientation_clip_2_3(std::vector<point> const allPoints, std:
 
         // Dot Product of normal and node vector
         dp = dotProduct(normal, V);
-        //printf("Dot Product of (%.1lf, %.1lf) and (%.1lf, %.1lf): %.2lf\n", V[0], V[1], normal[0], normal[1], dp);
 
         // Convection of placement with respect to the line
         if(dp < 0){         // Below the line
@@ -66,7 +87,6 @@ std::array<int, 6> orientation_clip_2_3(std::vector<point> const allPoints, std:
         index++;
     }
 
-    //std::cout << std::endl;
     return signs;
 }
 
@@ -80,7 +100,8 @@ std::vector<std::pair<int, int>> clip_below_1(std::array<int, 4> const& sign){
 
     // Mapping the intersection points and providing an ID
     intersectPoints[{1,2}] = 4;      // Pi = 4, since allPoints[4] = {1, 0.5}
-    intersectPoints[{3,0}] = 5;      // Pj = 5, since allPoints[5] = {0, 0.5}
+    //intersectPoints[{3,0}] = 5;      // Pj = 5, since allPoints[5] = {0, 0.5}
+    intersectPoints[{2,3}] = 5;
 
     int i, j;                                                                                                                               
     for(const auto& edge : edges){
@@ -117,14 +138,12 @@ std::array<int, 4> orientation_clip_1(std::vector<point> const nodes, std::array
 
         // Dot Product of normal and node vector
         dp = dotProduct(normal, V);
-        //printf("Dot Product of (%.1lf, %.1lf) and (%.1lf, %.1lf): %.2lf\n", V[0], V[1], normal[0], normal[1], dp);
 
         // Convection of placement with respect to the line
         signs[index] = (dp < 0) ? -1 : 1;       // Classy :)
         index++;
     }
 
-    //std::cout << std::endl;
     return signs;
 }
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -140,24 +159,26 @@ std::vector<int> clip_below_2(std::vector<point> const& nodes,
 
     // Mappings
     intersectPoints[{1,2}] = 4;     
-    intersectPoints[{3,0}] = 5;      
+    //intersectPoints[{3,0}] = 5; 
+    intersectPoints[{2,3}] = 5;     
     reverse_map[4] = {1,2};
-    reverse_map[5] = {3,0};
+    //reverse_map[5] = {3,0};
+    reverse_map[5] = {2,3};
 
     int i = 0, j = 1;                                                                                                                               
     do{
         belowline.emplace_back(i);
 
         // Checking all possibilities 
-        if(sign[i] == sign[j] && sign[i] < 0){              // Below the Line
+        if(sign[i] == sign[j] && sign[i] < 0 || sign[j] < 0){   // Below the Line
             i = j;
             j = (j + 1) % n;
         }
-        else if(sign[i] < 0){                               // Detecting intersecting points
+        else if(sign[i] < 0){                                   // Detecting intersecting points
             i = intersectPoints.at({i,j});
             j = i + 1;
         }
-        else if(sign[i] == sign[j] && sign[i] == 0){        // Detecting on the line
+        else if(sign[i] == sign[j] && sign[i] == 0){            // Detecting on the line
             i = j;  
             j = reverse_map.at(i).second; 
         }
@@ -173,10 +194,9 @@ std::vector<int> clip_below_2(std::vector<point> const& nodes,
 
 // Sort in Counter Clockwise manner Based on Degree /////////////////////////////////////
 void sorting(std::vector<point> &nodes, point center){
-    std::sort(nodes.begin(), nodes.end(), [&center](const point& a, const point& b){
+    std::sort(nodes.begin(), nodes.end(), [&center](const point& a, const point& b){        
         double a1 = (std::atan2(a.y - center.y, a.x - center.x) * (180 / M_PI));  
         double a2 = (std::atan2(b.y - center.y, b.x - center.x) * (180 / M_PI));  
-
         return a1 < a2;   
     });
 }
@@ -203,7 +223,8 @@ int main(int argc, const char * argv[]){
 
     // Cell Nodes and Interface Declared
     std::vector<point> nodes = {{0,0}, {1,0}, {1,1}, {0,1}};
-    std::array<point, 2> interface = {{{1.0, 0.5}, {0.0, 0.5}}};
+    //std::array<point, 2> interface = {{{1.0, 0.5}, {0.0, 0.5}}};
+    std::array<point, 2> interface = {{{1.0, 0.5}, {0.5, 1}}};
 
     // Store all points in a single list
     std::vector<point> allPoints;
@@ -231,7 +252,6 @@ int main(int argc, const char * argv[]){
     std::array<int, 6> signs3 = orientation_clip_2_3(allPoints, interface, V);
 
     // Clip below
-    //std::cout << std::endl;
     for(int p = 0;  p < allPoints.size(); p++){
         if(signs3[p] <= 0){
             belowLine3.emplace_back(p);
