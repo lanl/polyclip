@@ -1,8 +1,10 @@
-#include "Clippings.cpp"
+#include "Clippings.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, const char * argv[]){
+    using namespace polyintersect;
+
     std::array<double, 2> V;
     std::vector<int> belowLine3;
 

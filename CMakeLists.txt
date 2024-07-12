@@ -7,4 +7,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
 add_executable(allclips)
-target_sources(allclips PUBLIC Clippings.cpp)
+target_include_directories(allclips PUBLIC .)
+target_sources(allclips PUBLIC main.cpp Clippings.cpp)

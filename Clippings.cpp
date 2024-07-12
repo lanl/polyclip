@@ -1,4 +1,4 @@
-#include "Mesh.h"
+#include "Clippings.h"
 
 /*
     Code Description:
@@ -23,7 +23,7 @@
 */
 
 // Finding the normal vector between 2 points ///////////////////////////////////////////
-std::array<double, 2> normVec(std::array<point, 2> const& inter){
+std::array<double, 2> polyintersect::normVec(std::array<point, 2> const& inter){
    // Direction vec
    double dx = inter[1].x - inter[0].x;     // x2 - x1
    double dy = inter[1].y - inter[0].y;     // y2 - y1
@@ -34,13 +34,13 @@ std::array<double, 2> normVec(std::array<point, 2> const& inter){
 }
 
 // Finding the dot product of the array and vector //////////////////////////////////////
-double dotProduct(std::array<double, 2> const& v , std::array<double, 2> &n){
+double polyintersect::dotProduct(std::array<double, 2> const& v , std::array<double, 2> &n){
    double product = (v[0] * n[0]) + (v[1] * n[1]);
    return product;
 }
 
 // Print the normal vector //////////////////////////////////////////////////////////////
-void printNorm(std::array<double, 2> const& normal){
+void polyintersect::printNorm(std::array<double, 2> const& normal){
    printf("Normal: ");
    for(int i = 0; i < 2; ++i){
        printf("%.1lf ", normal[i]);
@@ -49,7 +49,7 @@ void printNorm(std::array<double, 2> const& normal){
 }
 
 // Point Vector /////////////////////////////////////////////////////////////////////////
-std::array<double, 2> pointVec(const point &p, std::array<point, 2> const& inter){
+std::array<double, 2> polyintersect::pointVec(const point &p, std::array<point, 2> const& inter){
    double dx = p.x - inter[0].x;
    double dy = p.y - inter[0].y;
    
@@ -58,8 +58,9 @@ std::array<double, 2> pointVec(const point &p, std::array<point, 2> const& inter
 }
 
 // Orientation of Every Node for Method 2 and 3 /////////////////////////////////////////
-std::array<int, 6> orientation_clip_2_3(std::vector<point> const allPoints, std::array<point, 2> const interface, 
-                                      std::array<double, 2> V){
+std::array<int, 6> polyintersect::orientation_clip_2_3(std::vector<point> const allPoints, 
+                                                       std::array<point, 2> const interface, 
+                                                       std::array<double, 2> V){
     
     // Deduce the normal vector of the cutting line 
     std::array <double, 2> normal = normVec(interface);
@@ -92,7 +93,7 @@ std::array<int, 6> orientation_clip_2_3(std::vector<point> const allPoints, std:
 
 
 // Below the Line Using Edges ///////////////////////////////////////////////////////////
-std::vector<std::pair<int, int>> clip_below_1(std::array<int, 4> const& sign){
+std::vector<std::pair<int, int>> polyintersect::clip_below_1(std::array<int, 4> const& sign){
 
     std::vector<std::pair<int, int>> belowline;
     std::map<std::pair<int, int>, int > intersectPoints; 
@@ -123,7 +124,7 @@ std::vector<std::pair<int, int>> clip_below_1(std::array<int, 4> const& sign){
 }
 
 // Orientation of Every Node for Method 1 ///////
-std::array<int, 4> orientation_clip_1(std::vector<point> const nodes, std::array<point, 2> const interface, 
+std::array<int, 4> polyintersect::orientation_clip_1(std::vector<point> const nodes, std::array<point, 2> const interface, 
                                       std::array<double, 2> V){
     
     // Deduce the normal vector of the cutting line 
@@ -149,8 +150,8 @@ std::array<int, 4> orientation_clip_1(std::vector<point> const nodes, std::array
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // Below the Line Pointing to the Next Node /////////////////////////////////////////////
-std::vector<int> clip_below_2(std::vector<point> const& nodes, 
-                            std::array<int, 6> const& sign){
+std::vector<int> polyintersect::clip_below_2(std::vector<point> const& nodes, 
+                                             std::array<int, 6> const& sign){
 
     std::map<std::pair<int, int>, int > intersectPoints; 
     std::map<int, std::pair<int, int>> reverse_map;
@@ -193,7 +194,7 @@ std::vector<int> clip_below_2(std::vector<point> const& nodes,
 
 
 // Sort in Counter Clockwise manner Based on Degree /////////////////////////////////////
-void sorting(std::vector<point> &nodes, point center){
+void polyintersect::sorting(std::vector<point> &nodes, point center){
     std::sort(nodes.begin(), nodes.end(), [&center](const point& a, const point& b){        
         double a1 = (std::atan2(a.y - center.y, a.x - center.x) * (180 / M_PI));  
         double a2 = (std::atan2(b.y - center.y, b.x - center.x) * (180 / M_PI));  
@@ -202,7 +203,7 @@ void sorting(std::vector<point> &nodes, point center){
 }
 
 // Find the Center Coordinate ///////////////////
-point center(std::vector<point> &nodes){
+point polyintersect::center(std::vector<point> &nodes){
     std::vector<point> result;
     double sumX = 0, sumY = 0;
 
