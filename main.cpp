@@ -62,5 +62,9 @@ int main(int argc, const char * argv[]){
     } 
     printf("\n");
 
+    // New Portion //////////////////////////////////////////////////
+    int cells = 4;
+    mesh m = createMesh(cells);
+
 
 }

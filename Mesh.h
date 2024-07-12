@@ -14,6 +14,14 @@
 
 // Need to set up a single cell now knowing that i will be recieving x (rows) and y (columns)
 struct point{
-   double x = 0.;
-   double y = 0.;
+   double x = 0.0;
+   double y = 0.0;
 };  // Point
+
+   struct mesh{
+      std::vector<point> points;
+      std::vector<std::vector<int>> cells;
+   };
+
+   // Create the Mesh //////////////////////////////////////////////////////////////////////
+   mesh createMesh(int n_cells);
