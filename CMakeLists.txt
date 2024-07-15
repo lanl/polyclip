@@ -8,7 +8,4 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 add_executable(allclips)
 target_include_directories(allclips PUBLIC .)
-target_sources(allclips PUBLIC main.cpp Clippings.cpp Mesh.cpp)
-
-# add_executable(mesh)
-# target_sources(mesh PUBLIC Mesh.cpp)
+target_sources(allclips PUBLIC main.cpp Clippings.cpp Mesh.cpp geometry.cpp)
