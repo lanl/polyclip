@@ -21,13 +21,17 @@ mesh createMesh(int n_cells){
     }
 
     // Identifying the Cells ////////////////////////////////////////
-    int size = m.points.size();
+    int size = n_cells * n_cells;
     m.cells.resize(size);
-    std::cout << std::endl << std::endl << "    //////////////////////// Cells ////////////////////////" << std::endl << std::endl;
-    for(int k = 0; k < size; ++k){
-        m.cells[k] = {k, (k+1), ((k+1) + n_nodes), k + n_nodes};
-        std::cout << "Cell " << k << ":   ";
-        std::cout << k << ", " << k+1 << ", " << k+1 + n_nodes << ", " << k + n_nodes << std::endl;
-    }    
+    std::cout << "    //////////////////////// Cells ////////////////////////" << std::endl << std::endl;
+    for(int j = 0; j < n_cells; j++){               // Cell Rows
+        for(int i = 0; i < n_cells; i++){           // Cell Columns
+            int k = i + (j * n_cells);              // Identify the individual cell elements
+            m.cells[k] = {k + j, (k+1) + j, ((k+1) + n_nodes) + j, k + n_nodes + j};
+            std::cout << "Cell " << k << ":   ";
+            std::cout << k + j << ", " << k+1 + j << ", " << k+1 + n_nodes + j << ", " << k + n_nodes + j << std::endl;
+        }
+        std::cout << std::endl << std::endl;
+    }
     return m;
 }

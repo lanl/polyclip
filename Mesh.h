@@ -18,10 +18,10 @@ struct point{
    double y = 0.0;
 };  // Point
 
-   struct mesh{
-      std::vector<point> points;
-      std::vector<std::vector<int>> cells;
-   };
+struct mesh{
+   std::vector<point> points;
+   std::vector<std::vector<int>> cells;
+};
 
-   // Create the Mesh //////////////////////////////////////////////////////////////////////
-   mesh createMesh(int n_cells);
+// Create the Mesh //////////////////////////////////////////////////////////////////////
+mesh createMesh(int n_cells);
