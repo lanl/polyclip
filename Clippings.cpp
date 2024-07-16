@@ -22,12 +22,13 @@
 
 // Method 1: Clipping Using Edges ///////////////////////////////////////////////////////
 std::vector<std::pair<int, int>> polyintersect::clip_below_1(int cell, Mesh const &mesh, 
-                                                             std::array<Point, 2> const& interface, 
-                                                             bool print){
+                                                             std::array<Point, 2> const& interface,
+                                                             bool print,
+                                                             std::map<std::pair<int, int>, int> const& intersectPoints){
 
     std::array<double, 2> V;
     std::vector<std::pair<int, int>> belowline;
-    std::map<std::pair<int, int>, int > intersectPoints; 
+//    std::map<std::pair<int, int>, int > intersectPoints;
     std::vector<std::pair<int,int>> edges = {{0,1}, {1,2}, {2,3}, {3,0}}; 
     
     // Coordinates of the Cell Currently On
@@ -36,10 +37,14 @@ std::vector<std::pair<int, int>> polyintersect::clip_below_1(int cell, Mesh cons
         nodes.emplace_back(mesh.points_[c]);
     }
 
-    // Mapping the intersection Points and providing an ID
-    intersectPoints[{1,2}] = 4;      // Pi = 4, since allPoints[4] = {1, 0.5}
-    //intersectPoints[{3,0}] = 5;      // Pj = 5, since allPoints[5] = {0, 0.5}
-    intersectPoints[{2,3}] = 5;
+//    // Mapping the intersection Points and providing an ID
+//    intersectPoints[{1,2}] = 4;      // Pi = 4, since allPoints[4] = {1, 0.5}
+//    intersectPoints[{3,0}] = 5;      // Pj = 5, since allPoints[5] = {0, 0.5}
+////    intersectPoints[{2,3}] = 5;
+
+    for (auto [key, val] : intersectPoints) {
+      std::cout << "map("<< key.first << ", "<< key.second << ") = "<< val << std::endl;
+    }
 
     std::array<int, 4> const sign = orientation_clip_1(nodes, interface, V);
 
@@ -73,12 +78,13 @@ std::vector<std::pair<int, int>> polyintersect::clip_below_1(int cell, Mesh cons
 // Method 2 : Clipping by Pointing to the Next Node /////////////////////////////////////
 std::vector<int> polyintersect::clip_below_2(int cell, Mesh const &mesh, 
                                              std::array<Point, 2> const& interface, 
-                                             bool print){
+                                             bool print,
+                                             std::map<std::pair<int, int>, int> const& intersectPoints){
 
-    std::map<std::pair<int, int>, int > intersectPoints; 
+//    std::map<std::pair<int, int>, int > intersectPoints;
     std::map<int, std::pair<int, int>> reverse_map;
     std::vector<int> belowline;
-    std::array<double, 2> V;
+    std::array<double, 2> V{};
     int n = 0;
 
     // Store all Points in a single list
@@ -89,13 +95,17 @@ std::vector<int> polyintersect::clip_below_2(int cell, Mesh const &mesh,
     }
     allPoints.insert(allPoints.end(), interface.begin(), interface.end());     
 
-    // Mappings
-    intersectPoints[{1,2}] = 4;     
-    //intersectPoints[{3,0}] = 5; 
-    intersectPoints[{2,3}] = 5;     
-    reverse_map[4] = {1,2};
-    //reverse_map[5] = {3,0};
-    reverse_map[5] = {2,3};
+//    // Mappings
+//    intersectPoints[{1,2}] = 4;
+//    intersectPoints[{3,0}] = 5;
+//    intersectPoints[{2,3}] = 5;
+//    reverse_map[4] = {1,2};
+//    reverse_map[5] = {3,0};
+//    reverse_map[5] = {2,3};
+    for (auto [key,val] : intersectPoints) {
+      reverse_map[val] = key;
+    }
+
 
     std::array<int, 6> const sign = orientation_clip_2_3(allPoints, interface, V);
 
