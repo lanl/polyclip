@@ -11,21 +11,21 @@
                and stores as edges
                 * But skips the the interface edge and uses maps.
 
-            2) Method 2: Clips by pointing to the next node based on the sign 
+            2) Method 2: Clips by Pointing to the next node based on the sign 
                comparison.
                 * But it uses a map and a reverse map.
 
-            3) Method 3: Finds the center point of all the nodes, calculates 
-               the degree of every node WTR to the center point, and sorts based 
-               on smallest to biggest degree. Uses the sorted value of all points to 
+            3) Method 3: Finds the center Point of all the nodes, calculates 
+               the degree of every node WTR to the center Point, and sorts based 
+               on smallest to biggest degree. Uses the sorted value of all Points to 
                compare the signs.
 
 */
 
 
 // Below the Line Using Edges ///////////////////////////////////////////////////////////
-std::vector<std::pair<int, int>> polyintersect::clip_below_1(std::vector<point> const& nodes, 
-                                                             std::array<point, 2> const& interface, 
+std::vector<std::pair<int, int>> polyintersect::clip_below_1(std::vector<Point> const& nodes, 
+                                                             std::array<Point, 2> const& interface, 
                                                              bool print){
 
     std::array<double, 2> V;
@@ -33,7 +33,7 @@ std::vector<std::pair<int, int>> polyintersect::clip_below_1(std::vector<point> 
     std::map<std::pair<int, int>, int > intersectPoints; 
     std::vector<std::pair<int,int>> edges = {{0,1}, {1,2}, {2,3}, {3,0}}; 
 
-    // Mapping the intersection points and providing an ID
+    // Mapping the intersection Points and providing an ID
     intersectPoints[{1,2}] = 4;      // Pi = 4, since allPoints[4] = {1, 0.5}
     //intersectPoints[{3,0}] = 5;      // Pj = 5, since allPoints[5] = {0, 0.5}
     intersectPoints[{2,3}] = 5;
@@ -70,8 +70,8 @@ std::vector<std::pair<int, int>> polyintersect::clip_below_1(std::vector<point> 
 
 
 // Below the Line Pointing to the Next Node /////////////////////////////////////////////
-std::vector<int> polyintersect::clip_below_2(std::vector<point> const& nodes, 
-                                             std::array<point, 2> const& interface, 
+std::vector<int> polyintersect::clip_below_2(std::vector<Point> const& nodes, 
+                                             std::array<Point, 2> const& interface, 
                                              bool print){
 
     std::map<std::pair<int, int>, int > intersectPoints; 
@@ -80,7 +80,7 @@ std::vector<int> polyintersect::clip_below_2(std::vector<point> const& nodes,
     std::array<double, 2> V;
     int n = nodes.size();
 
-    std::vector<point> allPoints;
+    std::vector<Point> allPoints;
     allPoints.insert(allPoints.end(), nodes.begin(), nodes.end());
     allPoints.insert(allPoints.end(), interface.begin(), interface.end());      
 
@@ -103,7 +103,7 @@ std::vector<int> polyintersect::clip_below_2(std::vector<point> const& nodes,
             i = j;
             j = (j + 1) % n;
         }
-        else if(sign[i] < 0){                                   // Detecting intersecting points
+        else if(sign[i] < 0){                                   // Detecting intersecting Points
             i = intersectPoints.at({i,j});
             j = i + 1;
         }
@@ -124,18 +124,18 @@ std::vector<int> polyintersect::clip_below_2(std::vector<point> const& nodes,
     return belowline;
 }
 /////////////////////////////////////////////////////////////////////////////////////////
-std::vector<int> polyintersect::clip_below_3(std::vector<point> const& nodes, 
-                                             std::array<point, 2> const& interface,
+std::vector<int> polyintersect::clip_below_3(std::vector<Point> const& nodes, 
+                                             std::array<Point, 2> const& interface,
                                              bool print) {
 
     std::array<double, 2> V;
-    // Store all points in a single list
-    std::vector<point> allPoints;
+    // Store all Points in a single list
+    std::vector<Point> allPoints;
     allPoints.insert(allPoints.end(), nodes.begin(), nodes.end());
     allPoints.insert(allPoints.end(), interface.begin(), interface.end());                         
 
     // Find Center Point and Sort from Least to Greatest Degree
-    point centerPoint = center(allPoints);
+    Point centerPoint = center(allPoints);
     sorting(allPoints, centerPoint);
     
     // Store the Orientation of every node

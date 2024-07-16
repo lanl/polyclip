@@ -26,16 +26,16 @@ namespace polyintersect {
 
 
 // Below the Line Using Edges ///////////////////////////////////////////////////////////
-std::vector<std::pair<int, int>> clip_below_1(std::vector<point> const& nodes, 
-                                              std::array<point, 2> const& interface,
+std::vector<std::pair<int, int>> clip_below_1(std::vector<Point> const& nodes, 
+                                              std::array<Point, 2> const& interface,
                                               bool print);
 // Below the Line Pointing to the Next Node /////////////////////////////////////////////
-std::vector<int> clip_below_2(std::vector<point> const& nodes, 
-                              std::array<point, 2> const& interface, 
+std::vector<int> clip_below_2(std::vector<Point> const& nodes, 
+                              std::array<Point, 2> const& interface, 
                               bool print);
 /////////////////////////////////////////////////////////////////////////////////////////
-std::vector<int> clip_below_3(std::vector<point> const& nodes, 
-                              std::array<point, 2> const& interface, 
+std::vector<int> clip_below_3(std::vector<Point> const& nodes, 
+                              std::array<Point, 2> const& interface, 
                               bool print);
 
 }

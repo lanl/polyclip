@@ -1,13 +1,14 @@
 #include "Clippings.h"
+#include "Mesh.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, const char * argv[]){
-    using namespace polyintersect;
 
+    using namespace polyintersect;
     // Cell Nodes and Interface Declared
-    std::vector<point> nodes = {{0,0}, {1,0}, {1,1}, {0,1}};
-    std::array<point, 2> interface = {{{1.0, 0.5}, {0.5, 1}}};
+    std::vector<Point> nodes = {{0,0}, {1,0}, {1,1}, {0,1}};
+    std::array<Point, 2> interface = {{{1.0, 0.5}, {0.5, 1}}};
 
     // // Store all points in a single list
     // std::vector<point> allPoints;
@@ -23,13 +24,13 @@ int main(int argc, const char * argv[]){
     // std::array<int, 6> signs2 = orientation_clip_2_3(allPoints2, interface, V);
 
     // 2) Clipping the values from below Using Different Methods //////////////
-    auto const belowLine1 = polyintersect::clip_below_1(nodes, interface, true);
-    auto const belowLine2 = polyintersect::clip_below_2(nodes, interface, true);
-    auto const belowLine3 = polyintersect::clip_below_3(nodes, interface, true);
+    auto const belowLine1 = clip_below_1(nodes, interface, true);
+    auto const belowLine2 = clip_below_2(nodes, interface, true);
+    auto const belowLine3 = clip_below_3(nodes, interface, true);
 
     // New Portion //////////////////////////////////////////////////
     int cells = 4;
-    mesh m = createMesh(cells);
+    Mesh m(cells);
 
-
+    return EXIT_SUCCESS;
 }

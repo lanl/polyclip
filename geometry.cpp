@@ -1,7 +1,7 @@
 #include "geometry.h"
 
-// Finding the normal vector between 2 points ///////////////////////////////////////////
-std::array<double, 2> polyintersect::normVec(std::array<point, 2> const& inter){
+// Finding the normal vector between 2 Points ///////////////////////////////////////////
+std::array<double, 2> polyintersect::normVec(std::array<Point, 2> const& inter){
    // Direction vec
    double dx = inter[1].x - inter[0].x;     // x2 - x1
    double dy = inter[1].y - inter[0].y;     // y2 - y1
@@ -27,17 +27,17 @@ void polyintersect::printNorm(std::array<double, 2> const& normal){
 }
 
 // Point Vector /////////////////////////////////////////////////////////////////////////
-std::array<double, 2> polyintersect::pointVec(const point &p, std::array<point, 2> const& inter){
+std::array<double, 2> polyintersect::pointVec(const Point &p, std::array<Point, 2> const& inter){
    double dx = p.x - inter[0].x;
    double dy = p.y - inter[0].y;
    
-   std::array <double, 2> point = {dx, dy};
-   return point;
+   std::array <double, 2> Point = {dx, dy};
+   return Point;
 }
 
 // Orientation of Every Node for Method 2 and 3 /////////////////////////////////////////
-std::array<int, 6> polyintersect::orientation_clip_2_3(std::vector<point> const allPoints, 
-                                                       std::array<point, 2> const interface, 
+std::array<int, 6> polyintersect::orientation_clip_2_3(std::vector<Point> const allPoints, 
+                                                       std::array<Point, 2> const interface, 
                                                        std::array<double, 2> V){
     
     // Deduce the normal vector of the cutting line 
@@ -46,9 +46,9 @@ std::array<int, 6> polyintersect::orientation_clip_2_3(std::vector<point> const 
     int index = 0;
     double dp;
 
-    for(const auto& point : allPoints){
+    for(const auto& Point : allPoints){
         // Vector of Node
-        V = pointVec(point, interface);
+        V = pointVec(Point, interface);
 
         // Dot Product of normal and node vector
         dp = dotProduct(normal, V);
@@ -70,8 +70,9 @@ std::array<int, 6> polyintersect::orientation_clip_2_3(std::vector<point> const 
 }
 
 // Orientation of Every Node for Method 1 ///////
-std::array<int, 4> polyintersect::orientation_clip_1(std::vector<point> const nodes, std::array<point, 2> const interface, 
-                                      std::array<double, 2> V){
+std::array<int, 4> polyintersect::orientation_clip_1(std::vector<Point> const nodes, 
+                                                    std::array<Point, 2> const interface, 
+                                                    std::array<double, 2> V){
     
     // Deduce the normal vector of the cutting line 
     std::array <double, 2> normal = normVec(interface);
@@ -79,9 +80,9 @@ std::array<int, 4> polyintersect::orientation_clip_1(std::vector<point> const no
     int index = 0;
     double dp;
 
-    for(const auto& point : nodes){
+    for(const auto& Point : nodes){
         // Vector of Node
-        V = pointVec(point, interface);
+        V = pointVec(Point, interface);
 
         // Dot Product of normal and node vector
         dp = dotProduct(normal, V);
@@ -95,8 +96,8 @@ std::array<int, 4> polyintersect::orientation_clip_1(std::vector<point> const no
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 // Sort in Counter Clockwise manner Based on Degree /////////////////////////////////////
-void polyintersect::sorting(std::vector<point> &nodes, point center){
-    std::sort(nodes.begin(), nodes.end(), [&center](const point& a, const point& b){        
+void polyintersect::sorting(std::vector<Point> &nodes, Point center){
+    std::sort(nodes.begin(), nodes.end(), [&center](const Point& a, const Point& b){        
         double a1 = (std::atan2(a.y - center.y, a.x - center.x) * (180 / M_PI));  
         double a2 = (std::atan2(b.y - center.y, b.x - center.x) * (180 / M_PI));  
         return a1 < a2;   
@@ -104,8 +105,8 @@ void polyintersect::sorting(std::vector<point> &nodes, point center){
 }
 
 // Find the Center Coordinate ///////////////////
-point polyintersect::center(std::vector<point> &nodes){
-    std::vector<point> result;
+polyintersect::Point polyintersect::center(std::vector<Point> &nodes){
+    std::vector<Point> result;
     double sumX = 0, sumY = 0;
 
     // Add up all the coordinates /////

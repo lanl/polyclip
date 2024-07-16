@@ -1,27 +1,18 @@
 #pragma once      //prevent headers being used twice
 
-#include <iostream>
-#include <cstdio>
-#include <vector>
-#include <array>
-#include <cmath>
-#include <chrono>
-#include <map>
-#include <utility>
-#include <algorithm>
-#include <cmath>
+#include "geometry.h"
 
+namespace polyintersect {
 
-// Need to set up a single cell now knowing that i will be recieving x (rows) and y (columns)
-struct point{
-   double x = 0.0;
-   double y = 0.0;
-};  // Point
+class Mesh {
+public:
+   // constructor
+   Mesh(int n_cells);
+   // destructor
+   ~Mesh() = default;
 
-struct mesh{
-   std::vector<point> points;
-   std::vector<std::vector<int>> cells;
+   // data members
+   std::vector<Point> points_;
+   std::vector<std::vector<int>> cells_;
 };
-
-// Create the Mesh //////////////////////////////////////////////////////////////////////
-mesh createMesh(int n_cells);
+}
