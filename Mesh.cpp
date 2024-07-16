@@ -1,5 +1,11 @@
 #include "Mesh.h"
 
+/*
+    Code Description:
+        - Creates the Mesh
+        - Identifies the Cells of the Mesh
+*/
+
 namespace polyintersect {
 
 // Create the Mesh //////////////////////////////////////////////////////////////////////
@@ -9,7 +15,7 @@ Mesh::Mesh(int n_cells){
     double dy = lengthPerAxis / n_cells;
     double dx = dy;
 
-    // Creating the Mesh ////////////////////////////////////////////
+    // Step 1: Creating the Mesh 
     points_.resize(n_nodes * n_nodes);
     std::cout << "    //////////////////////// Mesh ////////////////////////" << std::endl << std::endl;
     for(int j = 0; j < n_nodes; j++){               // Rows
@@ -21,7 +27,7 @@ Mesh::Mesh(int n_cells){
         std::cout << std::endl << std::endl;
     }
 
-    // Identifying the Cells ////////////////////////////////////////
+    // step 2: Identifying the Cells 
     int size = n_cells * n_cells;
     cells_.resize(size);
     std::cout << "    //////////////////////// Cells ////////////////////////" << std::endl << std::endl;

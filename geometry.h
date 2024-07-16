@@ -11,9 +11,17 @@
 #include <algorithm>
 #include <cmath>
 
+/*
+    geometry.h Description:
+        - Calculates the normal vector of the interface.
+        - Calculates the direction vector with respect to (WRT) the normal vector.
+        - Calculates the dot product of the normal and direction vector.
+            - This will indicate the sign of the node. 
+*/
+
 namespace polyintersect {
 
-// Need to set up a single cell now knowing that i will be recieving x (rows) and y (columns)
+// x and y values ///////////////////////////////////////////////////////////////////////
 struct Point {
    double x = 0.0;
    double y = 0.0;
@@ -36,13 +44,12 @@ std::array<int, 6> orientation_clip_2_3(std::vector<Point> const allPoints,
                                         std::array<Point, 2> const interface, 
                                         std::array<double, 2> V);
 
-// Orientation of Every Node for Method 1 ///////
+// Orientation of Every Node for Method 1 ///////////////////////////////////////////////
 std::array<int, 4> orientation_clip_1(std::vector<Point> const nodes, 
                                       std::array<Point, 2> const interface, 
                                       std::array<double, 2> V);
-/////////////////////////////////////////////////////////////////////////////////////////
 
-// Find the Center Coordinate ///////////////////
+// Find the Center Coordinate ///////////////////////////////////////////////////////////
 Point center(std::vector<Point> &nodes);
 
 // Sort in Counter Clockwise manner Based on Degree /////////////////////////////////////

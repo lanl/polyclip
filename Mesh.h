@@ -4,6 +4,7 @@
 
 namespace polyintersect {
 
+// Mesh containing the coordinates and the cell
 class Mesh {
 public:
    // constructor

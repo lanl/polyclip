@@ -1,5 +1,14 @@
 #include "geometry.h"
 
+/*
+    Code Description:
+        - Calculates the normal vector of the interface.
+        - Calculates the direction vector with respect to (WRT) the normal vector.
+        - Calculates the dot product of the normal and direction vector.
+            - This will indicate the sign of the node. 
+*/
+
+
 // Finding the normal vector between 2 Points ///////////////////////////////////////////
 std::array<double, 2> polyintersect::normVec(std::array<Point, 2> const& inter){
    // Direction vec
@@ -69,7 +78,7 @@ std::array<int, 6> polyintersect::orientation_clip_2_3(std::vector<Point> const 
     return signs;
 }
 
-// Orientation of Every Node for Method 1 ///////
+// Orientation of Every Node for Method 1 ///////////////////////////////////////////////
 std::array<int, 4> polyintersect::orientation_clip_1(std::vector<Point> const nodes, 
                                                     std::array<Point, 2> const interface, 
                                                     std::array<double, 2> V){
@@ -94,7 +103,7 @@ std::array<int, 4> polyintersect::orientation_clip_1(std::vector<Point> const no
 
     return signs;
 }
-/////////////////////////////////////////////////////////////////////////////////////////
+
 // Sort in Counter Clockwise manner Based on Degree /////////////////////////////////////
 void polyintersect::sorting(std::vector<Point> &nodes, Point center){
     std::sort(nodes.begin(), nodes.end(), [&center](const Point& a, const Point& b){        
@@ -104,7 +113,7 @@ void polyintersect::sorting(std::vector<Point> &nodes, Point center){
     });
 }
 
-// Find the Center Coordinate ///////////////////
+// Find the Center Coordinate ///////////////////////////////////////////////////////////
 polyintersect::Point polyintersect::center(std::vector<Point> &nodes){
     std::vector<Point> result;
     double sumX = 0, sumY = 0;
