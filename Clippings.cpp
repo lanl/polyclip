@@ -144,7 +144,7 @@ std::vector<int> polyintersect::clip_below_3(int cell, Mesh const & mesh,
                                              std::array<Point, 2> const& interface,
                                              bool print) {
     // Initialize the point vetor
-    std::array<double, 2> V;
+    std::array<double, 2> V{};
 
     // Store all Points in a single list
     std::vector<Point> allPoints;

@@ -11,6 +11,20 @@ namespace polyintersect {
     std::array<Point, 2> result;
     int const n = mesh.cells_[c].size();
 
+    // deduce bounds on coordinates
+    double x_min = std::numeric_limits<double>::max();
+    double y_min = std::numeric_limits<double>::max();
+    double x_max = -x_min;
+    double y_max = -y_min;
+
+    for (int i = 0; i < n; ++i) {
+      int const a = mesh.cells_[c][i];
+      x_min = std::min(x_min, mesh.points_[a].x);
+      y_min = std::min(y_min, mesh.points_[a].y);
+      x_max = std::max(x_max, mesh.points_[a].x);
+      y_max = std::max(y_max, mesh.points_[a].y);
+    }
+
     int k = 0;
     for (int i = 0; i < n; ++i) {
       int const j = (i + 1) % n;
@@ -40,9 +54,15 @@ namespace polyintersect {
         double const c2 = a2 * xp + b2 * yp;
         double const x = (b2 * c1 - b1 * c2) / det;
         double const y = (a1 * c2 - a2 * c1) / det;
+        if (x < x_min or x > x_max or y < y_min or y > y_max) {
+          continue;
+        }
         result[k] = {x, y};
         mapping[{i, j}] = k + n;
         k++;
+      #ifdef DEBUG
+        std::cout << "x: " << x << ", y: " << y << std::endl;
+      #endif
       }
     }
     return result;
