@@ -139,7 +139,7 @@ std::vector<int> polyintersect::clip_below_3(int cell, Mesh const &mesh,
   }
 
   if (print) {
-    std::cout << "\nMethod 3: " << std::endl;
+    std::cout << "\nCell " << cell << ": " << std::endl;
     for (const auto &b: belowline) {        // method 3
       std::cout << "Coordinates: (" << allPoints[b].x << ", " << allPoints[b].y << ")" << std::endl;
     }

@@ -16,20 +16,25 @@ namespace polyintersect {
     double y_min = std::numeric_limits<double>::max();
     double x_max = -x_min;
     double y_max = -y_min;
+    //std::cout << x_max << " " << y_max << " " << x_min << " " << y_min << std::endl;
 
     for (int i = 0; i < n; ++i) {
       int const a = mesh.cells_[c][i];
+      //std::cout << "ID: " << a << std::endl;
       x_min = std::min(x_min, mesh.points_[a].x);
       y_min = std::min(y_min, mesh.points_[a].y);
       x_max = std::max(x_max, mesh.points_[a].x);
       y_max = std::max(y_max, mesh.points_[a].y);
+      //std::cout << "Min and Max: " << x_max << "   " << y_max << "   " << x_min << "   " << y_min << std::endl << std::endl;;
     }
 
     int k = 0;
     for (int i = 0; i < n; ++i) {
       int const j = (i + 1) % n;
+      //td::cout << j << std::endl;
       int const a = mesh.cells_[c][i];
       int const b = mesh.cells_[c][j];
+      //std::cout << b << std::endl;
       double const& xa = mesh.points_[a].x;
       double const& ya = mesh.points_[a].y;
       double const& xb = mesh.points_[b].x;

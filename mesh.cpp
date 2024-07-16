@@ -27,7 +27,7 @@ namespace polyintersect {
       std::cout << std::endl << std::endl;
     }
 
-    // step 2: Identifying the Cells 
+    // Step 2: Identifying the Cells 
     int size = n_cells * n_cells;
     cells_.resize(size);
     std::cout << "    //////////////////////// Cells ////////////////////////" << std::endl << std::endl;
