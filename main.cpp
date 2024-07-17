@@ -5,98 +5,51 @@
 
 int main(int argc, const char * argv[]){
     using namespace polyintersect;
-    bool horizontal = false;
-    bool four = false;
+    bool horizontal = true;
+    bool four = true;
 
+    int n_cells = 16;
+    Mesh mesh(n_cells);
+    int n_nodes = n_cells + 1; 
+    std::vector<std::array<Point, 2>> line(n_cells);
 
-    // 4 by 4 Case //////////////////////////////
-    if(four){
-        int n_cells = 4;
-        Mesh mesh(n_cells);
-        int n_nodes = n_cells + 1; 
-        std::vector<std::array<Point, 2>> line(n_cells);
+    // Horizontal ///////////////////////////////
+    if(horizontal){
+        // Interface ////////////////////////
+        for(int i = 0; i < line.size(); i++){
+            int y1 = i * n_nodes;
+            int y2 = y1 + n_nodes;
+            double val = (mesh.points_[y1].y + mesh.points_[y2].y) / 2;
 
-        if(horizontal){
-            // Interface ////////////////////////
-            for(int i = 0; i < line.size(); i++){
-                int y1 = i * n_nodes;
-                int y2 = y1 + n_nodes;
-                double val = (mesh.points_[y1].y + mesh.points_[y2].y) / 2;
-
-                line[i] = {{{2.0, val}, {-1.0, val}}};
-            }
-
-            // Clipping below for Every Cell ////
-            for(int c = 0; c < (n_cells * n_cells); c++){
-                int const k = static_cast<int>(c / n_cells);
-                auto const interface = intersect_cell_with_line(mesh, c, line[k]);
-                auto const belowLine = clip_below_3(c, mesh, interface, true);
-            }
+            line[i] = {{{2.0, val}, {-1.0, val}}};
         }
-        else{
-            // Interface ////////////////////////
-            for(int i = 0; i < line.size(); i++){
-                int x1 = i;
-                int x2 = x1 + 1;
-                double val = (mesh.points_[x1].x + mesh.points_[x2].x) / 2;
 
-                line[i] = {{{val, -1.0}, {val, 2.0}}};
-            }
-
-            // Clipping below for Every Cell ////
-            for(int k = 0; k < line.size(); k++){
-                for(int c = k; c < (n_cells * n_cells); (c += line.size())){
-                auto const interface = intersect_cell_with_line(mesh, c, line[k]);
-                auto const belowLine = clip_below_3(c, mesh, interface, true);
-                }
-            }
+        // Clipping below for Every Cell ////
+        for(int c = 0; c < (n_cells * n_cells); c++){
+            int const k = static_cast<int>(c / n_cells);
+            auto const interface = intersect_cell_with_line(mesh, c, line[k]);
+            auto const belowLine = clip_below_3(c, mesh, interface, true);
         }
     }
-    
-    // 16 by 16 Case ////////////////////////////
+
+    // Vertical /////////////////////////////////
     else{
-        int n_cells = 16;
-        Mesh mesh(n_cells);
-        int n_nodes = n_cells + 1; 
-        std::vector<std::array<Point, 2>> line(n_cells);
+        // Interface ////////////////////////
+        for(int i = 0; i < line.size(); i++){
+            int x1 = i;
+            int x2 = x1 + 1;
+            double val = (mesh.points_[x1].x + mesh.points_[x2].x) / 2;
 
-        if(horizontal){
-            // Interface ////////////////////////
-            for(int i = 0; i < line.size(); i++){
-                int y1 = i * n_nodes;
-                int y2 = y1 + n_nodes;
-                double val = (mesh.points_[y1].y + mesh.points_[y2].y) / 2;
-
-                line[i] = {{{2.0, val}, {-1.0, val}}};
-            }
-
-            // Clipping below for Every Cell ////
-            for(int c = 0; c < (n_cells * n_cells); c++){
-                int const k = static_cast<int>(c / n_cells);
-                auto const interface = intersect_cell_with_line(mesh, c, line[k]);
-                auto const belowLine = clip_below_3(c, mesh, interface, true);
-            }
-
-        }
-        else{
-            // Interface ////////////////////////
-            for(int i = 0; i < line.size(); i++){
-                int x1 = i;
-                int x2 = x1 + 1;
-                double val = (mesh.points_[x1].x + mesh.points_[x2].x) / 2;
-
-                line[i] = {{{val, -1.0}, {val, 2.0}}};
-            }
-
-            // Clipping below for Every Cell ////
-            for(int k = 0; k < line.size(); k++){
-                for(int c = k; c < (n_cells * n_cells); (c += line.size())){
-                auto const interface = intersect_cell_with_line(mesh, c, line[k]);
-                auto const belowLine = clip_below_3(c, mesh, interface, true);
-                }
-            }
+            line[i] = {{{val, -1.0}, {val, 2.0}}};
         }
 
+        // Clipping below for Every Cell ////
+        for(int k = 0; k < line.size(); k++){
+            for(int c = k; c < (n_cells * n_cells); (c += line.size())){
+            auto const interface = intersect_cell_with_line(mesh, c, line[k]);
+            auto const belowLine = clip_below_3(c, mesh, interface, true);
+            }
+        }
     }
 
     return EXIT_SUCCESS;
