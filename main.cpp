@@ -1,6 +1,7 @@
 #include "clippings.h"
 #include "mesh.h"
 #include "intersect.h"
+#include <Kokkos_Core.hpp>
 
 int main(int argc, const char * argv[]){
     using namespace polyintersect;
@@ -19,7 +20,6 @@ int main(int argc, const char * argv[]){
         auto const interface1 = intersect_cell_with_line(mesh, c, line[k]);
         auto const belowLine3 = clip_below_3(c, mesh, interface1, true);
     }
-
     return EXIT_SUCCESS;
 }
 

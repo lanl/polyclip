@@ -95,7 +95,8 @@ polyintersect::Point polyintersect::center(std::vector<Point> const &nodes) {
     sumX += p.x;
     sumY += p.y;
   }
+  double const n = nodes.size();
 
   // Store middle coordinates ///////
-  return {(sumX /= nodes.size()), (sumY /= nodes.size())};
+  return {sumX / n, sumY / n};
 }
