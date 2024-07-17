@@ -5,8 +5,7 @@ namespace polyintersect {
 
   std::array<Point, 2> intersect_cell_with_line(Mesh const& mesh,
                                                 int c,
-                                                Line const& line,
-                                                std::map<std::pair<int, int>, int>& mapping) {
+                                                Line const& line) {
 
     std::array<Point, 2> result;
     int const n = mesh.cells_[c].size();
@@ -63,7 +62,7 @@ namespace polyintersect {
           continue;
         }
         result[k] = {x, y};
-        mapping[{i, j}] = k + n;
+        // mapping[{i, j}] = k + n;
         k++;
       #ifdef DEBUG
         std::cout << "x: " << x << ", y: " << y << std::endl;
