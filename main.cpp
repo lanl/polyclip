@@ -2,13 +2,14 @@
 #include "mesh.h"
 #include "intersect.h"
 #include <Kokkos_Core.hpp>
+#include <omp.h>
 
 int main(int argc, const char * argv[]){
     using namespace polyintersect;
     bool horizontal = true;
     bool four = true;
 
-    int n_cells = 16;
+    int n_cells = 4;
     Mesh mesh(n_cells);
     int n_nodes = n_cells + 1; 
     std::vector<std::array<Point, 2>> line(n_cells);
@@ -16,6 +17,7 @@ int main(int argc, const char * argv[]){
     // Horizontal ///////////////////////////////
     if(horizontal){
         // Interface ////////////////////////
+	#pragma omp parallel for
         for(int i = 0; i < line.size(); i++){
             int y1 = i * n_nodes;
             int y2 = y1 + n_nodes;
@@ -25,6 +27,7 @@ int main(int argc, const char * argv[]){
         }
 
         // Clipping below for Every Cell ////
+	#pragma omp parallel for
         for(int c = 0; c < (n_cells * n_cells); c++){
             int const k = static_cast<int>(c / n_cells);
             auto const interface = intersect_cell_with_line(mesh, c, line[k]);
