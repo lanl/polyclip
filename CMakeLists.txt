@@ -15,5 +15,5 @@ find_package(OpenMP REQUIRED)
 target_link_libraries(allclips PUBLIC OpenMP::OpenMP_CXX)
 
 # link with kokkos
-#find_package(Kokkos REQUIRED)
-#target_link_libraries(allclips PUBLIC Kokkos::kokkos)
+find_package(Kokkos REQUIRED)
+target_link_libraries(allclips PUBLIC Kokkos::kokkos)
