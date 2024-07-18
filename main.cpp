@@ -45,7 +45,7 @@ int main(int argc, const char * argv[]){
         duration[0] = timer::elapsed(start);
 
         // Print elapsed time
-        std::cout << "Duration: " << duration[0] << std::endl;
+        std::cout << "Duration: " << duration[0] << " ms." << std::endl;
     }
 
     // Vertical /////////////////////////////////

@@ -14,7 +14,7 @@ namespace polyintersect {
     double dy = lengthPerAxis / n_cells;
     double dx = dy;
 
-    // Step 1: Creating the Mesh 
+    // Step 1: Creating the Mesh (KOKKOS)
     points_.resize(n_nodes * n_nodes);
     //std::cout << "    //////////////////////// Mesh ////////////////////////" << std::endl << std::endl;
     for (int j = 0; j < n_nodes; j++) {         // Rows
@@ -26,7 +26,7 @@ namespace polyintersect {
       //std::cout << std::endl << std::endl;
     }
 
-    // Step 2: Identifying the Cells 
+    // Step 2: Identifying the Cells (KOKKOS: NO DEPENDENTS)
     int size = n_cells * n_cells;
     cells_.resize(size);
     //std::cout << "    //////////////////////// Cells ////////////////////////" << std::endl << std::endl;

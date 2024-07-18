@@ -10,7 +10,7 @@ namespace timer {
 
   inline float elapsed(std::chrono::high_resolution_clock::time_point& tic) {
     auto const toc = now();
-    return std::chrono::duration_cast<std::chrono::microseconds>(toc - tic).count();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(toc - tic).count();
   }
 
   double average(std::vector<double> const& durations) {
