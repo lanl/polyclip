@@ -18,6 +18,10 @@ int main(int argc, const char * argv[]){
     // Horizontal ///////////////////////////////
     if(horizontal){
         // start timer here
+        std::vector<double> duration(1, 0.);
+        auto start = timer::now();
+        
+
         #pragma omp parallel
         {
             // Interface ////////////////////////        
@@ -34,11 +38,13 @@ int main(int argc, const char * argv[]){
             for(int c = 0; c < (n_cells * n_cells); c++){
                 int const k = static_cast<int>(c / n_cells);
                 auto const interface = intersect_cell_with_line(mesh, c, line[k]);
-                auto const belowLine = clip_below_3(c, mesh, interface, true);
+                auto const belowLine = clip_below_3(c, mesh, interface, false);
             }
         }
         // stop timer here
+        duration[0] = timer::elapsed(start);
         // print elapsed time here
+        std::cout << "Duration: " << duration[0] << std::endl;
     }
 
     // Vertical /////////////////////////////////
