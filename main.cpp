@@ -17,14 +17,14 @@ int main(int argc, const char * argv[]){
 
     // Horizontal ///////////////////////////////
     if(horizontal){
-        // start timer here
+        // Start timer
         std::vector<double> duration(1, 0.);
         auto start = timer::now();
         
-
+        // Parallel Region
         #pragma omp parallel
         {
-            // Interface ////////////////////////        
+            // Interface        
             double const h = lengthPerAxis / n_cells;
 
             #pragma omp for
@@ -33,7 +33,7 @@ int main(int argc, const char * argv[]){
                 line[i] = {{{7.0, val}, {-1.0, val}}};
             }
 
-            // Clipping below for Every Cell ////
+            // Clipping below for Every Cell 
             #pragma omp for
             for(int c = 0; c < (n_cells * n_cells); c++){
                 int const k = static_cast<int>(c / n_cells);
@@ -41,9 +41,10 @@ int main(int argc, const char * argv[]){
                 auto const belowLine = clip_below_3(c, mesh, interface, false);
             }
         }
-        // stop timer here
+        // Stop timer 
         duration[0] = timer::elapsed(start);
-        // print elapsed time here
+
+        // Print elapsed time
         std::cout << "Duration: " << duration[0] << std::endl;
     }
 
