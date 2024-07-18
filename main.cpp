@@ -1,13 +1,12 @@
 #include "clippings.h"
 #include "mesh.h"
 #include "intersect.h"
-#include <Kokkos_Core.hpp>
+// #include <Kokkos_Core.hpp>
 #include <omp.h>
 
 int main(int argc, const char * argv[]){
     using namespace polyintersect;
     bool horizontal = true;
-    bool four = true;
 
     int n_cells = 4;
     Mesh mesh(n_cells);
