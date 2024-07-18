@@ -1,5 +1,6 @@
 #include "clippings.h"
 #include "mesh.h"
+#include <omp.h>
 
 /*
     Code Description:
@@ -138,6 +139,7 @@ std::vector<int> polyintersect::clip_below_3(int cell, Mesh const &mesh,
     }
   }
 
+  #pragma omp master
   if (print) {
     std::cout << "\nCell " << cell << ": " << std::endl;
     for (const auto &b: belowline) {        // method 3

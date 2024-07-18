@@ -10,6 +10,10 @@ add_executable(allclips)
 target_include_directories(allclips PUBLIC .)
 target_sources(allclips PUBLIC main.cpp clippings.cpp mesh.cpp geometry.cpp intersect.cpp)
 
+# link with OpenMP
+find_package(OpenMP REQUIRED)
+target_link_libraries(allclips PUBLIC OpenMP::OpenMP_CXX)
+
 # link with kokkos
 find_package(Kokkos REQUIRED)
 target_link_libraries(allclips PUBLIC Kokkos::kokkos)
