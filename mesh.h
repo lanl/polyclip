@@ -8,7 +8,7 @@ namespace polyintersect {
   class Mesh {
   public:
     // constructor
-    explicit Mesh(int n_cells);
+    explicit Mesh(int n_cells, double lengthPerAxis);
 
     // destructor
     ~Mesh() = default;

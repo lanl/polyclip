@@ -9,9 +9,8 @@
 namespace polyintersect {
 
 // Create the Mesh //////////////////////////////////////////////////////////////////////
-  Mesh::Mesh(int n_cells) {
+  Mesh::Mesh(int n_cells, double lengthPerAxis) {
     int n_nodes = n_cells + 1;
-    double lengthPerAxis = 1;
     double dy = lengthPerAxis / n_cells;
     double dx = dy;
 
