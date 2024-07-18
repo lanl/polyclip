@@ -8,7 +8,7 @@ int main(int argc, const char * argv[]){
     bool horizontal = true;
     bool four = true;
 
-    int n_cells = 16;
+    int n_cells = 4;
     Mesh mesh(n_cells);
     int n_nodes = n_cells + 1; 
     std::vector<std::array<Point, 2>> line(n_cells);
@@ -16,11 +16,10 @@ int main(int argc, const char * argv[]){
     // Horizontal ///////////////////////////////
     if(horizontal){
         // Interface ////////////////////////
+        
+        double const h = 1./n_cells;
         for(int i = 0; i < line.size(); i++){
-            int y1 = i * n_nodes;
-            int y2 = y1 + n_nodes;
-            double val = (mesh.points_[y1].y + mesh.points_[y2].y) / 2;
-
+            double const val = h * (0.5 + i);
             line[i] = {{{2.0, val}, {-1.0, val}}};
         }
 
