@@ -1,24 +1,25 @@
 #pragma once      //prevent headers being used twice
 
+#include <Kokkos_Core.hpp>
 #include "geometry.h"
 
 namespace polyintersect {
 
 // Mesh containing the coordinates and the cell
-  class Mesh {
+  class Mesh_Kokkos {
   public:
     // constructor
-    explicit Mesh(int n_cells, double lengthPerAxis);
+    Mesh_Kokkos(int n_cells, double lengthPerAxis);
 
     // destructor
-    ~Mesh() = default;
+    ~Mesh_Kokkos() = default;
 
     std::vector<Point> list_of_points(int cell,
                                       std::array<Point, 2> const &line) const;
 
     // data members
     // REPLACED WITH KOKKOS VIEWS (NEW FILE) 
-    std::vector<Point> points_;
-    std::vector<std::vector<int>> cells_;
+    Kokkos::View<Point*> points_;
+    Kokkos::View<int**> cells_;
   };
 }
