@@ -123,7 +123,6 @@ std::vector<int> polyintersect::clip_below_3(int cell, Mesh const &mesh,
 
   // Store all Points in a single list
   auto allPoints = mesh.list_of_points(cell, interface);
-  printf("All Points Size - %d\n", allPoints.size());
 
   // Find Center Point and Sort from Least to Greatest Degree
   Point centerPoint = center(allPoints);

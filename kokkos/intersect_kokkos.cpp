@@ -66,9 +66,9 @@ namespace polyintersect {
         result[k] = {x, y};
         // mapping[{i, j}] = k + n;
         k++;
-      #ifdef DEBUG
+      // #ifdef DEBUG
         std::cout << "x: " << x << ", y: " << y << std::endl;
-      #endif
+      // #endif
       }
     }
     return result;
