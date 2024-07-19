@@ -9,8 +9,8 @@ int main(int argc, const char * argv[]){
     using namespace polyintersect;
     bool horizontal = true;
 
-    int n_cells = 100;
-    double lengthPerAxis = 5.;
+    int n_cells = 4;
+    double lengthPerAxis = 1;
     Mesh mesh(n_cells, lengthPerAxis);
     int n_nodes = n_cells + 1; 
     std::vector<std::array<Point, 2>> line(n_cells);
@@ -22,25 +22,25 @@ int main(int argc, const char * argv[]){
         auto start = timer::now();
         
         // Parallel Region
-        #pragma omp parallel
-        {
+        // #pragma omp parallel
+        // {
             // Interface        
             double const h = lengthPerAxis / n_cells;
 
-            #pragma omp for
+            //#pragma omp for
             for(int i = 0; i < line.size(); i++){
                 double const val = h * (0.5 + i);
                 line[i] = {{{7.0, val}, {-1.0, val}}};
             }
 
             // Clipping below for Every Cell 
-            #pragma omp for
+            //#pragma omp for
             for(int c = 0; c < (n_cells * n_cells); c++){
                 int const k = static_cast<int>(c / n_cells);
                 auto const interface = intersect_cell_with_line(mesh, c, line[k]);
                 auto const belowLine = clip_below_3(c, mesh, interface, false);
             }
-        }
+        //}
         // Stop timer 
         duration[0] = timer::elapsed(start);
 
