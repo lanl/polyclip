@@ -10,68 +10,69 @@ namespace polyintersect {
 
 // Create the Mesh //////////////////////////////////////////////////////////////////////
   Mesh_Kokkos::Mesh_Kokkos(int n_cells, double lengthPerAxis) {
-    int n_nodes = n_cells + 1;
-    double dy = lengthPerAxis / n_cells;
-    double dx = dy;
+    int const n_nodes = n_cells + 1;
+    int const total_nodes = n_nodes * n_nodes;
+    int const total_cells = n_cells * n_cells;
+    double const dy = lengthPerAxis / n_cells;
+    double const dx = dy;
 
-    int total_nodes = n_nodes * n_nodes;
-    int total_cells = n_cells * n_cells;
     Kokkos::resize(points_, total_nodes);
     Kokkos::resize(cells_, total_cells, 4); // 4 vertices per cell
 
     // Step 1: Creating the Mesh (KOKKOS)
-    //std::cout << "    //////////////////////// Mesh ////////////////////////" << std::endl << std::endl;
-    for (int j = 0; j < n_nodes; j++) {         // Rows
+    Kokkos::parallel_for(n_nodes, KOKKOS_LAMBDA(int j) { // Rows
       for (int i = 0; i < n_nodes; i++) {       // Columns
         int k = i + (j * n_nodes);              // Identify the elements
         points_(k) = {(i * dx), (j * dy)};
-        std::cout << "point "<< k <<": ("<< i * dx << ", " << j * dy << ")" << std::endl;
       }
-    }
-
+    });
+  
     // Step 2: Identifying the Cells (KOKKOS: NO DEPENDENTS)
-    //Kokkos:: parallel_for(n_cells, KOKKOS_LAMBDA(int j){
-    //std::cout << "    //////////////////////// Cells ////////////////////////" << std::endl << std::endl;
-    for (int j = 0; j < n_cells; j++) {         // Cell Rows
+    Kokkos:: parallel_for(n_cells, KOKKOS_LAMBDA(int j){ // Cell Rows
       for (int i = 0; i < n_cells; i++) {       // Cell Columns
         int k = i + (j * n_cells);              // Identify the individual cell elements
         cells_(k , 0) = k + j;
         cells_(k , 1) = (k + 1) + j;
         cells_(k , 2) = ((k + 1) + n_nodes) + j;
         cells_(k , 3) = k + n_nodes + j; 
-      
-        std::cout << "Cell " << k << ":   ";
-        std::cout << k + j << ", " << k + 1 + j << ", " << k + 1 + n_nodes + j << ", " << k + n_nodes + j << std::endl;
       }
+    });
+
+  #ifdef ENABLE_PRINTING
+    // super clean printing !
+    for (int k = 0; k < total_nodes; ++k) {
+      double const& x = points_(k).x;
+      double const& y = points_(k).y;
+      std::cout << "point "<< k <<": ("<< x << ", " << y << ")" << std::endl;
     }
+
+    for (int k = 0; k < total_cells; ++k) {
+      int const a = cells_(k, 0);
+      int const b = cells_(k, 1);
+      int const c = cells_(k, 2);
+      int const d = cells_(k, 3);
+      std::cout << "cell " << k << ": [" << a << ", "<< b << ", "<< c << ", "<< d << "]" << std::endl;
+    }
+
     std::cout << "finished initialization" << std::endl;
-      //  });
+  #endif    
   }
 
 // get list of points  ////////////////////////////////////////////////////////////////
   std::vector<Point> Mesh_Kokkos::list_of_points(int cell,
                                                  std::array<Point, 2> const &line) const {
 
-    std::vector<Point> list;
-    //Kokkos::resize(cells_, cell, n_);
+    std::vector<Point> list(6);
+    std::cout << "Cell: " << cell << std::endl;
 
-    #pragma omp critical
-    {
-      std::cout << "Cell: " << cell << std::endl;
-      for (int i = 0; i < 4; i++) {
-
-        // int index = cells_(cell, i);
-        // std::cout << "Index: " << index << std::endl;
-        // std::cout << "Point[" << index << "]: " << "(" << points_[index].x 
-        // << ", " << points_[index].y << ")" << std::endl;    
-      }
-      std::cout << std::endl;
-      std::cout << "Interface of Cell " << cell << ": " << line[0].x << ", " << line[0].y << "\t" << line[1].x << ", " << line[1].y;
-
-      std::cout << std::endl;
+    for (int i = 0; i < 4; i++) {
+      int index = cells_(cell, i);
+      list[i] = points_(index);
     }
-    list.insert(list.end(), line.begin(), line.end());
+    list[4] = line[0];
+    list[5] = line[1];
 
+  #ifdef ENABLE_PRINTING
     #pragma omp critical
     {
       std::cout << "List of Cell " << cell << ": " << std::endl;;
@@ -80,7 +81,7 @@ namespace polyintersect {
       }
       std::cout << std::endl;
     }
-
+  #endif    
     return list;
   }
 
