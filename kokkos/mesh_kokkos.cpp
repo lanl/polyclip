@@ -63,8 +63,6 @@ namespace polyintersect {
                                                  std::array<Point, 2> const &line) const {
 
     std::vector<Point> list(6);
-    std::cout << "Cell: " << cell << std::endl;
-
     for (int i = 0; i < 4; i++) {
       int index = cells_(cell, i);
       list[i] = points_(index);

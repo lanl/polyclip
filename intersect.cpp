@@ -10,6 +10,8 @@ namespace polyintersect {
     std::array<Point, 2> result;
     int const n = mesh.cells_[c].size();
 
+    //std::cout << "Size: " << n << std::endl;
+
     // deduce bounds on coordinates
     double x_min = std::numeric_limits<double>::max();
     double y_min = std::numeric_limits<double>::max();

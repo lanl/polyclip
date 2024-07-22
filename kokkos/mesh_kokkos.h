@@ -1,6 +1,7 @@
 #pragma once      //prevent headers being used twice
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Vector.hpp>
 #include "geometry.h"
 
 namespace polyintersect {
