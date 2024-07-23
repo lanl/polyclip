@@ -37,8 +37,8 @@ if __name__ == '__main__':
     (threads_kokkos, avg_kokkos) = compute_avg_time("TimeResults_Kokkos.txt")
 
     # Plot the Averages of the Threads ##################
-    plt.plot(threads_openmp, avg_kokkos, marker='o', linestyle='-', color='pink', markerfacecolor='blue', linewidth = 3, label='kokkos')
-    plt.plot(threads_openmp, avg_openmp, marker='o', linestyle='-', color='green', markerfacecolor='blue', linewidth = 3, label='openmp')
+    plt.plot(threads_openmp, avg_kokkos, marker='o', linestyle='-', color='red', markerfacecolor='red', linewidth = 3, label='kokkos')
+    plt.plot(threads_openmp, avg_openmp, marker='o', linestyle='-', color='blue', markerfacecolor='blue', linewidth = 3, label='openmp')
     plt.xlabel('Threads')
     plt.ylabel('Time (ms)')
     plt.title('Clipping Strong Scaling, mesh size: 120x120 cells')
