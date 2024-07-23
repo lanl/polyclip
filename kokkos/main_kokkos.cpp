@@ -40,8 +40,9 @@ int main(int argc, char * argv[]) {
             auto const belowLine = clip_below_3(c, mesh, interface, true);
         });
 
+        //int t = omp_get_num_threads();
         // Print elapsed time
-        std::cout << "Duration: " << timer::elapsed(start) << " ms." << std::endl;
+        std::cout << "Duration: " << timer::elapsed(start) << std::endl;
     }
 
     Kokkos::finalize();
