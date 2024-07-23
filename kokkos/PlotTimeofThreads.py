@@ -46,7 +46,5 @@ if __name__ == '__main__':
     plt.xticks(threads_openmp)
     plt.yscale('log', base=2)
     plt.xscale('log', base=2)
-    ax = plt.figure().gca()
-    plt.xtics.
     plt.legend()
     plt.show()
