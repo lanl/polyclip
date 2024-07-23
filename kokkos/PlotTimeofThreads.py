@@ -30,7 +30,7 @@ for t in threads:
 
 
 # Plot the Averages of the Threads ##################
-plt.plot(threads, avg, marker='o', linestyle='-', color='pink')
+plt.plot(threads, avg, marker='o', linestyle='-', color='pink', markerfacecolor='blue', linewidth = 3)
 plt.xlabel('Threads')
 plt.ylabel('Time (ms)')
 plt.title('Kokkos Clipping Duration over Threads')
