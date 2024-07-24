@@ -3,6 +3,7 @@
 #include "intersect_kokkos.h"
 #include <Kokkos_Core.hpp>
 #include <omp.h>
+#include <cstdlib>
 #include "timer.h"
 
 int main(int argc, char * argv[]) {
@@ -13,8 +14,10 @@ int main(int argc, char * argv[]) {
         bool horizontal = true;
         // aspect ratio: 4:1
         // 4 cells for lenghtperaxis = 1
-        int n_cells = 120;
-        double lengthPerAxis = 30.;
+        int n_cells = std::atoi(argv[1]);
+        double lengthPerAxis = std::atoi(argv[2]);
+        // int n_cells = 120;
+        // double lengthPerAxis = 30.;
         Mesh_Kokkos mesh(n_cells, lengthPerAxis);
 
         int n_nodes = n_cells + 1; 
@@ -42,7 +45,7 @@ int main(int argc, char * argv[]) {
 
         //int t = omp_get_num_threads();
         // Print elapsed time
-        std::cout << "Duration: " << timer::elapsed(start) << std::endl;
+        std::cout << "Duration: " << timer::elapsed(start) << " ms" << std::endl;
     }
 
     Kokkos::finalize();

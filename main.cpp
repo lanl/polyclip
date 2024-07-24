@@ -8,9 +8,10 @@
 int main(int argc, const char * argv[]){
     using namespace polyintersect;
     bool horizontal = true;
-
-    int n_cells = 120;            //Update: 120
-    double lengthPerAxis = 30;   //update: 30
+    int n_cells = std::atoi(argv[1]);
+    double lengthPerAxis = std::atoi(argv[2]);
+    // int n_cells = 120;            //Update: 120
+    // double lengthPerAxis = 30;   //update: 30
 
     Mesh mesh(n_cells, lengthPerAxis);
     int n_nodes = n_cells + 1; 
