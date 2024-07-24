@@ -16,8 +16,6 @@ int main(int argc, char * argv[]) {
         // 4 cells for lenghtperaxis = 1
         int n_cells = std::atoi(argv[1]);
         double lengthPerAxis = std::atoi(argv[2]);
-        // int n_cells = 120;
-        // double lengthPerAxis = 30.;
         Mesh_Kokkos mesh(n_cells, lengthPerAxis);
 
         int n_nodes = n_cells + 1; 
