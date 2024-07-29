@@ -8,9 +8,9 @@
             - This will indicate the sign of the node. 
 */
 
-
+// DONE
 // Finding the normal vector between 2 Points ///////////////////////////////////////////
-polyintersect::Point normVec(polyintersect::Line line) {
+polyintersect::Point polyintersect::normVec(Line const &line) {
   // Direction vec
   double dx = line.b.x - line.a.x;     // x2 - x1
   double dy = line.b.y - line.a.y;     // y2 - y1
@@ -19,15 +19,17 @@ polyintersect::Point normVec(polyintersect::Line line) {
   return {dy, -dx};
 }
 
+// DONE
 // Finding the dot product of the array and vector //////////////////////////////////////
-double polyintersect::dotProduct(Point v,
-                                 Point n) {
+double polyintersect::dotProduct(Point const  &v,
+                                 Point const &n) {
   double product = (v.x * n.x) + (v.y * n.y);
   return product;
 }
 
+// DONE
 // Point Vector /////////////////////////////////////////////////////////////////////////
-polyintersect::Point pointVec(const polyintersect::Point &p, polyintersect::Line const &line) {
+polyintersect::Point polyintersect::pointVec(Point const &p, Line const &line) {
   double dx = p.x - line.a.x;
   double dy = p.y - line.a.y;
 
@@ -35,19 +37,21 @@ polyintersect::Point pointVec(const polyintersect::Point &p, polyintersect::Line
   return {dx, dy};
 }
 
+// DONE
 // Orientation of Every Node for Method 2 and 3 /////////////////////////////////////////
-std::array<int, 6> polyintersect::orientation_clip(std::vector<Point> const& allPoints,
-                                                   Line line) {
+void polyintersect::orientation_clip(Kokkos::View<Point[6]> const &allPoints,
+                                     Line line, int signs[6]) {
 
   // Deduce the normal vector of the cutting line
   auto normal = normVec(line);
-  std::array<int, 6> signs{};
+  //int signs[6];
+  //std::array<int, 6> signs{};
   int index = 0;
   double dp;
 
-  for (const auto &p: allPoints) {
+  for(int p = 0; p < 6; p++){ //(const auto &p: allPoints) {
     // Vector of Node
-    auto const V = pointVec(p, line);
+    auto const V = pointVec(allPoints(p), line);
 
     // Dot Product of normal and node vector
     dp = dotProduct(normal, V);
@@ -63,27 +67,28 @@ std::array<int, 6> polyintersect::orientation_clip(std::vector<Point> const& all
     index++;
   }
 
-  return signs;
+  //return signs;
 }
 
+// HELP --SOLVE LATER
 // Sort in Counter Clockwise manner Based on Degree /////////////////////////////////////
-void polyintersect::sorting(std::vector<Point> &nodes, Point const &center) {
-  std::sort(nodes.begin(), nodes.end(), [&center](const Point &a, const Point &b) {
+void polyintersect::sorting(Kokkos::View<Point[6]> &nodes, Point const &center) {
+  std::sort(&nodes(0), &nodes(0) + 6, [&center](const Point &a, const Point &b) {
     double a1 = (std::atan2(a.y - center.y, a.x - center.x) * (180 / M_PI));
     double a2 = (std::atan2(b.y - center.y, b.x - center.x) * (180 / M_PI));
     return a1 < a2;
   });
 }
 
+// DONE
 // Find the Center Coordinate ///////////////////////////////////////////////////////////
-polyintersect::Point polyintersect::center(std::vector<Point> const &nodes) {
-  std::vector<Point> result;
+polyintersect::Point polyintersect::center(Kokkos::View<Point[6]> const &nodes) {
   double sumX = 0, sumY = 0;
 
   // Add up all the coordinates /////
-  for (const auto &p: nodes) {
-    sumX += p.x;
-    sumY += p.y;
+  for(int p = 0; p < 6; p++){ //(const auto &p: nodes) {
+    sumX += nodes(p).x;
+    sumY += nodes(p).y;
   }
   double const n = nodes.size();
 

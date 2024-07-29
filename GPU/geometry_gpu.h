@@ -10,6 +10,8 @@
 #include <utility>
 #include <algorithm>
 #include <cmath>
+#include <Kokkos_Core.hpp>
+#include <Kokkos_Vector.hpp>
 
 /*
     geometry.h Description:
@@ -27,28 +29,27 @@ namespace polyintersect {
         double y = 0.0;
     };
 
-    //using Line = std::array<Point, 2>;
-
     struct Line {
         Point a;
         Point b;
     };
 
     // Finding the normal vector between 2 Points ///////////////////////////////////////////
-    Point normVec(Line line);
+    Point normVec(Line const &line);
 
     // Finding the dot product of the array and vector //////////////////////////////////////
-    double dotProduct(Point v, Point n);
+    double dotProduct(Point const &v, Point const &n);
 
     // Point Vector /////////////////////////////////////////////////////////////////////////
-    Point pointVec(const Point& p, Line const& line);
+    Point pointVec(Point const &p, Line const& line);
 
     // Orientation of Every Node for Method 2 and 3 /////////////////////////////////////////
-    std::array<int, 6> orientation_clip(std::vector<Point> const& allPoints, Line line);
+    void orientation_clip(Kokkos::View<Point[6]> const &allPoints,
+                          Line line, int signs[6]);
 
     // Find the Center Coordinate ///////////////////////////////////////////////////////////
-    Point center(std::vector<Point> const& nodes);
+    Point center(Kokkos::View<Point[6]> const &nodes);
 
     // Sort in Counter Clockwise manner Based on Degree /////////////////////////////////////
-    void sorting(std::vector<Point> &nodes, Point const& center);
+    void sorting(Kokkos::View<Point[6]> &nodes, Point const &center);
 }

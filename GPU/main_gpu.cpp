@@ -19,8 +19,8 @@ int main(int argc, char * argv[]) {
         Mesh_Kokkos mesh(n_cells, lengthPerAxis);
 
         int n_nodes = n_cells + 1; 
-        Kokkos::View<std::array<Point, 2>*> line;
-        Kokkos::resize(line, n_cells);
+        Kokkos::View<Line*> line;
+        //Kokkos::resize(line, n_cells);
 
         // Horizontal ///////////////////////////////
         // Start timer
@@ -31,7 +31,8 @@ int main(int argc, char * argv[]) {
 
         Kokkos::parallel_for(n_cells, KOKKOS_LAMBDA(int i) {
             double const val = h * (0.5 + i);
-            line(i) = {{{lengthPerAxis + 2, val}, {-1.0, val}}};
+            line(i).a = {lengthPerAxis + 2, val};
+            line(i).b = {-1.0, val};
         });
 
         // Clipping below for Every Cell 
@@ -42,7 +43,6 @@ int main(int argc, char * argv[]) {
         });
 
         // Print elapsed time 
-        // CANT PRINTTTTTTT
         std::cout << "Duration: " << timer::elapsed(start) << " ms" << std::endl;
     }
 

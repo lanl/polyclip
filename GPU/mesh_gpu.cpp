@@ -37,54 +37,23 @@ namespace polyintersect {
         cells_(k , 3) = k + n_nodes + j; 
       }
     });
-
-  #ifdef ENABLE_PRINTING
-    // super clean printing !
-    for (int k = 0; k < total_nodes; ++k) {
-      double const& x = points_(k).x;
-      double const& y = points_(k).y;
-      std::cout << "point "<< k <<": ("<< x << ", " << y << ")" << std::endl;
-    }
-
-    for (int k = 0; k < total_cells; ++k) {
-      int const a = cells_(k, 0);
-      int const b = cells_(k, 1);
-      int const c = cells_(k, 2);
-      int const d = cells_(k, 3);
-      std::cout << "cell " << k << ": [" << a << ", "<< b << ", "<< c << ", "<< d << "]" << std::endl;
-    }
-
-    std::cout << "finished initialization" << std::endl;
-  #endif    
+    
   }
 
 
 // UPDATEEEEEEE PLEASEEEEEEEE
 
 // get list of points  ////////////////////////////////////////////////////////////////
-  std::vector<Point> Mesh_Kokkos::list_of_points(int cell,
-                                                 Line const &line) const {
+  void Mesh_Kokkos::list_of_points(int cell, Line const &line,
+                                   Kokkos::View<Point[6]> list) const {
 
-    // VECTOR NEED TO UPDATE //////////////
-    std::vector<Point> list(6);
+    //std::vector<Point> list(6);
     for (int i = 0; i < 4; i++) {
       int index = cells_(cell, i);
-      list[i] = points_(index);
+      list(i) = points_(index);
     }
-    list[4] = line.a;
-    list[5] = line.b;
-
-  #ifdef ENABLE_PRINTING
-    #pragma omp critical
-    {
-      std::cout << "List of Cell " << cell << ": " << std::endl;;
-      for(int i = 0; i < list.size(); i++){
-        std::cout << list[i].x << ", " << list[i].y << std::endl;
-      }
-      std::cout << std::endl;
-    }
-  #endif    
-    return list;
+    list(4) = line.a;
+    list(5) = line.b;
   }
 
 } 

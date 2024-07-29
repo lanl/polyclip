@@ -15,8 +15,8 @@ namespace polyintersect {
     // destructor
     ~Mesh_Kokkos() = default;
 
-    std::vector<Point> list_of_points(int cell,
-                                      polyintersect::Line const &line) const;
+    void list_of_points(int cell, Line const &line,
+                        Kokkos::View<Point[6]> list) const;
 
     // data members
     Kokkos::View<Point*> points_;
