@@ -130,16 +130,19 @@ std::vector<int> polyintersect::clip_below_3(int cell, Mesh const &mesh,
 
   // Store the Orientation of every node
   std::array<int, 6> const sign = orientation_clip(allPoints, interface);
-  std::vector<int> belowline;
+  int const n = allPoints.size(); 
+  std::vector<int> belowline(n);
 
   // Clip below
-  for (int p = 0; p < allPoints.size(); p++) {
+  int k = 0;
+  for (int p = 0; p < n; p++) {
     if (sign[p] <= 0) {
-      belowline.emplace_back(p);
+      belowline[k++] = p;
     }
   }
+  belowline.resize(k);
 
-  if (print) {
+  // if (print) {
     // #pragma omp critical
     // {
     //   std::cout << "\nCell " << cell << ": " << std::endl;
@@ -147,7 +150,7 @@ std::vector<int> polyintersect::clip_below_3(int cell, Mesh const &mesh,
     //     std::cout << "Coordinates: (" << allPoints[b].x << ", " << allPoints[b].y << ")" << std::endl;
     //   }
     // }
-  }
+  // }
   return belowline;
 }
 

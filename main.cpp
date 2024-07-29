@@ -26,7 +26,7 @@ int main(int argc, const char * argv[]){
             // Interface        
             double const h = lengthPerAxis / n_cells;
 
-            //#pragma omp for
+            #pragma omp for
             for(int i = 0; i < line.size(); i++){   //UPDATE 
                 double const val = h * (0.5 + i);
                 line[i] = {{{lengthPerAxis + 2, val}, {-1.0, val}}};

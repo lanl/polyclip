@@ -18,7 +18,7 @@ target_link_libraries(allclips PUBLIC OpenMP::OpenMP_CXX)
 find_package(Kokkos REQUIRED)
 target_link_libraries(allclips PUBLIC Kokkos::kokkos)
 
-# kokkos version
+# kokkos CPU version
 add_executable(clip_kokkos)
 target_include_directories(clip_kokkos PUBLIC .)
 target_sources(clip_kokkos 
@@ -36,3 +36,22 @@ target_link_libraries(clip_kokkos PUBLIC OpenMP::OpenMP_CXX)
 # link with kokkos
 find_package(Kokkos REQUIRED)
 target_link_libraries(clip_kokkos PUBLIC Kokkos::kokkos)
+
+# kokkos CPU version
+add_executable(clip_gpu)
+target_include_directories(clip_gpu PUBLIC .)
+target_sources(clip_gpu 
+  PUBLIC 
+    GPU/main_gpu.cpp
+    GPU/geometry_gpu.cpp  
+    GPU/clippings_gpu.cpp 
+    GPU/mesh_gpu.cpp 
+    GPU/intersect_gpu.cpp)
+
+# link with OpenMP
+find_package(OpenMP REQUIRED)
+target_link_libraries(clip_gpu PUBLIC OpenMP::OpenMP_CXX)
+
+# link with kokkos
+find_package(Kokkos REQUIRED)
+target_link_libraries(clip_gpu PUBLIC Kokkos::kokkos)
