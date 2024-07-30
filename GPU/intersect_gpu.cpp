@@ -5,12 +5,12 @@
 
 
 namespace polyintersect {
-    Kokkos::View<Line*> intersect_cell_with_line(Mesh_Kokkos const& mesh,
-                                                int c,
-                                                Line const& line) {
+    Line intersect_cell_with_line(Mesh_Kokkos const& mesh,
+                                  int c,
+                                  Line const& line) {
 
-        Kokkos::View<Line*> result;
         int const n = 4;
+        Point points[2];
 
         // deduce bounds on coordinates
         double x_min = DBL_MAX; // DBL_MAX
@@ -68,12 +68,12 @@ namespace polyintersect {
                 double const y = (a1 * c2 - a2 * c1) / det;
                 
                 if (x < x_min or x > x_max or y < y_min or y > y_max) {
-                continue;
+                    continue;
                 }
-                result(k) = {x, y};
+                points[k] = {x, y};
                 k++;
             }
         }
-        return result;
+        return {points[0], points[1]};
     }
 }

@@ -33,7 +33,6 @@ polyintersect::Point polyintersect::pointVec(Point const &p, Line const &line) {
   double dx = p.x - line.a.x;
   double dy = p.y - line.a.y;
 
-  //std::array<double, 2> Point = {dx, dy};
   return {dx, dy};
 }
 
@@ -44,8 +43,6 @@ void polyintersect::orientation_clip(Kokkos::View<Point[6]> const &allPoints,
 
   // Deduce the normal vector of the cutting line
   auto normal = normVec(line);
-  //int signs[6];
-  //std::array<int, 6> signs{};
   int index = 0;
   double dp;
 
@@ -66,18 +63,6 @@ void polyintersect::orientation_clip(Kokkos::View<Point[6]> const &allPoints,
     }
     index++;
   }
-
-  //return signs;
-}
-
-// HELP --SOLVE LATER
-// Sort in Counter Clockwise manner Based on Degree /////////////////////////////////////
-void polyintersect::sorting(Kokkos::View<Point[6]> &nodes, Point const &center) {
-  std::sort(&nodes(0), &nodes(0) + 6, [&center](const Point &a, const Point &b) {
-    double a1 = (std::atan2(a.y - center.y, a.x - center.x) * (180 / M_PI));
-    double a2 = (std::atan2(b.y - center.y, b.x - center.x) * (180 / M_PI));
-    return a1 < a2;
-  });
 }
 
 // DONE
@@ -95,3 +80,20 @@ polyintersect::Point polyintersect::center(Kokkos::View<Point[6]> const &nodes) 
   // Store middle coordinates ///////
   return {sumX / n, sumY / n};
 }
+
+
+// get list of points  ////////////////////////////////////////////////////////////////
+  void polyintersect::list_of_points(int cell,
+                                     Kokkos::View<Point*> points,
+                                     Kokkos::View<int**> cells,
+                                     Line const &line,
+                                     Kokkos::View<Point[6]> list) {
+
+    //std::vector<Point> list(6);
+    for (int i = 0; i < 4; i++) {
+      int index = cells(cell, i);
+      list(i) = points(index);
+    }
+    list(4) = line.a;
+    list(5) = line.b;
+  }

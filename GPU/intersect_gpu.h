@@ -6,7 +6,7 @@
 
 namespace polyintersect {
 
-    Kokkos::View<Line*> intersect_cell_with_line(Mesh_Kokkos const& mesh,
-                                                 int c,
-                                                 polyintersect::Line const& line);
+    Line intersect_cell_with_line(Mesh_Kokkos const& mesh,
+                                  int c,
+                                  Line const& line);
 }

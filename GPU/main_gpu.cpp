@@ -19,7 +19,14 @@ int main(int argc, char * argv[]) {
         Mesh_Kokkos mesh(n_cells, lengthPerAxis);
 
         int n_nodes = n_cells + 1; 
-        Kokkos::View<Line*> line;
+        Kokkos::View<Line*> line("line", n_cells);
+        Kokkos::View<Line*> interface("interface", n_cells);
+        Kokkos::View<int**> belowline("belowline", n_cells * n_cells, 5);
+        Kokkos::View<int*> size("size", n_cells * n_cells);
+        Kokkos::View<Point[6]> allPoints;
+
+        //Line line;
+        //Kokkos::View<std::array<Point, 2>*> line;
         //Kokkos::resize(line, n_cells);
 
         // Horizontal ///////////////////////////////
@@ -31,15 +38,15 @@ int main(int argc, char * argv[]) {
 
         Kokkos::parallel_for(n_cells, KOKKOS_LAMBDA(int i) {
             double const val = h * (0.5 + i);
-            line(i).a = {lengthPerAxis + 2, val};
-            line(i).b = {-1.0, val};
+            line(i) = {{lengthPerAxis + 2, val}, {-1.0, val}};
         });
 
         // Clipping below for Every Cell 
         Kokkos::parallel_for(n_cells * n_cells, KOKKOS_LAMBDA(int c) {            
             int const k = static_cast<int>(c / n_cells);
-            //auto const interface = intersect_cell_with_line(mesh, c, line[k]);
-            //auto const belowLine = clip_below_3(c, mesh, interface);
+            interface(k) = intersect_cell_with_line(mesh, c, line(k));
+            clip_below_3(c, mesh.points_, mesh.cells_, interface(k),
+                         belowline, size, allPoints);
         });
 
         // Print elapsed time 

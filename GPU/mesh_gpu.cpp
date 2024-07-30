@@ -39,21 +39,4 @@ namespace polyintersect {
     });
     
   }
-
-
-// UPDATEEEEEEE PLEASEEEEEEEE
-
-// get list of points  ////////////////////////////////////////////////////////////////
-  void Mesh_Kokkos::list_of_points(int cell, Line const &line,
-                                   Kokkos::View<Point[6]> list) const {
-
-    //std::vector<Point> list(6);
-    for (int i = 0; i < 4; i++) {
-      int index = cells_(cell, i);
-      list(i) = points_(index);
-    }
-    list(4) = line.a;
-    list(5) = line.b;
-  }
-
 } 

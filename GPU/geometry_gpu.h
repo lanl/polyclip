@@ -50,6 +50,10 @@ namespace polyintersect {
     // Find the Center Coordinate ///////////////////////////////////////////////////////////
     Point center(Kokkos::View<Point[6]> const &nodes);
 
-    // Sort in Counter Clockwise manner Based on Degree /////////////////////////////////////
-    void sorting(Kokkos::View<Point[6]> &nodes, Point const &center);
+    // get list of points  ////////////////////////////////////////////////////////////////
+    void list_of_points(int cell,
+                        Kokkos::View<Point*> points,
+                        Kokkos::View<int**> cells,
+                        Line const &line,
+                        Kokkos::View<Point[6]> list);
 }
