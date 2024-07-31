@@ -43,10 +43,7 @@ target_include_directories(clip_gpu PUBLIC GPU)
 target_sources(clip_gpu 
   PUBLIC 
     GPU/main_gpu.cpp
-    GPU/geometry_gpu.cpp  
-    GPU/clippings_gpu.cpp 
-    GPU/mesh_gpu.cpp 
-    GPU/intersect_gpu.cpp)
+    GPU/mesh_gpu.cpp)
 
 # link with OpenMP
 find_package(OpenMP REQUIRED)

@@ -15,16 +15,13 @@ namespace polyintersect {
     // destructor
     ~Mesh_Kokkos() = default;
 
-
-    void init();
-    void list_of_points(int cell, 
-                        Kokkos::View<Line*> const &line,
-                        Kokkos::View<Point[6]> list) const;
+    void init(int n_nodes, 
+              int n_cells,
+              double lengthPerAxis, 
+              Kokkos::View<Point*> points,
+              Kokkos::View<int**> cells);
 
     // mesh data members
-    int n_nodes_ = 0;
-    int n_cells_ = 0;
-    double length_per_axis_ = 0.;
     Kokkos::View<Point*, Kokkos::CudaSpace> points_;
     Kokkos::View<int**, Kokkos::CudaSpace> cells_;
     

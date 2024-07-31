@@ -23,7 +23,7 @@ namespace polyintersect {
     // sorting(allPoints, centerPoint); // still a problem
 
     // Store the Orientation of every node
-    int signs[6];
+    /*int signs[6];
     orientation_clip(allPoints, interface, signs);
     //auto const sign = orientation_clip(allPoints, interface, signs);
     int const n = allPoints.size();
@@ -37,6 +37,6 @@ namespace polyintersect {
     }
     // keep track of number of vertices for the section of the cell
     // that is below the cutting plane
-    size(cell) = count;
+    size(cell) = count;*/
   }
 }
