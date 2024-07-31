@@ -3,11 +3,12 @@
 #include <Kokkos_Vector.hpp>
 #include <cfloat>
 
-
-namespace polyintersect {
-    Line intersect_cell_with_line(Mesh_Kokkos const& mesh,
-                                  int c,
-                                  Line const& line) {
+/*
+ KOKKOS_FUNCTION	
+ Line polyintersect::intersect_cell_with_line(Kokkos::View<Point*> points,
+		                              Kokkos::View<int**> cells,
+                                              int c,
+                                              Line const& line) {
 
         int const n = 4;
         Point points[2];
@@ -19,31 +20,31 @@ namespace polyintersect {
         double y_max = -y_min;
 
         for (int i = 0; i < n; ++i) {
-            int const a = mesh.cells_(c, i);
-            if(mesh.points_(a).x < x_min){      // x min
-                x_min = mesh.points_(a).x;
+            int const a = cells(c, i);
+            if(points(a).x < x_min){      // x min
+                x_min = points(a).x;
             }
-            if(mesh.points_(a).y < y_min){      // y min
-                y_min = mesh.points_(a).y;
+            if(points(a).y < y_min){      // y min
+                y_min = points(a).y;
             }
-            if(mesh.points_(a).x > x_max){      // x max
-                x_min = mesh.points_(a).x;
+            if(points(a).x > x_max){      // x max
+                x_min = points(a).x;
             }
-            if(mesh.points_(a).y > y_max){      // y max 
-                y_min = mesh.points_(a).y;
+            if(points(a).y > y_max){      // y max 
+                y_min = points(a).y;
             }
         }
 
         int k = 0;
         for (int i = 0; i < n; ++i) {
             int const j = (i + 1) % n;
-            int const a = mesh.cells_(c, i);//[c][i];
-            int const b = mesh.cells_(c, j);//[c][j];
+            int const a = cells(c, i);//[c][i];
+            int const b = cells(c, j);//[c][j];
             
-            double const& xa = mesh.points_(a).x;
-            double const& ya = mesh.points_(a).y;
-            double const& xb = mesh.points_(b).x;
-            double const& yb = mesh.points_(b).y;
+            double const& xa = points(a).x;
+            double const& ya = points(a).y;
+            double const& xb = points(b).x;
+            double const& yb = points(b).y;
 
             double const& xp = line.a.x;
             double const& yp = line.a.y;
@@ -76,4 +77,4 @@ namespace polyintersect {
         }
         return {points[0], points[1]};
     }
-}
+*/

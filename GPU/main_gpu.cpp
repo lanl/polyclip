@@ -4,7 +4,7 @@
 #include <Kokkos_Core.hpp>
 #include <omp.h>
 #include <cstdlib>
-#include "timer.h"
+#include "../timer.h"
 
 int main(int argc, char * argv[]) {
     
@@ -44,7 +44,8 @@ int main(int argc, char * argv[]) {
         // Clipping below for Every Cell 
         Kokkos::parallel_for(n_cells * n_cells, KOKKOS_LAMBDA(int c) {            
             int const k = static_cast<int>(c / n_cells);
-            interface(k) = intersect_cell_with_line(mesh, c, line(k));
+	    auto const l = line(k);
+            interface(k) = intersect_cell_with_line(mesh.points_, mesh.cells_, c, l);
             clip_below_3(c, mesh.points_, mesh.cells_, interface(k),
                          belowline, size, allPoints);
         });

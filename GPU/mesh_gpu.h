@@ -15,17 +15,20 @@ namespace polyintersect {
     // destructor
     ~Mesh_Kokkos() = default;
 
+
+    void init();
     void list_of_points(int cell, 
                         Kokkos::View<Line*> const &line,
                         Kokkos::View<Point[6]> list) const;
 
     // mesh data members
-    //Kokkos::View<Point*> points_;
+    int n_nodes_ = 0;
+    int n_cells_ = 0;
+    double length_per_axis_ = 0.;
     Kokkos::View<Point*, Kokkos::CudaSpace> points_;
-    Kokkos::View<Point*> host_points_ = Kokkos::create_mirror_view(points_);
-
-    //Kokkos::View<int**> cells_;
-    Kokkos::View<int**> cells_;
-    Kokkos::View<int**> host_cells_ = Kokkos::create_mirror_view(cells_);
+    Kokkos::View<int**, Kokkos::CudaSpace> cells_;
+    
+    Kokkos::View<Point*>::HostMirror mirror_points_;
+    Kokkos::View<int**,>::HostMirror mirror_cells_;
   };
 }
