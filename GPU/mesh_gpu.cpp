@@ -33,17 +33,17 @@ namespace polyintersect {
     double const dx = dy;
     
     // Step 1: Creating the Mesh (KOKKOS)
-    Kokkos::parallel_for(n_nodes, KOKKOS_LAMBDA(int j) { // Rows
-      for (int i = 0; i < n_nodes; i++) {       // Columns
-        int k = i + (j * n_nodes);              // Identify the elements
+    Kokkos::parallel_for(n_nodes, KOKKOS_LAMBDA(int j) {  // Rows
+      for (int i = 0; i < n_nodes; i++) {                 // Columns
+        int k = i + (j * n_nodes);                        // Identify the elements
         points(k) = {(i * dx), (j * dy)};
       }
     });
   
     // Step 2: Identifying the Cells (KOKKOS: NO DEPENDENTS)
-    Kokkos:: parallel_for(n_cells, KOKKOS_LAMBDA(int j){ // Cell Rows
-      for (int i = 0; i < n_cells; i++) {       // Cell Columns
-        int k = i + (j * n_cells);              // Identify the individual cell elements
+    Kokkos:: parallel_for(n_cells, KOKKOS_LAMBDA(int j){  // Cell Rows
+      for (int i = 0; i < n_cells; i++) {                 // Cell Columns
+        int k = i + (j * n_cells);                        // Identify the individual cell elements
         cells(k , 0) = k + j;
         cells(k , 1) = (k + 1) + j;
         cells(k , 2) = ((k + 1) + n_nodes) + j;
