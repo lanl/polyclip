@@ -62,6 +62,7 @@ int main(int argc, char * argv[]) {
         Kokkos::deep_copy(mirror_interface, interface);
         Kokkos::deep_copy(mirror_line, line);
 
+    #ifdef PRINT_EVERYTHING
         // print interfaces
         for (int j = 0; j < n_cells; ++j) {
             auto const pa = mirror_line(j).a;
@@ -94,7 +95,8 @@ int main(int argc, char * argv[]) {
         std::cout << std::endl << std::endl;
         }
         std::cout << std::endl;
-
+    #endif
+    
         // Print Below the Line
         for(int c = 0; c < (n_cells * n_cells); c++){
             for(int i = 0; i < 4; i++){
