@@ -63,7 +63,8 @@ namespace polyintersect {
 
     // Orientation of Every Node for Method 2 and 3 /////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    void orientation_clip(Kokkos::View<Point[6]> const &allPoints,
+    void orientation_clip(int c, 
+                          Kokkos::View<Point**> list,
                           Line line, 
                           int signs[6]) {
 
@@ -74,7 +75,7 @@ namespace polyintersect {
 
         for(int p = 0; p < 6; p++){ //(const auto &p: allPoints) {
             // Vector of Node
-            auto const V = pointVec(allPoints(p), line);
+            auto const V = pointVec(list(c, p), line);
 
             // Dot Product of normal and node vector
             dp = dotProduct(normal, V);
@@ -93,7 +94,7 @@ namespace polyintersect {
 
     // Find the Center Coordinate ///////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point center(Kokkos::View<Point[6]> const &nodes){
+    Point center(Kokkos::View<Point*> nodes){
         double sumX = 0, sumY = 0;
 
         // Add up all the coordinates /////
@@ -113,13 +114,13 @@ namespace polyintersect {
                         Kokkos::View<Point*> points,
                         Kokkos::View<int**> cells,
                         Line const &line,
-                        Kokkos::View<Point*> list) {
+                        Kokkos::View<Point**> list) {
 
         for (int i = 0; i < 4; i++) {
             int index = cells(cell, i);
-            list(i) = points(index);
+            list(cell, i) = points(index);
         }
-        list(4) = line.a;
-        list(5) = line.b;
+        list(cell, 4) = line.a;
+        list(cell, 5) = line.b;
     }
 }

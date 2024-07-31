@@ -30,10 +30,10 @@ namespace polyintersect {
                 y_min = points(a).y;
             }
             if(points(a).x > x_max){      // x max
-                x_min = points(a).x;
+                x_max = points(a).x;
             }
             if(points(a).y > y_max){      // y max
-                y_min = points(a).y;
+                y_max = points(a).y;
             }
         }
 

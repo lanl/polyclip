@@ -13,20 +13,15 @@ namespace polyintersect {
                   Line const &interface,
                   Kokkos::View<int**> belowline,
                   Kokkos::View<int*> size,
-                  Kokkos::View<Point*> allPoints) {
+                  Kokkos::View<Point**> allPoints) {
 
     // Store all Points in a single list
     list_of_points(cell, points, cells, interface, allPoints);
 
-    // Find Center Point and Sort from Least to Greatest Degree
-    // Point centerPoint = center(allPoints);
-    // sorting(allPoints, centerPoint); // still a problem
-
     // Store the Orientation of every node
     int signs[6];
-    orientation_clip(allPoints, interface, signs);
-    //auto const sign = orientation_clip(allPoints, interface, signs);
-    int const n = allPoints.size();
+    orientation_clip(cell, allPoints, interface, signs);
+    int const n = 6;
 
     // Clip below
     int count = 0;
