@@ -19,10 +19,13 @@ namespace polyintersect {
                         Kokkos::View<Line*> const &line,
                         Kokkos::View<Point[6]> list) const;
 
-    // data members
-    Kokkos::View<Point*> points_;
-    //auto host_points_ = Kokkos::create_mirror_view(points_);
+    // mesh data members
+    //Kokkos::View<Point*> points_;
+    Kokkos::View<Point*, Kokkos::CudaSpace> points_;
+    Kokkos::View<Point*> host_points_ = Kokkos::create_mirror_view(points_);
+
+    //Kokkos::View<int**> cells_;
     Kokkos::View<int**> cells_;
-    //auto host_cells_ = Kokkos::create_mirror_view(cells_);
+    Kokkos::View<int**> host_cells_ = Kokkos::create_mirror_view(cells_);
   };
 }
