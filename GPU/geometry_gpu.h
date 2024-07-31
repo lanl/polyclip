@@ -113,11 +113,11 @@ namespace polyintersect {
                         Kokkos::View<Point*> points,
                         Kokkos::View<int**> cells,
                         Line const &line,
-                        Kokkos::View<Point[6]> list) {
+                        Kokkos::View<Point*> list) {
 
         for (int i = 0; i < 4; i++) {
-        int index = cells(cell, i);
-        list(i) = points(index);
+            int index = cells(cell, i);
+            list(i) = points(index);
         }
         list(4) = line.a;
         list(5) = line.b;

@@ -25,7 +25,7 @@ int main(int argc, char * argv[]) {
         Kokkos::View<Line*> interface("interface", n_cells);
         Kokkos::View<int**> belowline("belowline", n_cells * n_cells, 5);
         Kokkos::View<int*> size("size", n_cells * n_cells);
-        Kokkos::View<Point[6]> allPoints;
+        Kokkos::View<Point*> allPoints("allpoints", 6);
 
         // Horizontal ///////////////////////////////
         // Start timer
