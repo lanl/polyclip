@@ -29,6 +29,10 @@ int main(int argc, char * argv[]) {
         Kokkos::View<int*> size("size", n_cells * n_cells);
         Kokkos::View<Point**> allPoints("allpoints", n_cells * n_cells, 6);
 
+        // Max Threads
+        Kokkos::DefaultExecutionSpace exec_space;
+        int max_threads = exec_space.impl_max_concurrency();
+
         // Horizontal ///////////////////////////////
         // Start timer
         auto start = timer::now();
@@ -48,6 +52,7 @@ int main(int argc, char * argv[]) {
 
         // Print elapsed time 
         std::cout << "Duration: " << timer::elapsed(start) << " ms" << std::endl;
+        std::cout << "Max Threads: " << max_threads << std::endl; 
 
         // CPU Copy 
         auto mirror_belowline = Kokkos::create_mirror_view(belowline);
