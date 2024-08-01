@@ -39,7 +39,7 @@ output_file="gpu_120.txt" > $output_file   # 120x120
 for i in {1 2 3 4 5}         
 do 
 duration=$(./clip_gpu "$arg_1_120" "$arg_2_120" | grep "Duration" | awk '{print $2}')
-duration=$(./clip_gpu "$arg_1_120" "$arg_2_120" | grep "Max Threads" | awk '{print $3}')
+threads=$(./clip_gpu "$arg_1_120" "$arg_2_120" | grep "Max Threads" | awk '{print $3}')
 #echo "Threads: $threads, Duration: $duration" >> $output_file
 echo "Threads: $threads, Duration: $duration"
 done
