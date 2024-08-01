@@ -2,7 +2,7 @@
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Vector.hpp>
-#include "omp/geometry.h"
+#include "geometry.h"
 
 namespace polyintersect {
 

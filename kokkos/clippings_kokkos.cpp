@@ -1,5 +1,5 @@
 #include "clippings_kokkos.h"
-#include "omp/geometry.h"
+#include "geometry.h"
 #include <omp.h>
 #include <Kokkos_Core.hpp>
 
