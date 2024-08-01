@@ -13,8 +13,6 @@ int main(int argc, char * argv[]) {
     // Interface        
     int n_cells = std::atoi(argv[1]);
     double lengthPerAxis = std::atoi(argv[2]);
-
-    int n_nodes = n_cells + 1;
     double const h = lengthPerAxis / n_cells;
 
     Kokkos::initialize(argc, argv);
@@ -51,7 +49,7 @@ int main(int argc, char * argv[]) {
 
         // Print elapsed time 
         std::cout << "Duration: " << timer::elapsed(start) << " ms" << std::endl;
-        std::cout << "Max Threads: " << max_threads << std::endl; 
+        std::cout << "Max Threads: " << max_threads << std::endl << std::endl; 
 
         // CPU Copy 
         auto mirror_belowline = Kokkos::create_mirror_view(belowline);
@@ -68,6 +66,8 @@ int main(int argc, char * argv[]) {
 
     #ifdef PRINT_EVERYTHING
         // print interfaces
+        int n_nodes = n_cells + 1;
+
         for (int j = 0; j < n_cells; ++j) {
             auto const pa = mirror_line(j).a;
             auto const pb = mirror_line(j).b;
