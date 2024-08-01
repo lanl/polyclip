@@ -1,4 +1,4 @@
-import pandas as pd
+import matplotlib.pyplot as plt
 
 def compute_avg_time(filename):
     time_data = {}
@@ -30,11 +30,20 @@ def compute_avg_time(filename):
 
 if __name__ == '__main__':
     (threads_gpu_120, avg_gpu_120) = compute_avg_time("gpu_120.txt")
-    (threads_gpu_80, avg_gpu_80) = compute_avg_time("gpu_80.txt")
+    # (threads_gpu_80, avg_gpu_80) = compute_avg_time("gpu_80.txt")
 
-    data = {'Threads:' [threads_gpu_120], 'Duration:' [avg_gpu_120]}
-    df = pd.DataFrame(data)
+    fig, ax = plt.sublots()
 
-    df.to_csv('table_results.csv', index=False)
-    print(df)
+    ax.xaxis.set_visible(False)
+    ax.yaxis.set_visible(False)
+    ax.set_frame_on(False)
+
+    table_data = [["Threads", threads_gpu_120], ["Duration (µs)", avg_gpu_120]]
+
+    table = ax.table(CellText=table_data, loc='center')
+
+    table.set_fontsize(14)
+    table.scale(1.5, 1.5)
+
+    plt.show()
 
