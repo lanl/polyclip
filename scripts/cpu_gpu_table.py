@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 def compute_avg_time(filename):
     time_data = {}
@@ -29,21 +30,82 @@ def compute_avg_time(filename):
     return (threads, avg)    
 
 if __name__ == '__main__':
-    (threads_gpu_120, avg_gpu_120) = compute_avg_time("gpu_120.txt")
-    # (threads_gpu_80, avg_gpu_80) = compute_avg_time("gpu_80.txt")
+    (threads_cpu_120, avg_cpu_120) = compute_avg_time("cpu_120.txt")
+    (threads_cpu_80, avg_cpu_80) = compute_avg_time("cpu_80.txt")
 
-    fig, ax = plt.sublots()
+    name = 60 
 
-    ax.xaxis.set_visible(False)
-    ax.yaxis.set_visible(False)
-    ax.set_frame_on(False)
+    title_text = 'Kokkos CPU VS GPU'
+    footer_text = 'Melanie Walmsith'
+    fig_background_color = 'pink'
+    fig_border = 'black'
 
-    table_data = [["Threads", threads_gpu_120], ["Duration (µs)", avg_gpu_120]]
+    # plt.show()
+    data =  [
+            [         'CPU, Threads: '+ str(threads_cpu_120) , 'GPU, Threads: ' ],
+            [ '120 x 120',  np.mean(avg_cpu_120), 0],
+            ['80 x 80',  np.mean(avg_cpu_80), 0]
+        ]
 
-    table = ax.table(CellText=table_data, loc='center')
+    # Pop the headers from the data array
+    column_headers = data.pop(0)
+    row_headers = [x.pop(0) for x in data]
 
-    table.set_fontsize(14)
-    table.scale(1.5, 1.5)
+    # Table data needs to be non-numeric text. Format the data
+    # while I'm at it.
+    cell_text = []
+    for row in data:
+        cell_text.append([f'{x}' for x in row])
 
-    plt.show()
+    # Get some lists of color specs for row and column headers
+    rcolors = plt.cm.BuPu(np.full(len(row_headers), 0.1))
+    ccolors = plt.cm.BuPu(np.full(len(column_headers), 0.1))
+
+    # Create the figure. Setting a small pad on tight_layout
+    # seems to better regulate white space. Sometimes experimenting
+    # with an explicit figsize here can produce better outcome.
+    plt.figure(linewidth=2,
+            edgecolor=fig_border,
+            facecolor=fig_background_color,
+            tight_layout={'pad':1},
+            )
+
+    # Add a table at the bottom of the axes
+    the_table = plt.table(cellText=cell_text,
+                        rowLabels=row_headers,
+                        rowColours=rcolors,
+                        rowLoc='right',
+                        colColours=ccolors,
+                        colLabels=column_headers,
+                        loc='center')
+
+    # Scaling is the only influence we have over top and bottom cell padding.
+    # Make the rows taller (i.e., make cell y scale larger).
+    the_table.scale(1, 1.5)
+
+    # Hide axes
+    ax = plt.gca()
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+
+    # Hide axes border
+    plt.box(on=None)
+
+    # Add title
+    plt.suptitle(title_text)
+
+    # Add footer
+    plt.figtext(0.95, 0.05, footer_text, horizontalalignment='right', size=6, weight='light')
+    
+    # Force the figure to update, so backends center objects correctly within the figure.
+    # Without plt.draw() here, the title will center on the axes and not the figure.
+    plt.draw()
+
+    # Create image. plt.savefig ignores figure edge and face colors, so map them.
+    fig = plt.gcf()
+    plt.savefig('pyplot-table-demo.png',
+                edgecolor=fig.get_edgecolor(),
+                facecolor=fig.get_facecolor(),
+                dpi=150
+                )
 
