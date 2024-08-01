@@ -48,7 +48,7 @@ int main(int argc, char * argv[]) {
         });
 
         // Print elapsed time 
-        std::cout << "Duration: " << timer::elapsed(start) << " ms" << std::endl;
+        std::cout << "Duration: " << timer::elapsed(start) << " µs" << std::endl;
         std::cout << "Max Threads: " << max_threads << std::endl << std::endl; 
 
         // CPU Copy 

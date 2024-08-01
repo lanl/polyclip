@@ -39,9 +39,9 @@ if __name__ == '__main__':
     (threads_kokkos_80, avg_kokkos_80) = compute_avg_time("TimeResults_Kokkos_80.txt")
 
     # Plot the Averages of the Threads ##################
-    plt.plot(threads_openmp_120, avg_kokkos_120, marker='o', linestyle='-', color='red', markerfacecolor='red', linewidth = 3, label='kokkos, 120x120 cell')
+    plt.plot(threads_kokkos_120, avg_kokkos_120, marker='o', linestyle='-', color='red', markerfacecolor='red', linewidth = 3, label='kokkos_cpu, 120x120 cell')
     plt.plot(threads_openmp_120, avg_openmp_120, marker='o', linestyle='-', color='blue', markerfacecolor='blue', linewidth = 3, label='openmp, 120x120 cell')
-    plt.plot(threads_openmp_80, avg_kokkos_80, marker='o', linestyle='-', color='grey', markerfacecolor='grey', linewidth = 3, label='kokkos, 80x80 cell')
+    plt.plot(threads_kokkos_80, avg_kokkos_80, marker='o', linestyle='-', color='grey', markerfacecolor='grey', linewidth = 3, label='kokkos_cpu, 80x80 cell')
     plt.plot(threads_openmp_80, avg_openmp_80, marker='o', linestyle='-', color='black', markerfacecolor='black', linewidth = 3, label='openmp, 80x80 cell')
 
     plt.xlabel('Threads')

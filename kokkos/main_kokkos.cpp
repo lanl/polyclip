@@ -43,7 +43,7 @@ int main(int argc, char * argv[]) {
 
         //int t = omp_get_num_threads();
         // Print elapsed time
-        std::cout << "Duration: " << timer::elapsed(start) << " ms" << std::endl;
+        std::cout << "Duration: " << timer::elapsed(start) << " µs" << std::endl;
     }
 
     Kokkos::finalize();
