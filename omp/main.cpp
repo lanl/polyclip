@@ -1,9 +1,8 @@
 #include "clippings.h"
 #include "mesh.h"
 #include "intersect.h"
-#include <Kokkos_Core.hpp>
 #include <omp.h>
-#include "timer.h"
+#include "../timer.h"
 
 int main(int argc, const char * argv[]){
     using namespace polyintersect;

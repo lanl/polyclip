@@ -4,7 +4,7 @@
 #include <Kokkos_Core.hpp>
 #include <omp.h>
 #include <cstdlib>
-#include "timer.h"
+#include "../timer.h"
 
 int main(int argc, char * argv[]) {
     

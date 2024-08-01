@@ -6,50 +6,42 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-#add_executable(allclips)
-#target_include_directories(allclips PUBLIC .)
-#target_sources(allclips PUBLIC main.cpp clippings.cpp mesh.cpp geometry.cpp intersect.cpp)
+option(USE_KOKKOS_GPU "Run on Ndvidia's GPU using Kokkos" OFF)
+option(USE_KOKKOS_OMP "Run with multiple threads using Kokkos" OFF)
+option(USE_NATIVE_OMP "Run with multiple threads using OpenMP" OFF)
 
-# link with OpenMP
-#find_package(OpenMP REQUIRED)
-#target_link_libraries(allclips PUBLIC OpenMP::OpenMP_CXX)
+if (USE_KOKKOS_GPU)
+  add_executable(clip_gpu)
+  target_include_directories(clip_gpu PUBLIC gpu)
+  target_sources(clip_gpu PUBLIC  gpu/main_gpu.cpp  gpu/mesh_gpu.cpp)
 
-# link with kokkos
-#find_package(Kokkos REQUIRED)
-#target_link_libraries(allclips PUBLIC Kokkos::kokkos)
+  # link with Kokkos
+  find_package(Kokkos REQUIRED)
+  target_link_libraries(clip_gpu PUBLIC Kokkos::kokkos)
+elseif (USE_KOKKOS_OMP)
+  add_executable(clip_kokkos)
+  target_include_directories(clip_kokkos PUBLIC kokkos)
+  target_sources(clip_kokkos PUBLIC
+    kokkos/main_kokkos.cpp
+    kokkos/geometry.cpp
+    kokkos/clippings_kokkos.cpp
+    kokkos/mesh_kokkos.cpp
+    kokkos/intersect_kokkos.cpp)
 
-# kokkos CPU version
-#add_executable(clip_kokkos)
-#target_include_directories(clip_kokkos PUBLIC .)
-#target_sources(clip_kokkos 
-	#PUBLIC 
-  #kokkos/main_kokkos.cpp
-    # geometry.cpp  
-    # kokkos/clippings_kokkos.cpp 
-    # kokkos/mesh_kokkos.cpp 
-    #   kokkos/intersect_kokkos.cpp)
+  # link with Kokkos
+  find_package(Kokkos REQUIRED)
+  target_link_libraries(clip_kokkos PUBLIC Kokkos::kokkos)
+else()
+  add_executable(allclips)
+  target_include_directories(allclips PUBLIC omp)
+  target_sources(allclips PUBLIC
+    omp/main.cpp
+    omp/clippings.cpp
+    omp/mesh.cpp
+    omp/geometry.cpp
+    omp/intersect.cpp)
 
-# link with OpenMP
-#find_package(OpenMP REQUIRED)
-#target_link_libraries(clip_kokkos PUBLIC OpenMP::OpenMP_CXX)
-
-# link with kokkos
-#find_package(Kokkos REQUIRED)
-#target_link_libraries(clip_kokkos PUBLIC Kokkos::kokkos)
-
-# kokkos CPU version
-add_executable(clip_gpu)
-target_include_directories(clip_gpu PUBLIC GPU)
-target_sources(clip_gpu 
-  PUBLIC 
-    GPU/main_gpu.cpp
-    GPU/mesh_gpu.cpp)
-
-# link with OpenMP
-find_package(OpenMP REQUIRED)
-target_link_libraries(clip_gpu PUBLIC OpenMP::OpenMP_CXX)
-
-# link with kokkos
-find_package(Kokkos REQUIRED)
-target_link_libraries(clip_gpu PUBLIC Kokkos::kokkos)
-
+  # link with OpenMP
+  find_package(OpenMP REQUIRED)
+  target_link_libraries(allclips PUBLIC OpenMP::OpenMP_CXX)
+endif ()
