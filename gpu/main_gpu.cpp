@@ -30,8 +30,7 @@ int main(int argc, char * argv[]) {
         Kokkos::View<Point**> allPoints("allpoints", n_cells * n_cells, 6);
 
         // Max Threads
-        Kokkos::DefaultExecutionSpace exec_space;
-        int max_threads = exec_space.impl_max_concurrency();
+        int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
 
         // Horizontal ///////////////////////////////
         // Start timer
