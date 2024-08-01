@@ -32,6 +32,8 @@ def compute_avg_time(filename):
 if __name__ == '__main__':
     (threads_cpu_120, avg_cpu_120) = compute_avg_time("cpu_120.txt")
     (threads_cpu_80, avg_cpu_80) = compute_avg_time("cpu_80.txt")
+    # (threads_gpu_120, avg_gpu_120) = compute_avg_time("gpu_120.txt")
+    # (threads_gpu_80, avg_gpu_80) = compute_avg_time("gpu_80.txt")
 
     name = 60 
 
@@ -43,8 +45,8 @@ if __name__ == '__main__':
     # plt.show()
     data =  [
             [         'CPU, Threads: '+ str(threads_cpu_120) , 'GPU, Threads: ' ],
-            [ '120 x 120',  np.mean(avg_cpu_120), 0],
-            ['80 x 80',  np.mean(avg_cpu_80), 0]
+            [ 'Time (µs), Cells: 120 x 120',  np.mean(avg_cpu_120), 0],
+            ['Time (µs), Cells: 80 x 80',  np.mean(avg_cpu_80), 0]
         ]
 
     # Pop the headers from the data array
