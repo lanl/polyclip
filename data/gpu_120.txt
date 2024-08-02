@@ -1,0 +1,5 @@
+Threads: 1024, Duration: 120
+Threads: 1024, Duration: 139
+Threads: 1024, Duration: 147
+Threads: 1024, Duration: 120
+Threads: 1024, Duration: 136
