@@ -25,6 +25,7 @@ int main(int argc, char * argv[]) {
         // Horizontal ///////////////////////////////
         // Start timer
         auto start = timer::now();
+        int max_thread = omp_get_max_threads();
         
         // Interface        
         double const h = lengthPerAxis / n_cells;
@@ -44,6 +45,7 @@ int main(int argc, char * argv[]) {
         //int t = omp_get_num_threads();
         // Print elapsed time
         std::cout << "Duration: " << timer::elapsed(start) << " µs" << std::endl;
+        std::cout << "Max Threads: " << max_thread << std::endl;
     }
 
     Kokkos::finalize();
