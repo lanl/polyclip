@@ -37,16 +37,16 @@ if __name__ == '__main__':
 
     name = 60 
 
-    title_text = 'Kokkos CPU VS GPU'
+    title_text = 'Kokkos CPU vs GPU timing comparison (in µs)'
     footer_text = 'Melanie Walmsith'
-    fig_background_color = 'pink'
+    fig_background_color = 'lightgray'
     fig_border = 'black'
 
     # plt.show()
     data =  [
-            [         'CPU, Threads: '+ str(threads_cpu_120) , 'GPU, Threads: ' ],
-            [ 'Time (µs), Cells: 120 x 120',  np.mean(avg_cpu_120), 0],
-            ['Time (µs), Cells: 80 x 80',  np.mean(avg_cpu_80), 0]
+            [         'CPU ' , 'GPU ' ],
+            [ '120 x 120 Cells',  np.mean(avg_cpu_120), 0],
+            [ '80 x 80 Cells',  np.mean(avg_cpu_80), 0]
         ]
 
     # Pop the headers from the data array
@@ -70,6 +70,7 @@ if __name__ == '__main__':
             edgecolor=fig_border,
             facecolor=fig_background_color,
             tight_layout={'pad':1},
+            figsize=(10, 5)
             )
 
     # Add a table at the bottom of the axes
