@@ -18,30 +18,33 @@ if (USE_KOKKOS_GPU)
   # link with Kokkos
   find_package(Kokkos REQUIRED)
   target_link_libraries(clip_gpu PUBLIC Kokkos::kokkos)
-elseif (USE_KOKKOS_OMP)
-  add_executable(clip_kokkos)
-  target_include_directories(clip_kokkos PUBLIC kokkos)
-  target_sources(clip_kokkos PUBLIC
-    kokkos/main_kokkos.cpp
-    kokkos/geometry.cpp
-    kokkos/clippings_kokkos.cpp
-    kokkos/mesh_kokkos.cpp
-    kokkos/intersect_kokkos.cpp)
-
-  # link with Kokkos
-  find_package(Kokkos REQUIRED)
-  target_link_libraries(clip_kokkos PUBLIC Kokkos::kokkos)
 else()
-  add_executable(allclips)
-  target_include_directories(allclips PUBLIC omp)
-  target_sources(allclips PUBLIC
-    omp/main.cpp
-    omp/clippings.cpp
-    omp/mesh.cpp
-    omp/geometry.cpp
-    omp/intersect.cpp)
+  if (USE_KOKKOS_OMP)
+    add_executable(clip_kokkos)
+    target_include_directories(clip_kokkos PUBLIC kokkos)
+    target_sources(clip_kokkos PUBLIC
+      kokkos/main_kokkos.cpp
+      kokkos/geometry.cpp
+      kokkos/clippings_kokkos.cpp
+      kokkos/mesh_kokkos.cpp
+      kokkos/intersect_kokkos.cpp)
 
-  # link with OpenMP
-  find_package(OpenMP REQUIRED)
-  target_link_libraries(allclips PUBLIC OpenMP::OpenMP_CXX)
-endif ()
+    # link with Kokkos
+    find_package(Kokkos REQUIRED)
+    target_link_libraries(clip_kokkos PUBLIC Kokkos::kokkos)
+  endif()
+  if (USE_NATIVE_OMP)
+    add_executable(allclips)
+    target_include_directories(allclips PUBLIC omp)
+    target_sources(allclips PUBLIC
+      omp/main.cpp
+      omp/clippings.cpp
+      omp/mesh.cpp
+      omp/geometry.cpp
+      omp/intersect.cpp)
+
+    # link with OpenMP
+    find_package(OpenMP REQUIRED)
+    target_link_libraries(allclips PUBLIC OpenMP::OpenMP_CXX)
+  endif ()
+ endif ()

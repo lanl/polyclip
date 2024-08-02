@@ -13,8 +13,8 @@ std::vector<int> polyintersect::clip_below_3(int cell, Mesh_Kokkos const &mesh,
   //printf("All Points Size - %d\n", allPoints.size());
 
   // Find Center Point and Sort from Least to Greatest Degree
-  // Point centerPoint = center(allPoints);
-  // sorting(allPoints, centerPoint);
+  Point centerPoint = center(allPoints);
+  sorting(allPoints, centerPoint);
 
   // Store the Orientation of every node
   auto const sign = orientation_clip(allPoints, interface);

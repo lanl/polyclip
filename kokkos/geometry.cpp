@@ -76,27 +76,27 @@ std::array<int, 6> polyintersect::orientation_clip(std::vector<Point> const& all
   return signs;
 }
 
-// // Sort in Counter Clockwise manner Based on Degree /////////////////////////////////////
-// void polyintersect::sorting(std::vector<Point> &nodes, Point const &center) {
-//   std::sort(nodes.begin(), nodes.end(), [&center](const Point &a, const Point &b) {
-//     double a1 = (std::atan2(a.y - center.y, a.x - center.x) * (180 / M_PI));
-//     double a2 = (std::atan2(b.y - center.y, b.x - center.x) * (180 / M_PI));
-//     return a1 < a2;
-//   });
-// }
+// Sort in Counter Clockwise manner Based on Degree /////////////////////////////////////
+void polyintersect::sorting(std::vector<Point> &nodes, Point const &center) {
+  std::sort(nodes.begin(), nodes.end(), [&center](const Point &a, const Point &b) {
+    double a1 = (std::atan2(a.y - center.y, a.x - center.x) * (180 / M_PI));
+    double a2 = (std::atan2(b.y - center.y, b.x - center.x) * (180 / M_PI));
+    return a1 < a2;
+  });
+}
 
-// // Find the Center Coordinate ///////////////////////////////////////////////////////////
-// polyintersect::Point polyintersect::center(std::vector<Point> const &nodes) {
-//   std::vector<Point> result;
-//   double sumX = 0, sumY = 0;
+// Find the Center Coordinate ///////////////////////////////////////////////////////////
+polyintersect::Point polyintersect::center(std::vector<Point> const &nodes) {
+  std::vector<Point> result;
+  double sumX = 0, sumY = 0;
 
-//   // Add up all the coordinates /////
-//   for (const auto &p: nodes) {
-//     sumX += p.x;
-//     sumY += p.y;
-//   }
-//   double const n = nodes.size();
+  // Add up all the coordinates /////
+  for (const auto &p: nodes) {
+    sumX += p.x;
+    sumY += p.y;
+  }
+  double const n = nodes.size();
 
-//   // Store middle coordinates ///////
-//   return {sumX / n, sumY / n};
-// }
+  // Store middle coordinates ///////
+  return {sumX / n, sumY / n};
+}
