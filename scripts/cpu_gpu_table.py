@@ -32,21 +32,21 @@ def compute_avg_time(filename):
 if __name__ == '__main__':
     (threads_cpu_120, avg_cpu_120) = compute_avg_time("cpu_120.txt")
     (threads_cpu_80, avg_cpu_80) = compute_avg_time("cpu_80.txt")
-    # (threads_gpu_120, avg_gpu_120) = compute_avg_time("gpu_120.txt")
-    # (threads_gpu_80, avg_gpu_80) = compute_avg_time("gpu_80.txt")
+    (threads_gpu_120, avg_gpu_120) = compute_avg_time("gpu_120.txt")
+    (threads_gpu_80, avg_gpu_80) = compute_avg_time("gpu_80.txt")
 
     name = 60 
 
-    title_text = 'Kokkos CPU vs GPU timing comparison (in µs)'
-    footer_text = 'Melanie Walmsith'
+    title_text = 'Kokkos CPU VS GPU'
+    footer_text = ' '
     fig_background_color = 'lightgray'
     fig_border = 'black'
 
     # plt.show()
     data =  [
             [         'CPU ' , 'GPU ' ],
-            [ '120 x 120 Cells',  np.mean(avg_cpu_120), 0],
-            [ '80 x 80 Cells',  np.mean(avg_cpu_80), 0]
+            ['80 x 80 Cells',  str(np.mean(avg_cpu_80)) + ' µs', str(np.mean(avg_gpu_80)) + ' µs'],
+            [ '120 x 120 Cells',  str(np.mean(avg_cpu_120)) + ' µs', str(np.mean(avg_gpu_120)) + ' µs']
         ]
 
     # Pop the headers from the data array
@@ -70,7 +70,7 @@ if __name__ == '__main__':
             edgecolor=fig_border,
             facecolor=fig_background_color,
             tight_layout={'pad':1},
-            figsize=(10, 5)
+            figsize=(4, 2),
             )
 
     # Add a table at the bottom of the axes
