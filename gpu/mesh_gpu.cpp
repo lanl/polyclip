@@ -16,7 +16,7 @@ namespace polyintersect {
 
     Kokkos::resize(points_, total_nodes);
     Kokkos::resize(cells_, total_cells, 4); // 4 vertices per cell
-    mirror_points_ = Kokkos::create_mirror_view(points_);
+    mirror_points_ = Kokkos::create_mirror_view(points_); //malloc
     mirror_cells_ = Kokkos::create_mirror_view(cells_);
 
     init(n_nodes, n_cells, lengthPerAxis, points_, cells_);
