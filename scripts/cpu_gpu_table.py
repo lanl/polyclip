@@ -38,7 +38,7 @@ if __name__ == '__main__':
     name = 60 
 
     title_text = 'Kokkos CPU VS GPU'
-    footer_text = ' '
+    footer_text = 'for CPU run: 36 threads (1 thread per core)'
     fig_background_color = 'lightgray'
     fig_border = 'black'
 

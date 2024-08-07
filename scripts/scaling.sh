@@ -1,8 +1,16 @@
+# Things that need to be changed
+#   1) text file
+#   2) the name of the cmake file being called
+#         - ./clip_kokkos
+#         - ./allclips
+#         - ./clip_gpu (gpu)
+
+
 # Arguments for 120x120 and 80x80 ####################
 arg_1_120="120" 
 arg_2_120="30"
-arg_1_80="80"
-arg_2_80="20"
+arg_1_80="1200"
+arg_2_80="300"
 
 # Kokkos file ########################################
 output_file="TimeResults_Kokkos_120.txt" > $output_file   # 120x120

@@ -47,9 +47,7 @@ int main(int argc, char * argv[]) {
                          belowline, size, allPoints);
         });
 
-        // Print elapsed time 
-        std::cout << "Duration: " << timer::elapsed(start) << " µs" << std::endl;
-        std::cout << "Max Threads: " << max_threads << std::endl << std::endl; 
+        auto const end = timer::elapsed(start);
 
         // CPU Copy 
         auto mirror_belowline = Kokkos::create_mirror_view(belowline);
@@ -63,6 +61,13 @@ int main(int argc, char * argv[]) {
         Kokkos::deep_copy(mirror_allPoints, allPoints);
         Kokkos::deep_copy(mirror_interface, interface);
         Kokkos::deep_copy(mirror_line, line);
+
+        auto const end_including_copy = timer::elapsed(start);
+
+        // Print elapsed time 
+        std::cout << "Duration: " << end << " µs" << std::endl;
+        std::cout << "Duration with copy: " << end_including_copy << " µs" << std::endl;
+        std::cout << "Max Threads: " << max_threads << std::endl << std::endl; 
 
     #ifdef PRINT_EVERYTHING
         // print interfaces
