@@ -31,9 +31,9 @@ def compute_avg_time(filename):
 
 if __name__ == '__main__':
     (threads_cpu_120, avg_cpu_120) = compute_avg_time("cpu_120.txt")
-    (threads_cpu_80, avg_cpu_80) = compute_avg_time("cpu_80.txt")
+    (threads_cpu_80, avg_cpu_80) = compute_avg_time("cpu_1200.txt")
     (threads_gpu_120, avg_gpu_120) = compute_avg_time("gpu_120.txt")
-    (threads_gpu_80, avg_gpu_80) = compute_avg_time("gpu_80.txt")
+    (threads_gpu_80, avg_gpu_80) = compute_avg_time("gpu_1200.txt")
 
     name = 60 
 
