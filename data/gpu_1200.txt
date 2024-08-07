@@ -1,0 +1,5 @@
+Threads: , Duration: 87, Deep Copy: 36969
+Threads: , Duration: 88, Deep Copy: 36522
+Threads: , Duration: 87, Deep Copy: 36591
+Threads: , Duration: 90, Deep Copy: 36586
+Threads: , Duration: 90, Deep Copy: 36574

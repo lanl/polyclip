@@ -1,5 +1,5 @@
-Threads: 1024, Duration: 120
-Threads: 1024, Duration: 139
-Threads: 1024, Duration: 147
-Threads: 1024, Duration: 120
-Threads: 1024, Duration: 136
+Threads: , Duration: 125, Deep Copy: 1259
+Threads: , Duration: 129, Deep Copy: 1239
+Threads: , Duration: 107, Deep Copy: 1218
+Threads: , Duration: 109, Deep Copy: 1300
+Threads: , Duration: 115, Deep Copy: 1308

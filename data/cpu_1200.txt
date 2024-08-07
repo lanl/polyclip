@@ -1,0 +1,5 @@
+Threads: 16, Duration: 376591
+Threads: 16, Duration: 336246
+Threads: 16, Duration: 423403
+Threads: 16, Duration: 402453
+Threads: 16, Duration: 389234
