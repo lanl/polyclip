@@ -66,7 +66,7 @@ int main(int argc, char * argv[]) {
 
         // Print elapsed time 
         std::cout << "Duration: " << end << " µs" << std::endl;
-        std::cout << "Duration with copy: " << end_including_copy << " µs" << std::endl;
+        std::cout << "Deep copy: " << end_including_copy << " µs" << std::endl;
         std::cout << "Max Threads: " << max_threads << std::endl << std::endl; 
 
     #ifdef PRINT_EVERYTHING
