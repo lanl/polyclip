@@ -39,7 +39,7 @@ int main(int argc, char * argv[]) {
         Kokkos::parallel_for(n_cells * n_cells, KOKKOS_LAMBDA(int c) {            
             int const k = static_cast<int>(c / n_cells);
             auto const interface = intersect_cell_with_line(mesh, c, line[k]);
-            auto const belowLine = clip_below_3(c, mesh, interface, true);
+            auto const belowLine = clip_below_3(c, mesh, interface, false);
         });
 
         //int t = omp_get_num_threads();
