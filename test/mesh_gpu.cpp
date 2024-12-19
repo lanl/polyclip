@@ -1,0 +1,30 @@
+#include "mesh_gpu.h"
+
+/*
+    Code Description:
+        - Creates the Mesh
+        - Identifies the Cells of the Mesh
+*/
+
+namespace polyintersect {
+
+// Create the Mesh //////////////////////////////////////////////////////////////////////
+  Mesh_Kokkos::Mesh_Kokkos(int total_points, int total_cells, int max_edges_per_cell) {
+
+    Kokkos::resize(points_, total_points);  // malloc
+    Kokkos::resize(cells_, total_cells, max_edges_per_cell, 2);
+
+    mirror_points_ = Kokkos::create_mirror_view(points_); //copy
+    mirror_cells_ = Kokkos::create_mirror_view(cells_);
+  }
+
+// Storing Coordinates of all the points ////////////////////////////////////////////////
+  void Mesh_Kokkos::add_all_points(int point, Point coordinate, Kokkos::View<Point*> points_){
+    points_(point) = {(coordinate.x), (coordinate.y)};
+  }  
+// Storing Components of a Cell /////////////////////////////////////////////////////////
+  void Mesh_Kokkos::add_edge(int cell, int edge, Edge const& node, Kokkos::View<int***> cells_){
+    cells_(cell, edge, 0) = node.a;
+    cells_(cell, edge, 1) = node.b;
+  }
+} 
