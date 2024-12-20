@@ -20,11 +20,15 @@ namespace polyintersect {
 
 // Storing Coordinates of all the points ////////////////////////////////////////////////
   void Mesh_Kokkos::add_all_points(int point, Point coordinate, Kokkos::View<Point*> points_){
-    points_(point) = {(coordinate.x), (coordinate.y)};
+    Kokkos::parallel_for( "add_point", 1, KOKKOS_LAMBDA(const int){
+    	points_(point) = {(coordinate.x), (coordinate.y)};
+    });
   }  
 // Storing Components of a Cell /////////////////////////////////////////////////////////
   void Mesh_Kokkos::add_edge(int cell, int edge, Edge const& node, Kokkos::View<int***> cells_){
-    cells_(cell, edge, 0) = node.a;
-    cells_(cell, edge, 1) = node.b;
+    Kokkos::parallel_for("create cell", 1, KOKKOS_LAMBDA(const int){
+    	cells_(cell, edge, 0) = node.a;
+    	cells_(cell, edge, 1) = node.b;
+    });
   }
 } 

@@ -32,7 +32,7 @@ int main(int argc, char * argv[]) {
         mesh.add_all_points(8, {0.5, 0.625}, mesh.points_);
         mesh.add_all_points(9, {0.5, 0.875}, mesh.points_);
         mesh.add_all_points(10, {0.875, 0.875}, mesh.points_);
-/*
+
         // Pentagon
         mesh.add_edge(0, 0, {0,1}, mesh.cells_);
         mesh.add_edge(0, 1, {1, 2}, mesh.cells_);
@@ -58,11 +58,11 @@ int main(int argc, char * argv[]) {
         mesh.add_edge(3, 1, {7, 10}, mesh.cells_);
         mesh.add_edge(3, 2, {10, 9}, mesh.cells_);
         mesh.add_edge(3, 3, {9, 8}, mesh.cells_);
-*/
+
 	Kokkos::deep_copy(mesh.mirror_points_, mesh.points_);
         Kokkos::deep_copy(mesh.mirror_cells_, mesh.cells_);
 
-        /*
+        
         // Print Cells 
         for(int j = 0; j < total_cells; j++){   // Cell
             std::cout << "Cell " << j << ":" << std::endl;
@@ -81,7 +81,7 @@ int main(int argc, char * argv[]) {
         // Print Point Coordinates
         for (int j = 0; j < total_points; j++) {             // All Pointd
                 std::cout << "Point " << j << ": (" << mesh.mirror_points_(j).x << ", " << mesh.mirror_points_(j).y << ")" << std::endl;
-            }*/
+            }
      }
     Kokkos::finalize();
 }
