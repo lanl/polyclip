@@ -34,7 +34,7 @@ int main(int argc, char * argv[]) {
         mesh.add_all_points(10, {0.875, 0.875}, mesh.points_);
 
         // Pentagon
-        mesh.add_edge(0, 0, {0,1}, mesh.cells_);
+        mesh.add_edge(0, 0, {0, 1}, mesh.cells_);
         mesh.add_edge(0, 1, {1, 2}, mesh.cells_);
         mesh.add_edge(0, 2, {2, 3}, mesh.cells_);
         mesh.add_edge(0, 3, {3, 4}, mesh.cells_);
@@ -65,10 +65,10 @@ int main(int argc, char * argv[]) {
         
         // Print Cells 
         for(int j = 0; j < total_cells; j++){   // Cell
-            std::cout << "Cell " << j << ":" << std::endl;
+            std::cout << "----- Cell " << j << " -----" << std::endl;
             for (int i = 0; i < max_edges_per_cell; i++) {      // Edge       
-                std::cout << "Edge " << i << " (" << mesh.mirror_cells_(j , i, 0) << ", ";
-                std::cout << mesh.mirror_cells_(j, i, 1) << ") ";
+                std::cout << "Edge " << i << ": (" << mesh.mirror_cells_(j , i, 0) << ", ";
+                std::cout << mesh.mirror_cells_(j, i, 1) << ") " << std::endl;
 
                 if(j == 0 && i == 4 || j == 1 && i == 2 || j == 3 && i == 3){   
                     break;
