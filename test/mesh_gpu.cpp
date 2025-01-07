@@ -11,6 +11,53 @@ namespace polyintersect {
 // Create the Mesh //////////////////////////////////////////////////////////////////////
   Mesh_Kokkos::Mesh_Kokkos(int total_points, int total_cells, int max_edges_per_cell) {
 
+    Kokkos::resize(host_points_, total_points);  // malloc
+    Kokkos::resize(host_cells_, total_cells, max_edges_per_cell, 2);
+
+    Kokkos::resize(device_points_, total_points);  // malloc
+    Kokkos::resize(device_cells_, total_cells, max_edges_per_cell, 2);
+
+    // Check GPU Results
+    mirror_points_ = Kokkos::create_mirror_view(device_points_); //copy
+    mirror_cells_ = Kokkos::create_mirror_view(device_cells_);
+
+  }
+
+// Storing Coordinates of all the points on the host ////////////////////////////////////////////////
+  void Mesh_Kokkos::add_all_points(int point, Point coordinate, Kokkos::View<Point*> host_points_){
+    Kokkos::parallel_for( "add_point", 1, KOKKOS_LAMBDA(const int){
+      host_points_(point) = {(coordinate.x), (coordinate.y)};
+    });
+  }  
+
+// Storing Components of a Cell on the host /////////////////////////////////////////////////////////
+  void Mesh_Kokkos::add_edge(int cell, int edge, Edge const& node, Kokkos::View<int***> host_cells_){
+    //Kokkos::parallel_for("create cell", 1, KOKKOS_LAMBDA(const int){
+     // host_cells_(cell, edge, 0) = node.a;
+     // host_cells_(cell, edge, 1) = node.b;
+    //});
+  }
+
+  void Mesh_Kokkos::send_to_gpu(Kokkos::View<int***> host_cells_, Kokkos::View<Point*> host_points_, Kokkos::View<int***> device_cells_, Kokkos::View<Point*> device_points_){
+    Kokkos::deep_copy(device_points_, host_points_);
+    Kokkos::deep_copy(device_cells_, host_cells_);
+  }
+} 
+
+
+/*#include "mesh_gpu.h"
+
+
+   // Code Description:
+       // - Creates the Mesh
+       // - Identifies the Cells of the Mesh
+
+
+namespace polyintersect {
+
+// Create the Mesh //////////////////////////////////////////////////////////////////////
+  Mesh_Kokkos::Mesh_Kokkos(int total_points, int total_cells, int max_edges_per_cell) {
+
     Kokkos::resize(points_, total_points);  // malloc
     Kokkos::resize(cells_, total_cells, max_edges_per_cell, 2);
 
@@ -31,4 +78,4 @@ namespace polyintersect {
     	cells_(cell, edge, 1) = node.b;
     });
   }
-} 
+} */
