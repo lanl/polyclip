@@ -14,16 +14,18 @@ namespace polyintersect {
 
     // destructor
     ~Mesh_Kokkos() = default;
-
+    
     // create list of all the points and create cells
-    void add_all_points(int point_index, Point coordinates, Kokkos::View<Point*> host_points_);
-    void add_edge(int cell_index, int edge, Edge const& points, Kokkos::View<int***> host_cells_);
-    void send_to_gpu( Kokkos::View<int***> host_cells_, Kokkos::View<Point*> host_points_, Kokkos::View<int***> device_cells_, Kokkos::View<Point*> device_points_ );
+    void add_all_points(int point_index, Point coordinates, std::vector<Point>& host_points_);
+    void add_edge(int cell_index, int edge, Edge const& points, std::vector<std::vector<std::vector<int>>>& host_cells_);
+    void send_to_gpu(int total_points, int total_cells, int max_edges_per_cell);
 
     // mesh data members for host and device
-    Kokkos::View<Point*> host_points_;
-    Kokkos::View<int***> host_cells_;
-
+    std::vector<Point> host_points_;
+    std::vector<std::vector<std::vector<int>>> host_cells_;
+   
+    Kokkos::View<Point*>::HostMirror host_points_view_;
+    Kokkos::View<int***>::HostMirror host_cells_view_;
     Kokkos::View<Point*, Kokkos::CudaSpace> device_points_;
     Kokkos::View<int***, Kokkos::CudaSpace> device_cells_;
 

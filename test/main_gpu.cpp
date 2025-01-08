@@ -58,14 +58,42 @@ int main(int argc, char * argv[]) {
         mesh.add_edge(3, 1, {7, 10}, mesh.host_cells_);
         mesh.add_edge(3, 2, {10, 9}, mesh.host_cells_);
         mesh.add_edge(3, 3, {9, 8}, mesh.host_cells_);
+ 
+	
+	// CPU Results ///////////////////////////////////////////////////////////////////////
+        // Print Cells
+	std::cout << "-------- CPU Results --------" << std::endl;
+	for(int j = 0; j < total_cells; j++){   // Cell
+            std::cout << "Cell " << j << ":" << std::endl;
+            for (int i = 0; i < max_edges_per_cell; i++) {      // Edge       
+                std::cout << "Edge " << i << " (" << mesh.host_cells_[j][i][0] << ", ";
+                std::cout << mesh.host_cells_[j][i][1] << ") ";
 
-        // NEED TO PUT THE NEW FUNCTION //
-       // mesh.send_to_gpu(mesh.host_cells_, mesh.host_points_, mesh.device_cells_, mesh.device_points_);
+                if(j == 0 && i == 4 || j == 1 && i == 2 || j == 3 && i == 3){   
+                    break;
+                }
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
 
-/*        Kokkos::deep_copy(mesh.mirror_points_, mesh.device_points_);
+        // Print Point Coordinates
+        for (int j = 0; j < total_points; j++) {             // All Points
+                std::cout << "Point " << j << ": (" << mesh.host_points_[j].x << ", " << mesh.host_points_[j].y << ")" << std::endl;
+     
+       }
+
+
+        // CPU to GPU
+        mesh.send_to_gpu(total_points, total_cells, max_edges_per_cell);
+
+        Kokkos::deep_copy(mesh.mirror_points_, mesh.device_points_);
         Kokkos::deep_copy(mesh.mirror_cells_, mesh.device_cells_);
         
+	// GPU Results ///////////////////////////////////////////////////////////////////////
         // Print Cells 
+	std::cout << std::endl;
+	std::cout << "-------- GPU Results --------" << std::endl;
         for(int j = 0; j < total_cells; j++){   // Cell
             std::cout << "Cell " << j << ":" << std::endl;
             for (int i = 0; i < max_edges_per_cell; i++) {      // Edge       
@@ -84,7 +112,7 @@ int main(int argc, char * argv[]) {
         for (int j = 0; j < total_points; j++) {             // All Points
                 std::cout << "Point " << j << ": (" << mesh.mirror_points_(j).x << ", " << mesh.mirror_points_(j).y << ")" << std::endl;
      
-       }*/
+       }
     }
     Kokkos::finalize();
 }
