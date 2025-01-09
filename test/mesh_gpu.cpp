@@ -45,7 +45,7 @@ namespace polyintersect {
     for(int i = 0; i < total_cells; i++){
       for(int j = 0; j < max_edges_per_cell; j++){
         host_cells_view_(i, j, 0) = host_cells_[i][j][0];
-        host_cells_view_(i, j, 0) = host_cells_[i][j][1];
+        host_cells_view_(i, j, 1) = host_cells_[i][j][1];
       }
     }
 
