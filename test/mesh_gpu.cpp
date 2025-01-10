@@ -12,6 +12,8 @@ namespace polyintersect {
   Mesh_Kokkos::Mesh_Kokkos(int total_points, int total_cells, int max_edges_per_cell) {
     Kokkos::resize(device_points_, total_points);  // malloc
     Kokkos::resize(device_cells_, total_cells, max_edges_per_cell, 2);
+    Kokkos::resize(num_verts_per_cell_, total_cells);
+    Kokkos::resize(signs_, total_cells, max_edges_per_cell);	
 
     // CPU data members
     mirror_points_ = Kokkos::create_mirror_view(device_points_); 

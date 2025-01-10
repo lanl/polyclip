@@ -25,6 +25,9 @@ namespace polyintersect {
     Kokkos::View<int***, Kokkos::CudaSpace> device_cells_;
     Kokkos::View<Point*>::HostMirror mirror_points_;
     Kokkos::View<int***,>::HostMirror mirror_cells_;
+ 
+    Kokkos::View<int*, Kokkos::CudaSpace>  num_verts_per_cell_;
+    Kokkos::View<int**, Kokkos::CudaSpace> signs_;
   };
 }
 
