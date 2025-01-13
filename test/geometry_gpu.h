@@ -145,8 +145,8 @@ namespace polyintersect {
             int index = cells(cell, i, 0);
             allPoints(cell, i) = points(index);
         }
-        allPoints(cell, m + 1) = interface.a;
-        allPoints(cell, m + 2) = interface.b;
+        allPoints(cell, m) = interface.a;
+        allPoints(cell, m + 1) = interface.b;
     }
 }
 
