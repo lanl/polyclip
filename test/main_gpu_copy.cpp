@@ -46,12 +46,12 @@ int main(int argc, char * argv[]) {
         mesh.add_edge(1, 2, {2, 1});
 
         // Hexagon
-        mesh.add_edge(2, 0, {2, 5});
-        mesh.add_edge(2, 1, {5, 6});
-        mesh.add_edge(2, 2, {6, 7});
-        mesh.add_edge(2, 3, {7, 8});
-        mesh.add_edge(2, 4, {8, 3});   
-        mesh.add_edge(2, 5, {3, 2});   
+        mesh.add_edge(2, 0, {3, 2}); 
+        mesh.add_edge(2, 1, {2, 5});
+        mesh.add_edge(2, 2, {5, 6});
+        mesh.add_edge(2, 3, {6, 7});
+        mesh.add_edge(2, 4, {7, 8});
+        mesh.add_edge(2, 5, {8, 3});    
 
         // Square
         mesh.add_edge(3, 0, {8, 7});
@@ -118,7 +118,10 @@ int main(int argc, char * argv[]) {
         // GPU Results ///////////////////////////////////////////////////////////////////////
         // Print Cells 
         std::cout << std::endl;
-        std::cout << "-------- GPU Results --------" << std::endl;
+        std::cout << "---------------- GPU Results ----------------" << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "------ Cell + Edges ------" << std::endl;
         for(int j = 0; j < total_cells; j++){   // Cell
             std::cout << "Cell " << j << ":" << std::endl;
             for (int i = 0; i < max_edges_per_cell; i++) {      // Edge       
@@ -134,21 +137,24 @@ int main(int argc, char * argv[]) {
         std::cout << std::endl;
 
         // Print Point Coordinates
+	std::cout << "------ Cell Vertices ------" << std::endl;
         for (int j = 0; j < total_points; j++) {             // All Points
                 std::cout << "Point " << j << ": (" << mesh.mirror_points_(j).x << ", " << mesh.mirror_points_(j).y << ")" << std::endl;
         
         }
         
 	// Print Interface 
-        std::cout << std::endl;       
+        std::cout << std::endl;
+        std::cout << "------ Interface ------" << std::endl;
         for (int j = 0; j < total_cells; ++j) {
             auto const pa = mirror_interface(j).a;
             auto const pb = mirror_interface(j).b;
-            std::cout << "intersection points at cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
+            std::cout << "Intersection Points at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
         }
 
-	// Print all Points
+	// Print all Points (Vertices + Intersect Points)
         std::cout << std::endl;
+	std::cout << "------ All Points ------" << std::endl;
         for(int c = 0; c < total_cells; c++){
 		int t = mesh.mirror_num_verts_per_cell_(c) + 2;
             for(int i = 0; i < t; i++){
@@ -160,26 +166,17 @@ int main(int argc, char * argv[]) {
 
         // Output Results
         std::cout << std::endl;
+	std::cout << "------ Output ------" << std::endl;
         for(int c = 0; c < total_cells; c++){
-	    std::cout << "Output size: " << mirror_size_output(c) << std::endl; 
-            int t = mesh.mirror_num_verts_per_cell_(c) + 2;
+	    int t = mirror_size_output(c); 
 	    for(int i = 0; i < t; i++){
                 int const j = mirror_output(c, i);
                 auto const p = mirror_allPoints(c, j);
-                std::cout << "Below line at cell " << c << ": " << j << std::endl;//": (" << p.x << ", "<< p.y << ") "<< std::endl; 
+                std::cout << "Below line at cell " << c << ", Coordinate " << i << ": (";
+		std::cout << p.x << ", "<< p.y << ") "<< std::endl;
             }
             std::cout << std::endl;
         }
-
- 	// Print signs
-        for(int i = 0; i < total_cells; i++){
-            int t = mesh.mirror_num_verts_per_cell_(i) + 2;
-            for(int j = 0; j < t; j++){
-                std::cout << "Sign at cell " << i << ": " << mesh.mirror_signs_(i, j) << std::endl;
-            }
-            std::cout << std::endl;
-        }
-
 
 /*	// print interfaces
         int n_nodes = n_cells + 1;

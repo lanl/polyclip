@@ -76,7 +76,7 @@ namespace polyintersect {
 
         // Deduce the normal vector of the cutting line
         auto normal = normVec(interface);
-        int index = 0;
+       // int index = 0;
         double dp;
 
         for(int p = 0; p < n; p++){ 
@@ -88,13 +88,13 @@ namespace polyintersect {
 
             // Convection of placement with respect to the line
             if (dp < 0) {           // Below the line
-              signs(c, index) = -1;
+              signs(c, p) = -1;
             } else if (dp > 0) {    // Above the line
-              signs(c, index) = 1;
+              signs(c, p) = 1;
             } else {                // On the line
-              signs(c, index) = 0;
+              signs(c, p) = 0;
             }
-            index++;
+           // index++;
         }
     }
 
@@ -103,13 +103,13 @@ namespace polyintersect {
     Line fake_intersect_cell(int c){
         switch(c){
             case 0:
-                return {{0, 0.125}, {.5, 0.125}}; 
+                return {{.5, 0.125}, {0, 0.125}}; 
             case 1:
-                return {{0.5, 0.125}, {0.75, 0.125}};
+                return {{0.75, 0.125}, {0.5, 0.125}};
             case 2:
-                return {{0.375, 0.5}, {0.9375, 0.5}};
+                return {{0.9375, 0.5}, {0.375, 0.5}};
             case 3:
-                return {{0.5, 0.75}, {0.875, 0.75}};
+                return {{0.875, 0.75}, {0.5, 0.75}};
             default: 
                 return {{-1.0, -1.0}, {-1.0, -1.0}};
         }
