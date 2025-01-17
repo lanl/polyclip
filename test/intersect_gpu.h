@@ -7,12 +7,13 @@
 namespace polyintersect {
  KOKKOS_INLINE_FUNCTION	
  Line intersect_cell_with_line(Kokkos::View<Point*> points,
-                               Kokkos::View<int**> cells,
+                               Kokkos::View<int***> cells,
                                int c,
-                               Line const& line) {
+                               Line const& line, 
+			       Kokkos::View<int*> num_verts_per_cell) {
 
 
-        int const n = 4;
+        int const n = num_verts_per_cell(c);
         Point pts[2];
 
         // deduce bounds on coordinates
@@ -40,8 +41,8 @@ namespace polyintersect {
         int k = 0;
         for (int i = 0; i < n; ++i) {
             int const j = (i + 1) % n;
-            int const a = cells(c, i);//[c][i];
-            int const b = cells(c, j);//[c][j];
+            int const a = cells(c, i, 0);//[c][i];
+            int const b = cells(c, j, 0);//[c][j];
 
             double const& xa = points(a).x;
             double const& ya = points(a).y;
