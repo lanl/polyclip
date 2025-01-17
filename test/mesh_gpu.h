@@ -16,9 +16,10 @@ namespace polyintersect {
     ~Mesh_Kokkos() = default;
     
     // create list of all the points and create cells
-    void add_all_points(int point_index, Point coordinates);
+    void add_points(int point_index, Point coordinates);
     void add_edge(int cell_index, int edge, Edge const& points);
     void send_to_gpu();
+    void send_to_cpu();
 
     // mesh data members for host and device
     Kokkos::View<Point*, Kokkos::CudaSpace> device_points_;
@@ -29,7 +30,6 @@ namespace polyintersect {
     Kokkos::View<int*, Kokkos::CudaSpace>  num_verts_per_cell_;
     Kokkos::View<int**, Kokkos::CudaSpace> signs_;
     Kokkos::View<int*>::HostMirror mirror_num_verts_per_cell_;
-    Kokkos::View<int**,>::HostMirror mirror_signs_;
   };
 }
 

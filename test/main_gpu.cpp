@@ -21,17 +21,17 @@ int main(int argc, char * argv[]) {
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
 
         // All Nodes 
-        mesh.add_all_points(0, {0.0, 0.0});
-        mesh.add_all_points(1, {0.5, 0.0});
-        mesh.add_all_points(2, {0.5, 0.25});
-        mesh.add_all_points(3, {0.25, 0.375});
-        mesh.add_all_points(4, {0.0, 0.25});
-        mesh.add_all_points(5, {0.875, 0.25});
-        mesh.add_all_points(6, {1.0, 0.375});
-        mesh.add_all_points(7, {0.875, 0.625});
-        mesh.add_all_points(8, {0.5, 0.625});
-        mesh.add_all_points(9, {0.5, 0.875});
-        mesh.add_all_points(10, {0.875, 0.875});
+        mesh.add_points(0, {0.0, 0.0});
+        mesh.add_points(1, {0.5, 0.0});
+        mesh.add_points(2, {0.5, 0.25});
+        mesh.add_points(3, {0.25, 0.375});
+        mesh.add_points(4, {0.0, 0.25});
+        mesh.add_points(5, {0.875, 0.25});
+        mesh.add_points(6, {1.0, 0.375});
+        mesh.add_points(7, {0.875, 0.625});
+        mesh.add_points(8, {0.5, 0.625});
+        mesh.add_points(9, {0.5, 0.875});
+        mesh.add_points(10, {0.875, 0.875});
 
         // Pentagon
         mesh.add_edge(0, 0, {0, 1});
@@ -77,9 +77,8 @@ int main(int argc, char * argv[]) {
         // Max Threads
         int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
 
-        // Horizontal ///////////////////////////////
-        auto start = timer::now();  // Timer 
-        
+        // Timer
+        auto start = timer::now();      
 
         // Clipping below for Every Cell 
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
@@ -97,15 +96,13 @@ int main(int argc, char * argv[]) {
         auto mirror_interface = Kokkos::create_mirror_view(interface);
        // auto mirror_line = Kokkos::create_mirror_view(line);
 
-        Kokkos::deep_copy(mesh.mirror_points_, mesh.device_points_);
-        Kokkos::deep_copy(mesh.mirror_cells_, mesh.device_cells_);
-	Kokkos::deep_copy(mesh.mirror_num_verts_per_cell_, mesh.num_verts_per_cell_);
-        Kokkos::deep_copy(mesh.mirror_signs_, mesh.signs_);
 	Kokkos::deep_copy(mirror_output, output);
 	Kokkos::deep_copy(mirror_size_output, size_output);
         Kokkos::deep_copy(mirror_allPoints, allPoints);
         Kokkos::deep_copy(mirror_interface, interface);
         //Kokkos::deep_copy(mirror_line, line);
+
+	mesh.send_to_cpu();
 
         auto const end_including_copy = timer::elapsed(start);
 

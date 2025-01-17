@@ -19,11 +19,10 @@ namespace polyintersect {
     mirror_points_ = Kokkos::create_mirror_view(device_points_); 
     mirror_cells_ = Kokkos::create_mirror_view(device_cells_);
     mirror_num_verts_per_cell_ = Kokkos::create_mirror_view(num_verts_per_cell_);
-    mirror_signs_ = Kokkos::create_mirror_view(signs_);
   }
 
 // Storing Coordinates of all the points on the host ////////////////////////////////////////////////
-  void Mesh_Kokkos::add_all_points(int point, Point coordinate){
+  void Mesh_Kokkos::add_points(int point, Point coordinate){
       mirror_points_(point) = {(coordinate.x), (coordinate.y)};
   }  
 
@@ -38,7 +37,13 @@ namespace polyintersect {
     Kokkos::deep_copy(device_points_, mirror_points_);
     Kokkos::deep_copy(device_cells_, mirror_cells_);
     Kokkos::deep_copy(num_verts_per_cell_, mirror_num_verts_per_cell_);
-    Kokkos::deep_copy(signs_, mirror_signs_);
+  }
+
+// GPU to CPU ///////////////////////////////////////////////////////////////////////////////////////
+  void Mesh_Kokkos::send_to_cpu(){
+    Kokkos::deep_copy(mirror_points_, device_points_);
+    Kokkos::deep_copy(mirror_cells_, device_cells_);
+    Kokkos::deep_copy(mirror_num_verts_per_cell_, num_verts_per_cell_);
   }
 }
 
