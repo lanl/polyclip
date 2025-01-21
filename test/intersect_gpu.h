@@ -23,7 +23,7 @@ namespace polyintersect {
         double y_max = -y_min;
 
         for (int i = 0; i < n; ++i) {
-            int const a = cells(c, i);
+            int const a = cells(c, i, 0);
             if(points(a).x < x_min){      // x min
                 x_min = points(a).x;
             }

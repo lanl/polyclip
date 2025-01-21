@@ -68,7 +68,7 @@ int main(int argc, char * argv[]) {
        	// CPU to GPU
         mesh.send_to_gpu();
 
-        //Kokkos::View<Line*> line("line", total _cells);
+        Kokkos::View<Line*> line("line", total_cells);
         Kokkos::View<Line*> interface("interface", total_cells);
         Kokkos::View<int**> output("output", total_cells, max_edges_per_cell);
         Kokkos::View<int*> size_output("sizeoutput", total_cells);                                           
@@ -82,7 +82,8 @@ int main(int argc, char * argv[]) {
 
         // Clipping below for Every Cell 
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
-            interface(c) = fake_intersect_cell(c);
+            line(c) = fake_intersect_cell(c);
+	    interface(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, line(c), mesh.num_verts_per_cell_);
             clip_below_3(c, mesh.device_points_, mesh.device_cells_, interface(c),
                          output, size_output, mesh.num_verts_per_cell_, mesh.signs_, allPoints);
         });
