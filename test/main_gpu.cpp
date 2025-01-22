@@ -167,21 +167,22 @@ int main(int argc, char * argv[]) {
 	std::cout << "------ Output ------" << std::endl;
         for(int c = 0; c < total_cells; c++){
 	    int t = mirror_size_output(c); 
-	    std::cout << "Total outputs: " << t << std::endl;
+	   // std::cout << "Total outputs: " << t << std::endl;
 	    for(int i = 0; i < t; i++){
                 int const j = mirror_output(c, i);
                 auto const p = mirror_allPoints(c, j);
-               // std::cout << "Below line at cell " << c << ", Coordinate " << i << ": (";
-	       // std::cout << p.x << ", "<< p.y << ") "<< std::endl;
+                std::cout << "Below line at cell " << c << ", Coordinate " << i << ": (";
+	        std::cout << p.x << ", "<< p.y << ") "<< std::endl;
             }
             std::cout << std::endl;
         }
 
 	// Print signs
+	std::cout << "------ Signs ------" << std::endl;
         for(int i = 0; i < total_cells; i++){
             int t = mesh.mirror_num_verts_per_cell_(i) + 2;
             for(int j = 0; j < t; j++){
-                std::cout << "Sign at cell " << i << ": " << mesh.mirror_signs_(i, j) << std::endl;
+                std::cout << "Sign at cell "<< i << ": " << mesh.mirror_signs_(i, j) << std::endl;
             }
             std::cout << std::endl;
         }

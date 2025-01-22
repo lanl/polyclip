@@ -71,21 +71,21 @@ namespace polyintersect {
     KOKKOS_INLINE_FUNCTION
     void orientation_clip(int c, 
                           Kokkos::View<Point**> allPoints,
-                          Line interface, 
+                          Line line, 
                           Kokkos::View<int**> signs,
                           int n){
 
         // Deduce the normal vector of the cutting line
-        auto normal = normVec(interface);
+        auto normal = normVec(line);
        // int index = 0;
         double dp;
 
         for(int p = 0; p < n; p++){ 
             // Vector of Node
-            auto const V = pointVec(allPoints(c, p), interface);
+            auto const V = pointVec(allPoints(c, p), line);
 
             // Dot Product of normal and node vector
-            dp = dotProduct(normal, V);
+            dp = dotProduct(V, normal);
 
             // Convection of placement with respect to the line
             if (dp < 0) {           // Below the line
@@ -104,13 +104,13 @@ namespace polyintersect {
     Line fake_intersect_cell(int c){
         switch(c){
             case 0:	// Cell 0
-                return {{0.625, -0.25}, {-0.125, 0.375}}; 
+                return {{1, 0.125}, {-1, 0.125}}; 
             case 1:	// Cell 1
-                return {{0.875, 0}, {0.5, 0.375}};
+                return {{1, 0.125}, {-1, 0.125}};
             case 2:	// Cell 2
-                return {{0.875, 0.125}, {0.25, 0.75}};
+                return {{1.5, 0.5}, {-1, 0.5}};
             case 3:	// Cell 3
-                return {{0.75, 0.5}, {0.375, 0.875}};
+                return {{1.5, 0.75}, {-1, 0.75}};
             default: 
                 return {{-1.0, -1.0}, {-1.0, -1.0}};
         }
@@ -137,7 +137,7 @@ namespace polyintersect {
     void list_of_points(int cell,
                         Kokkos::View<Point*> points,
                         Kokkos::View<int***> cells,
-                        Line const &interface,
+                        Line const &line,
                         Kokkos::View<Point**> allPoints, 
                         Kokkos::View<int*> num_verts_per_cell) {
 
@@ -146,8 +146,8 @@ namespace polyintersect {
             int index = cells(cell, i, 0);
             allPoints(cell, i) = points(index);
         }
-        allPoints(cell, m) = interface.a;
-        allPoints(cell, m + 1) = interface.b;
+        allPoints(cell, m) = line.a;
+        allPoints(cell, m + 1) = line.b;
     }
 }
 
