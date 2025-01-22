@@ -30,6 +30,8 @@ namespace polyintersect {
     Kokkos::View<int*, Kokkos::CudaSpace>  num_verts_per_cell_;
     Kokkos::View<int**, Kokkos::CudaSpace> signs_;
     Kokkos::View<int*>::HostMirror mirror_num_verts_per_cell_;
+    Kokkos::View<int**,>::HostMirror mirror_signs_;
+
   };
 }
 

@@ -104,13 +104,13 @@ namespace polyintersect {
     Line fake_intersect_cell(int c){
         switch(c){
             case 0:	// Cell 0
-                return {{1, 0.125}, {-1, 0.125}}; 
+                return {{0.625, -0.25}, {-0.125, 0.375}}; 
             case 1:	// Cell 1
-                return {{1, 0.125}, {-1, 0.125}};
+                return {{0.875, 0}, {0.5, 0.375}};
             case 2:	// Cell 2
-                return {{1.5, 0.5}, {-1, 0.5}};
+                return {{0.875, 0.125}, {0.25, 0.75}};
             case 3:	// Cell 3
-                return {{1.5, 0.75}, {-1, 0.75}};
+                return {{0.75, 0.5}, {0.375, 0.875}};
             default: 
                 return {{-1.0, -1.0}, {-1.0, -1.0}};
         }
