@@ -40,9 +40,9 @@ namespace polyintersect {
 
         int k = 0;
         for (int i = 0; i < n; ++i) {
-            int const j = (i + 1) % n;
+           // int const j = (i + 1) % n;
             int const a = cells(c, i, 0);//[c][i];
-            int const b = cells(c, j, 0);//[c][j];
+            int const b = cells(c, i, 1);//[c][j];
 
             double const& xa = points(a).x;
             double const& ya = points(a).y;

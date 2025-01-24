@@ -17,7 +17,7 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-        // Create mesh
+        // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
 
         // All Nodes 
@@ -68,43 +68,62 @@ int main(int argc, char * argv[]) {
        	// CPU to GPU
         mesh.send_to_gpu();
 
+	// Important Data Memebers //////////////////////////////////////////////////////////////////////////////
         Kokkos::View<Line*> line("line", total_cells);
         Kokkos::View<Line*> interface("interface", total_cells);
         Kokkos::View<int**> output("output", total_cells, max_edges_per_cell);
         Kokkos::View<int*> size_output("sizeoutput", total_cells);                                           
         Kokkos::View<Point**> allPoints("allpoints", total_cells, (max_edges_per_cell + 2));    // Cell points + intersect points
 
-        // Max Threads
+        // Max Threads and Timer
         int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
-
-        // Timer
         auto start = timer::now();      
 
-        // Clipping below for Every Cell 
+        // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
+        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
+            switch(i){
+              case 0:     // Cell 0
+                 line(i) = {{0.625, -0.25}, {-0.125, 0.375}};
+		 break;
+              case 1:     // Cell 1
+                 line(i) = {{.75, -0.125}, {0.375, 0.25}};
+		 break;
+              case 2:     // Cell 2
+                 line(i) = {{0.875, 0.125}, {0.25, 0.75}};
+		 break;
+              case 3:     // Cell 3
+                 line(i) = {{0.75, 0.5}, {0.375, 0.875}};
+		 break;
+             // default:
+               //  line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+        	}
+        });
+
+        // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
-            line(c) = fake_intersect_cell(c);
 	    interface(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, line(c), mesh.num_verts_per_cell_);
             clip_below_3(c, mesh.device_points_, mesh.device_cells_, interface(c),
                          output, size_output, mesh.num_verts_per_cell_, mesh.signs_, allPoints);
         });
-
-        auto const end = timer::elapsed(start);
+	
+	// Verify Results by Printing on the CPU //////////////////////////////////////////////////////////////// 
+        auto const end = timer::elapsed(start); // time deep copy
 
         // CPU Copy 
         auto mirror_output = Kokkos::create_mirror_view(output);
 	auto mirror_size_output = Kokkos::create_mirror_view(size_output);
         auto mirror_allPoints = Kokkos::create_mirror_view(allPoints);
         auto mirror_interface = Kokkos::create_mirror_view(interface);
-       // auto mirror_line = Kokkos::create_mirror_view(line);
+        auto mirror_line = Kokkos::create_mirror_view(line);
 
 	Kokkos::deep_copy(mirror_output, output);
 	Kokkos::deep_copy(mirror_size_output, size_output);
         Kokkos::deep_copy(mirror_allPoints, allPoints);
         Kokkos::deep_copy(mirror_interface, interface);
-        //Kokkos::deep_copy(mirror_line, line);
+	Kokkos::deep_copy(mirror_line, line);
 
+	// Send to CPU
 	mesh.send_to_cpu();
-
         auto const end_including_copy = timer::elapsed(start);
 
         // Print elapsed time 
@@ -112,8 +131,6 @@ int main(int argc, char * argv[]) {
         std::cout << "Deep copy: " << end_including_copy << " µs" << std::endl;
         std::cout << "Max Threads: " << max_threads << std::endl << std::endl; 
 
-  
-        // GPU Results ///////////////////////////////////////////////////////////////////////
         // Print Cells 
         std::cout << std::endl;
         std::cout << "---------------- GPU Results ----------------" << std::endl;
@@ -139,6 +156,15 @@ int main(int argc, char * argv[]) {
         for (int j = 0; j < total_points; j++) {             // All Points
                 std::cout << "Point " << j << ": (" << mesh.mirror_points_(j).x << ", " << mesh.mirror_points_(j).y << ")" << std::endl;
         
+        }
+
+	// Print Line
+        std::cout << std::endl;
+        std::cout << "------ Line ------" << std::endl;
+        for (int j = 0; j < total_cells; ++j) {
+            auto const pa = mirror_line(j).a;
+            auto const pb = mirror_line(j).b;
+            std::cout << "Line at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
         }
         
 	// Print Interface 

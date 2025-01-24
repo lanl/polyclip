@@ -99,7 +99,7 @@ namespace polyintersect {
         }
     }
 
-    // Fake Intersect ///////////////////////////////////////////////////////////////////////
+ /*   // Fake Intersect ///////////////////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
     Line fake_intersect_cell(int c){
         switch(c){
@@ -114,7 +114,7 @@ namespace polyintersect {
             default:
                 return {{-1.0, -1.0}, {-1.0, -1.0}};
         }
-    }
+    }*/
 
     // Find the Center Coordinate ///////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
