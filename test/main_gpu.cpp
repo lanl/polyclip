@@ -81,7 +81,7 @@ int main(int argc, char * argv[]) {
 
         // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
-            switch(i){
+           /* switch(i){
               case 0:     // Cell 0
                  line(i) = {{0.625, -0.25}, {-0.125, 0.375}};
 		 break;
@@ -94,9 +94,27 @@ int main(int argc, char * argv[]) {
               case 3:     // Cell 3
                  line(i) = {{0.75, 0.5}, {0.375, 0.875}};
 		 break;
-             // default:
-               //  line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
-        	}
+              default:
+                 line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+		 break;
+        	}*/
+	      switch(i){
+              case 0:     // Cell 0
+                 line(i) = {{1, 0.125}, {-1, 0.125}};
+                 break;
+              case 1:     // Cell 1
+                 line(i) = {{1, 0.125}, {-1, 0.125}};
+                 break;
+              case 2:     // Cell 2
+                 line(i) = {{1.5, 0.5}, {-1, 0.5}};
+                 break;
+              case 3:     // Cell 3
+                 line(i) = {{1.5, 0.75}, {-1, 0.75}};
+                 break;
+              default:
+                 line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 break;
+                }
         });
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
