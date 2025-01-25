@@ -71,9 +71,9 @@ int main(int argc, char * argv[]) {
 	// Important Data Memebers //////////////////////////////////////////////////////////////////////////////
         Kokkos::View<Line*> line("line", total_cells);
         Kokkos::View<Line*> interface("interface", total_cells);
-        Kokkos::View<int**> output("output", total_cells, max_edges_per_cell);
+        Kokkos::View<int**> output("output", total_cells, max_edges_per_cell);  // Cell ID, Edge ID
         Kokkos::View<int*> size_output("sizeoutput", total_cells);                                           
-        Kokkos::View<Point**> allPoints("allpoints", total_cells, (max_edges_per_cell + 2));    // Cell points + intersect points
+        Kokkos::View<Point**> allPoints("allpoints", total_cells, (max_edges_per_cell + 2));  // Cell ID, All Points Coordinate (Vertices + intersect points)
 
         // Max Threads and Timer
         int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
@@ -81,7 +81,24 @@ int main(int argc, char * argv[]) {
 
         // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
-           /* switch(i){
+            switch(i){
+              case 0:     // Cell 0
+                 line(i) = {{.375, 0}, {0.015625, 0.257812}};
+                 break;
+              case 1:     // Cell 1
+                 line(i) = {{0.575, 0.05}, {0.5, 0.125}};
+                 break;
+              case 2:     // Cell 2
+                 line(i) = {{0.625, 0.25}, {0.375, 0.5}};
+                 break;
+              case 3:     // Cell 3
+                 line(i) = {{0.625, 0.625}, {0.5, 0.75}};
+                 break;
+              default:
+                 line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 break;
+                }
+       	/*  switch(i){
               case 0:     // Cell 0
                  line(i) = {{0.625, -0.25}, {-0.125, 0.375}};
 		 break;
@@ -89,7 +106,7 @@ int main(int argc, char * argv[]) {
                  line(i) = {{.75, -0.125}, {0.375, 0.25}};
 		 break;
               case 2:     // Cell 2
-                 line(i) = {{0.875, 0.125}, {0.25, 0.75}};
+                 line(i) = {{0.875, 0.0}, {0.25, 0.625}};
 		 break;
               case 3:     // Cell 3
                  line(i) = {{0.75, 0.5}, {0.375, 0.875}};
@@ -98,7 +115,7 @@ int main(int argc, char * argv[]) {
                  line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
 		 break;
         	}*/
-	      switch(i){
+	    /*  switch(i){
               case 0:     // Cell 0
                  line(i) = {{1, 0.125}, {-1, 0.125}};
                  break;
@@ -114,13 +131,13 @@ int main(int argc, char * argv[]) {
               default:
                  line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
                  break;
-                }
+                }*/
         });
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
-	    interface(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, line(c), mesh.num_verts_per_cell_);
-            clip_below_3(c, mesh.device_points_, mesh.device_cells_, interface(c),
+	   // interface(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, line(c), mesh.num_verts_per_cell_);
+            clip_below_3(c, mesh.device_points_, mesh.device_cells_, line(c),
                          output, size_output, mesh.num_verts_per_cell_, mesh.signs_, allPoints);
         });
 	

@@ -9,7 +9,7 @@ namespace polyintersect {
  Line intersect_cell_with_line(Kokkos::View<Point*> points,
                                Kokkos::View<int***> cells,
                                int c,
-                               Line const& line, 
+                               Line const& line,
 			       Kokkos::View<int*> num_verts_per_cell) {
 
 
@@ -64,9 +64,9 @@ namespace polyintersect {
 
             // fabs
             if (fabs(det) < 1.e-15) {
-                continue;
-            } else {
-                double const c1 = a1 * xa + b1 * ya;
+              continue;
+            } else {  
+	        double const c1 = a1 * xa + b1 * ya;
                 double const c2 = a2 * xp + b2 * yp;
                 double const x = (b2 * c1 - b1 * c2) / det;
                 double const y = (a1 * c2 - a2 * c1) / det;
@@ -81,3 +81,6 @@ namespace polyintersect {
         return {pts[0], pts[1]};
     }
 }
+
+
+

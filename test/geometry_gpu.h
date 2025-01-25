@@ -60,11 +60,20 @@ namespace polyintersect {
 
     // Point Vector /////////////////////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point pointVec(Point const &p, Line const& line){
-        double dx = p.x - line.a.x;
-        double dy = p.y - line.a.y;
+    Point pointVec(Point const &p, Point const& middle){
+        double dx = p.x - middle.x;
+        double dy = p.y - middle.y;
 
         return {dx, dy};
+    }
+
+    // Middile Point of the Interface ////////////////////////////////////////////////////////
+    KOKKOS_INLINE_FUNCTION
+    Point middle_point(Line const& line){
+        double mx = (line.a.x + line.b.x) / 2;
+        double my = (line.a.y + line.b.y) / 2;
+
+        return {mx, my};
     }
 
     // Orientation of Every Node for Method 2 and 3 /////////////////////////////////////////
@@ -77,25 +86,26 @@ namespace polyintersect {
 
         // Deduce the normal vector of the cutting line
         auto normal = normVec(line);
-       // int index = 0;
+        int index = 0;
+        auto middle = middle_point(line);
         double dp;
 
         for(int p = 0; p < n; p++){ 
             // Vector of Node
-            auto const V = pointVec(allPoints(c, p), line);
+            auto const V = pointVec(allPoints(c, p), middle);
 
             // Dot Product of normal and node vector
             dp = dotProduct(V, normal);
 
             // Convection of placement with respect to the line
             if (dp < 0) {           // Below the line
-              signs(c, p) = -1;
+              signs(c, index) = -1;
             } else if (dp > 0) {    // Above the line
-              signs(c, p) = 1;
+              signs(c, index) = 1;
             } else {                // On the line
-              signs(c, p) = 0;
+              signs(c, index) = 0;
             }
-           // index++;
+            index++;
         }
     }
 
@@ -130,7 +140,7 @@ namespace polyintersect {
             allPoints(cell, i) = points(index);
         }
         allPoints(cell, m) = line.a;
-        allPoints(cell, m + 1) = line.b;
+        allPoints(cell, (m + 1)) = line.b;
     }
 }
 
