@@ -17,7 +17,7 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 2;
+	int line_rep = 3; // 1) Arbitrary lines intersect points. 2) Horizontal overlapping lines, 3) Arbitrary overlapping lines 
 
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -72,7 +72,7 @@ int main(int argc, char * argv[]) {
 
 	// Important Data Memebers //////////////////////////////////////////////////////////////////////////////
         Kokkos::View<Line*> line("line", total_cells);
-        Kokkos::View<Line*> interface("interface", total_cells);
+        Kokkos::View<Line*> intersect_points("intersect", total_cells);
         Kokkos::View<int**> output("output", total_cells, max_edges_per_cell);  // Cell ID, Edge ID
         Kokkos::View<int*> size_output("sizeoutput", total_cells);                                           
         Kokkos::View<Point**> allPoints("allpoints", total_cells, (max_edges_per_cell + 2));  // Cell ID, All Points Coordinate (Vertices + intersect points)
@@ -142,8 +142,8 @@ int main(int argc, char * argv[]) {
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
-	    interface(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, line(c), mesh.num_verts_per_cell_);
-            clip_below_3(c, mesh.device_points_, mesh.device_cells_, interface(c),
+	    intersect_points(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, line(c), mesh.num_verts_per_cell_);
+            clip_below_3(c, mesh.device_points_, mesh.device_cells_, intersect_points(c),
                          output, size_output, mesh.num_verts_per_cell_, mesh.signs_, allPoints);
         });
 	
@@ -154,13 +154,13 @@ int main(int argc, char * argv[]) {
         auto mirror_output = Kokkos::create_mirror_view(output);
 	auto mirror_size_output = Kokkos::create_mirror_view(size_output);
         auto mirror_allPoints = Kokkos::create_mirror_view(allPoints);
-        auto mirror_interface = Kokkos::create_mirror_view(interface);
+        auto mirror_intersect_points = Kokkos::create_mirror_view(intersect_points);
         auto mirror_line = Kokkos::create_mirror_view(line);
 
 	Kokkos::deep_copy(mirror_output, output);
 	Kokkos::deep_copy(mirror_size_output, size_output);
         Kokkos::deep_copy(mirror_allPoints, allPoints);
-        Kokkos::deep_copy(mirror_interface, interface);
+        Kokkos::deep_copy(mirror_intersect_points, intersect_points);
 	Kokkos::deep_copy(mirror_line, line);
 
 	// Send to CPU
@@ -208,12 +208,12 @@ int main(int argc, char * argv[]) {
             std::cout << "Line at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
         }
         
-	// Print Interface 
+	// Print Intersect Points
         std::cout << std::endl;
-        std::cout << "------ Interface ------" << std::endl;
+        std::cout << "------ Intersect Points ------" << std::endl;
         for (int j = 0; j < total_cells; ++j) {
-            auto const pa = mirror_interface(j).a;
-            auto const pb = mirror_interface(j).b;
+            auto const pa = mirror_intersect_points(j).a;
+            auto const pb = mirror_intersect_points(j).b;
             std::cout << "Intersection Points at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
         }
 
@@ -253,6 +253,43 @@ int main(int argc, char * argv[]) {
             }
             std::cout << std::endl;
         }
+	
+
+	std::cout << "----------- CPU Sign RESULTS -----------" << std::endl;
+	for(int cell = 0; cell < total_cells; cell++){
+	    Point normal = normVec(mirror_intersect_points(cell));
+	    Point middle = middle_point(mirror_intersect_points(cell));
+         
+            double dp;
+            int n = mesh.mirror_num_verts_per_cell_(cell) + 2;
+
+            for(int p = 0; p < n; p++){ // n = num_verts_per_cell + 2
+                // Vector of Node
+	       Point const V = pointVec(mirror_allPoints(cell, p), middle);
+
+                // Dot Product of normal and node vector
+                dp = (V.x * normal.x) + (V.y * normal.y);
+
+                // Convection of placement with respect to the line
+             if (dp < 0) {           // Below the line
+                    mesh.mirror_signs_(cell, p) = -1;
+                } else if (dp > 0) {    // Above the line
+                   mesh. mirror_signs_(cell, p) = 1;
+                } else {                // On the line
+                    mesh.mirror_signs_(cell, p) = 0;
+                }
+                // index++;
+                std::cout << "Cell " << cell << ", at coordinate " << p << ": " << mesh.mirror_signs_(cell, p) << std::endl;
+	/*	if(cell == 1 and p == 3 or p == 4 and cell == 1){
+			std::cout << "MIRROR POINT: " << mirror_allPoints(cell, p).x << ", " << mirror_allPoints(cell, p).y << std::endl;
+			std::cout << "MIRROR LINE: " << mirror_intersect_points(cell).a.x << ", " << mirror_intersect_points(cell).a.y << "      " << mirror_intersect_points(cell).b.x << ", " << mirror_intersect_points(cell).b.y << std::endl;
+			std::cout << "MIRROR MIDDLE: " << middle.x << ", " << middle.y << std::endl;
+		}*/
+
+	    }
+	    std::cout << std::endl; 
+        }
+
 
     }
     Kokkos::finalize();
