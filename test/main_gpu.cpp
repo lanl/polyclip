@@ -17,7 +17,7 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 3; // 1) Arbitrary lines intersect points. 2) Horizontal overlapping lines, 3) Arbitrary overlapping lines 
+	int line_rep = 2; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines 
 
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -83,25 +83,7 @@ int main(int argc, char * argv[]) {
 
         // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
-	  if (line_rep == 0){
-            switch(i){
-              case 0:     // Cell 0
-                 line(i) = {{.375, 0}, {0.015625, 0.257812}};
-                 break;
-              case 1:     // Cell 1
-                 line(i) = {{0.575, 0.05}, {0.5, 0.125}};
-                 break;
-              case 2:     // Cell 2
-                 line(i) = {{0.625, 0.25}, {0.375, 0.5}};
-                 break;
-              case 3:     // Cell 3
-                 line(i) = {{0.625, 0.625}, {0.5, 0.75}};
-                 break;
-              default:
-                 line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
-                 break;
-                }
-	   } else if (line_rep == 2){
+	   if (line_rep == 1){
 	     switch(i){
               case 0:     // Cell 0
                  line(i) = {{1, 0.125}, {-1, 0.125}};
@@ -254,40 +236,6 @@ int main(int argc, char * argv[]) {
             std::cout << std::endl;
         }
 	
-
-	std::cout << "----------- CPU Sign RESULTS -----------" << std::endl;
-	for(int cell = 0; cell < total_cells; cell++){
-	    Point normal = normVec(mirror_intersect_points(cell));
-	    Point middle = middle_point(mirror_intersect_points(cell));
-         
-            float dp;
-            int n = mesh.mirror_num_verts_per_cell_(cell) + 2;
-	
-	    float dpx;
-	    float dpy;
-
-            for(int p = 0; p < n; p++){ // n = num_verts_per_cell + 2
-                // Vector of Node
-	       Point const V = pointVec(mirror_allPoints(cell, p), middle);
-
-                // Dot Product of normal and node vector
-		dpx = (V.x * normal.x);
-		dpy = (V.y * normal.y);
-                dp = dpx + dpy;
-
-                // Convection of placement with respect to the line
-            	 if (dp < 0) {           // Below the line
-                    mesh.mirror_signs_(cell, p) = -1;
-                } else if (dp > 0) {    // Above the line
-                   mesh. mirror_signs_(cell, p) = 1;
-                } else{                // On the line
-                    mesh.mirror_signs_(cell, p) = 0;
-                }
-               
-                std::cout << "Cell " << cell << ", at coordinate " << p << ": " << mesh.mirror_signs_(cell, p) << std::endl;
-	    }
-	    std::cout << std::endl; 
-        }
     }
 
 

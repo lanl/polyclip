@@ -14,35 +14,31 @@ namespace polyintersect {
 
 
         int const n = num_verts_per_cell(c);
+	double x_min, y_min, x_max, y_max;
         Point pts[2];
-
-        // deduce bounds on coordinates
-        double x_min = DBL_MAX; // DBL_MAX
-        double y_min = x_min;
-        double x_max = -x_min;
-        double y_max = -y_min;
-
-        for (int i = 0; i < n; ++i) {
-            int const a = cells(c, i, 0);
-            if(points(a).x < x_min){      // x min
-                x_min = points(a).x;
-            }
-            if(points(a).y < y_min){      // y min
-                y_min = points(a).y;
-            }
-            if(points(a).x > x_max){      // x max
-                x_max = points(a).x;
-            }
-            if(points(a).y > y_max){      // y max
-                y_max = points(a).y;
-            }
-        }
 
         int k = 0;
         for (int i = 0; i < n; ++i) {
-           // int const j = (i + 1) % n;
-            int const a = cells(c, i, 0);//[c][i];
-            int const b = cells(c, i, 1);//[c][j];
+            int const a = cells(c, i, 0);
+            int const b = cells(c, i, 1);
+
+	    // deduce bounds on coordinates of the edge we are currently viewing
+            if(points(a).x > points(b).x){
+                x_max = points(a).x;
+                x_min = points(b).x;
+            }
+            else{
+                x_max = points(b).x;
+                x_min = points(a).x;
+            }
+            if(points(a).y > points(b).y){
+                y_max = points(a).y;
+                y_min = points(b).y;
+            }
+            else{
+                y_max = points(b).y;
+                y_min = points(a).y;
+            }
 
             double const& xa = points(a).x;
             double const& ya = points(a).y;
@@ -73,7 +69,7 @@ namespace polyintersect {
 
                 if (x < x_min or x > x_max or y < y_min or y > y_max) {
                     continue;
-                }
+		}
                 pts[k] = {x, y};
                 k++;
             }
