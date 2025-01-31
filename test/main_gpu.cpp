@@ -17,7 +17,7 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 2; // 1) Arbitrary lines intersect points. 2) Horizontal overlapping lines, 3) Arbitrary overlapping lines 
+	int line_rep = 3; // 1) Arbitrary lines intersect points. 2) Horizontal overlapping lines, 3) Arbitrary overlapping lines 
 
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
