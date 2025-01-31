@@ -104,7 +104,7 @@ int main(int argc, char * argv[]) {
 	   } else{
 	      switch(i){
               case 0:     // Cell 0
-                 line(i) = {{0.625, -0.25}, {-0.125, 0.375}};
+                 line(i) = {{0.625, -0.25}, {-0.125, 0.5}};
                  break;
               case 1:     // Cell 1
                  line(i) = {{.75, -0.125}, {0.375, 0.25}};
