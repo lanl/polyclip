@@ -17,7 +17,7 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 3; // 1) Arbitrary lines intersect points. 2) Horizontal overlapping lines, 3) Arbitrary overlapping lines 
+	int line_rep = 2; // 1) Arbitrary lines intersect points. 2) Horizontal overlapping lines, 3) Arbitrary overlapping lines 
 
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -260,38 +260,37 @@ int main(int argc, char * argv[]) {
 	    Point normal = normVec(mirror_intersect_points(cell));
 	    Point middle = middle_point(mirror_intersect_points(cell));
          
-            double dp;
+            float dp;
             int n = mesh.mirror_num_verts_per_cell_(cell) + 2;
+	
+	    float dpx;
+	    float dpy;
 
             for(int p = 0; p < n; p++){ // n = num_verts_per_cell + 2
                 // Vector of Node
 	       Point const V = pointVec(mirror_allPoints(cell, p), middle);
 
                 // Dot Product of normal and node vector
-                dp = (V.x * normal.x) + (V.y * normal.y);
+		dpx = (V.x * normal.x);
+		dpy = (V.y * normal.y);
+                dp = dpx + dpy;
 
                 // Convection of placement with respect to the line
-             if (dp < 0) {           // Below the line
+            	 if (dp < 0) {           // Below the line
                     mesh.mirror_signs_(cell, p) = -1;
                 } else if (dp > 0) {    // Above the line
                    mesh. mirror_signs_(cell, p) = 1;
-                } else {                // On the line
+                } else{                // On the line
                     mesh.mirror_signs_(cell, p) = 0;
                 }
-                // index++;
+               
                 std::cout << "Cell " << cell << ", at coordinate " << p << ": " << mesh.mirror_signs_(cell, p) << std::endl;
-	/*	if(cell == 1 and p == 3 or p == 4 and cell == 1){
-			std::cout << "MIRROR POINT: " << mirror_allPoints(cell, p).x << ", " << mirror_allPoints(cell, p).y << std::endl;
-			std::cout << "MIRROR LINE: " << mirror_intersect_points(cell).a.x << ", " << mirror_intersect_points(cell).a.y << "      " << mirror_intersect_points(cell).b.x << ", " << mirror_intersect_points(cell).b.y << std::endl;
-			std::cout << "MIRROR MIDDLE: " << middle.x << ", " << middle.y << std::endl;
-		}*/
-
 	    }
 	    std::cout << std::endl; 
         }
-
-
     }
+
+
     Kokkos::finalize();
     return EXIT_SUCCESS;
 }

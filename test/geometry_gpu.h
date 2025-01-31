@@ -53,8 +53,13 @@ namespace polyintersect {
 
     // Finding the dot product of the array and vector //////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    double dotProduct(Point const &v, Point const &n){
-        double product = (v.x * n.x) + (v.y * n.y);
+    float dotProduct(Point const &v, Point const &n){
+        //double product = (v.x * n.x) + (v.y * n.y);
+	float dpx = (v.x * n.x);
+	float dpy = (v.y * n.y);
+	float product = dpx + dpy;
+
+	// Dot Product 
         return product;
     }
 
@@ -63,7 +68,8 @@ namespace polyintersect {
     Point pointVec(Point const &p, Point const& middle){
         double dx = p.x - middle.x;
         double dy = p.y - middle.y;
-
+	
+	// Direction Vector
         return {dx, dy};
     }
 
@@ -82,30 +88,30 @@ namespace polyintersect {
                           Kokkos::View<Point**> allPoints,
                           Line line, 
                           Kokkos::View<int**> signs,
-                          int n){
+                          int const n){
 
         // Deduce the normal vector of the cutting line
-        auto normal = normVec(line);
-        int index = 0;
-        auto middle = middle_point(line);
-        double dp;
+        Point normal = normVec(line);
+        //int index = 0;
+        Point middle = middle_point(line);
+        float dp;
 
         for(int p = 0; p < n; p++){ 
             // Vector of Node
-            auto const V = pointVec(allPoints(c, p), middle);
+            Point const V = pointVec(allPoints(c, p), middle);
 
             // Dot Product of normal and node vector
             dp = dotProduct(V, normal);
 
             // Convection of placement with respect to the line
             if (dp < 0) {           // Below the line
-              signs(c, index) = -1;
+              signs(c, p) = -1;
             } else if (dp > 0) {    // Above the line
-              signs(c, index) = 1;
+              signs(c, p) = 1;
             } else {                // On the line
-              signs(c, index) = 0;
+              signs(c, p) = 0;
             }
-            index++;
+           // index++;
         }
     }
 
