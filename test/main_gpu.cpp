@@ -17,7 +17,7 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 2; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines 
+	int line_rep = 3; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines, 3) Vertical overlapping lines 
 
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -83,7 +83,7 @@ int main(int argc, char * argv[]) {
 
         // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
-	   if (line_rep == 1){
+	   if (line_rep == 1){	// Horizontal Lines
 	     switch(i){
               case 0:     // Cell 0
                  line(i) = {{1, 0.125}, {-1, 0.125}};
@@ -101,7 +101,7 @@ int main(int argc, char * argv[]) {
                  line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
                  break;
                 }
-	   } else{
+	   } else if (line_rep == 2){	// Arbitrary Lines
 	      switch(i){
               case 0:     // Cell 0
                  line(i) = {{0.625, -0.25}, {-0.125, 0.5}};
@@ -114,6 +114,24 @@ int main(int argc, char * argv[]) {
                  break;
               case 3:     // Cell 3
                  line(i) = {{0.75, 0.5}, {0.375, 0.875}};
+                 break;
+              default:
+                 line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 break;
+                }
+	   } else{
+	   switch(i){	// Vertical Lines
+              case 0:     // Cell 0
+                 line(i) = {{0.375, -0.375}, {0.375, 0.5}};
+                 break;
+              case 1:     // Cell 1
+                 line(i) = {{0.625, -0.375}, {0.625, 0.375}};
+                 break;
+              case 2:     // Cell 2
+                 line(i) = {{0.75, 0.0}, {0.75, 0.75}};
+                 break;
+              case 3:     // Cell 3
+                 line(i) = {{0.625, 0.375}, {0.625, 1.0}};
                  break;
               default:
                  line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
