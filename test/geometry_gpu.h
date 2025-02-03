@@ -117,15 +117,14 @@ namespace polyintersect {
 
     // Find the Center Coordinate ///////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point center(Kokkos::View<Point*> nodes){
+    Point center(int c, int n, Kokkos::View<Point**> allPoints){
         double sumX = 0, sumY = 0;
 
         // Add up all the coordinates /////
-        for(int p = 0; p < 6; p++){ //(const auto &p: nodes) {
-            sumX += nodes(p).x;
-            sumY += nodes(p).y;
+        for(int p = 0; p < n; p++){ //(const auto &p: nodes) {
+            sumX += allPoints(c, p).x;
+            sumY += allPoints(c, p).y;
         }
-        double const n = nodes.size();
 
         // Store middle coordinates ///////
         return {sumX / n, sumY / n};
@@ -148,5 +147,35 @@ namespace polyintersect {
         allPoints(cell, m) = line.a;
         allPoints(cell, (m + 1)) = line.b;
     }
+
+    // Compare Points ////////////////////////////////////////////////////////////////////
+    KOKKOS_INLINE_FUNCTION
+    bool compare_points(const Point p1, const Point p2, Point center_point){
+        double a1 = (std::atan2(p1.y - center_point.y, p1.x - center_point.x) * (180 / M_PI));
+        double a2 = (std::atan2(p2.y - center_point.y, p2.x - center_point.x) * (180 / M_PI));
+        return a1 < a2;
+    }
+
+    // Sort all points based on degrees ///////////////////////////////////////////////////
+    KOKKOS_INLINE_FUNCTION
+    void sorting(int c, int n, Kokkos::View<Point**> allPoints, Point center_point){
+        for (int i = 1; i < n; ++i) {
+            Point current_point = allPoints(c, i);
+            int insert_index = i;
+            for (int j = (i-1); j >= 0; j--){
+                if (compare_points(current_point, allPoints(c, j), center_point)){
+                    allPoints(c, (j + 1)) = allPoints(c, j);
+                    insert_index = j;
+                } 
+                else{
+                    break;
+                }
+            }
+            allPoints(c, insert_index) = current_point;
+        }
+
+    }
+
+
 }
 
