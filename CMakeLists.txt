@@ -13,7 +13,7 @@ option(USE_NATIVE_OMP "Run with multiple threads using OpenMP" OFF)
 if (USE_KOKKOS_GPU)
   add_executable(clip_gpu)
   target_include_directories(clip_gpu PUBLIC test)
-  target_sources(clip_gpu PUBLIC  test/main_gpu.cpp  test/mesh_gpu.cpp)
+  target_sources(clip_gpu PUBLIC  test/main_gpu.cpp  test/mesh_gpu.cpp test/materials_gpu.cpp)
 
   # link with Kokkos
   find_package(Kokkos REQUIRED)

@@ -1,5 +1,6 @@
 #include "clippings_gpu.h"
 #include "mesh_gpu.h"
+#include "materials_gpu.h"
 #include "intersect_gpu.h"
 #include <Kokkos_Core.hpp>
 #include <omp.h>
@@ -17,10 +18,11 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines, 3) Vertical overlapping lines 
+	int line_rep = 2; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines, 3) Vertical overlapping lines 
 
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
+	Materials materials(total_points, total_cells, max_edges_per_cell);
 
         // All Nodes 
         mesh.add_points(0, {0.0, 0.0});
@@ -70,13 +72,6 @@ int main(int argc, char * argv[]) {
        	// CPU to GPU
         mesh.send_to_gpu();
 
-	// Important Data Memebers //////////////////////////////////////////////////////////////////////////////
-        Kokkos::View<Line*> line("line", total_cells);
-        Kokkos::View<Line*> intersect_points("intersect", total_cells);
-        Kokkos::View<int**> output("output", total_cells, max_edges_per_cell);  // Cell ID, Edge ID
-        Kokkos::View<int*> size_output("sizeoutput", total_cells);                                           
-        Kokkos::View<Point**> allPoints("allpoints", total_cells, (max_edges_per_cell + 2));  // Cell ID, All Points Coordinate (Vertices + intersect points)
-
         // Max Threads and Timer
         int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
         auto start = timer::now();      
@@ -86,55 +81,55 @@ int main(int argc, char * argv[]) {
 	   if (line_rep == 1){	// Horizontal Lines
 	     switch(i){
               case 0:     // Cell 0
-                 line(i) = {{1, 0.125}, {-1, 0.125}};
+                 materials.line_(i) = {{1, 0.125}, {-1, 0.125}};
                  break;
               case 1:     // Cell 1
-                 line(i) = {{1, 0.125}, {-1, 0.125}};
+                 materials.line_(i) = {{1, 0.125}, {-1, 0.125}};
                  break;
               case 2:     // Cell 2
-                 line(i) = {{1.5, 0.5}, {-1, 0.5}};
+                 materials.line_(i) = {{1.5, 0.5}, {-1, 0.5}};
                  break;
               case 3:     // Cell 3
-                 line(i) = {{1.5, 0.75}, {-1, 0.75}};
+                 materials.line_(i) = {{1.5, 0.75}, {-1, 0.75}};
                  break;
               default:
-                 line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 materials.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
                  break;
                 }
 	   } else if (line_rep == 2){	// Arbitrary Lines
 	      switch(i){
               case 0:     // Cell 0
-                 line(i) = {{0.625, -0.25}, {-0.125, 0.5}};
+                 materials.line_(i) = {{0.625, -0.25}, {-0.125, 0.5}};
                  break;
               case 1:     // Cell 1
-                 line(i) = {{.75, -0.125}, {0.375, 0.25}};
+                 materials.line_(i) = {{.75, -0.125}, {0.375, 0.25}};
                  break;
               case 2:     // Cell 2
-                 line(i) = {{0.875, 0.0}, {0.25, 0.625}};
+                 materials.line_(i) = {{0.875, 0.0}, {0.25, 0.625}};
                  break;
               case 3:     // Cell 3
-                 line(i) = {{0.75, 0.5}, {0.375, 0.875}};
+                 materials.line_(i) = {{0.75, 0.5}, {0.375, 0.875}};
                  break;
               default:
-                 line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 materials.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
                  break;
                 }
 	   } else{
 	   switch(i){	// Vertical Lines
               case 0:     // Cell 0
-                 line(i) = {{0.375, -0.375}, {0.375, 0.5}};
+                 materials.line_(i) = {{0.375, -0.375}, {0.375, 0.5}};
                  break;
               case 1:     // Cell 1
-                 line(i) = {{0.625, -0.375}, {0.625, 0.375}};
+                 materials.line_(i) = {{0.625, -0.375}, {0.625, 0.375}};
                  break;
               case 2:     // Cell 2
-                 line(i) = {{0.75, 0.0}, {0.75, 0.75}};
+                 materials.line_(i) = {{0.75, 0.0}, {0.75, 0.75}};
                  break;
               case 3:     // Cell 3
-                 line(i) = {{0.625, 0.375}, {0.625, 1.0}};
+                 materials.line_(i) = {{0.625, 0.375}, {0.625, 1.0}};
                  break;
               default:
-                 line(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 materials.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
                  break;
                 }
 	   }
@@ -142,29 +137,18 @@ int main(int argc, char * argv[]) {
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
-	    intersect_points(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, line(c), mesh.num_verts_per_cell_);
-            clip_below_3(c, mesh.device_points_, mesh.device_cells_, intersect_points(c),
-                         output, size_output, mesh.num_verts_per_cell_, mesh.signs_, allPoints);
+	    materials.intersect_points_(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, materials.line_(c), mesh.num_verts_per_cell_);
+            clip_below_3(c, mesh.device_points_, mesh.device_cells_, materials.intersect_points_(c),
+                         materials.output_, materials.size_output_, mesh.num_verts_per_cell_, mesh.signs_, materials.allPoints_);
         });
 	
 	// Verify Results by Printing on the CPU //////////////////////////////////////////////////////////////// 
         auto const end = timer::elapsed(start); // time deep copy
 
-        // CPU Copy 
-        auto mirror_output = Kokkos::create_mirror_view(output);
-	auto mirror_size_output = Kokkos::create_mirror_view(size_output);
-        auto mirror_allPoints = Kokkos::create_mirror_view(allPoints);
-        auto mirror_intersect_points = Kokkos::create_mirror_view(intersect_points);
-        auto mirror_line = Kokkos::create_mirror_view(line);
-
-	Kokkos::deep_copy(mirror_output, output);
-	Kokkos::deep_copy(mirror_size_output, size_output);
-        Kokkos::deep_copy(mirror_allPoints, allPoints);
-        Kokkos::deep_copy(mirror_intersect_points, intersect_points);
-	Kokkos::deep_copy(mirror_line, line);
-
-	// Send to CPU
+       	// Send to CPU
 	mesh.send_to_cpu();
+	materials.send_to_cpu();
+
         auto const end_including_copy = timer::elapsed(start);
 
         // Print elapsed time 
@@ -203,8 +187,8 @@ int main(int argc, char * argv[]) {
         std::cout << std::endl;
         std::cout << "------ Line ------" << std::endl;
         for (int j = 0; j < total_cells; ++j) {
-            auto const pa = mirror_line(j).a;
-            auto const pb = mirror_line(j).b;
+            auto const pa = materials.mirror_line_(j).a;
+            auto const pb = materials.mirror_line_(j).b;
             std::cout << "Line at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
         }
         
@@ -212,8 +196,8 @@ int main(int argc, char * argv[]) {
         std::cout << std::endl;
         std::cout << "------ Intersect Points ------" << std::endl;
         for (int j = 0; j < total_cells; ++j) {
-            auto const pa = mirror_intersect_points(j).a;
-            auto const pb = mirror_intersect_points(j).b;
+            auto const pa = materials.mirror_intersect_points_(j).a;
+            auto const pb = materials.mirror_intersect_points_(j).b;
             std::cout << "Intersection Points at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
         }
 
@@ -223,7 +207,7 @@ int main(int argc, char * argv[]) {
         for(int c = 0; c < total_cells; c++){
 		int t = mesh.mirror_num_verts_per_cell_(c) + 2;
             for(int i = 0; i < t; i++){
-                auto const p = mirror_allPoints(c, i);
+                auto const p = materials.mirror_allPoints_(c, i);
                 std::cout << "Points at Cell  " << c << ": (" << p.x << ", "<< p.y << ") "<< std::endl;
             }
             std::cout << std::endl;
@@ -233,11 +217,11 @@ int main(int argc, char * argv[]) {
         std::cout << std::endl;
 	std::cout << "------ Output ------" << std::endl;
         for(int c = 0; c < total_cells; c++){
-	    int t = mirror_size_output(c); 
+	    int t = materials.mirror_size_output_(c); 
 	   // std::cout << "Total outputs: " << t << std::endl;
 	    for(int i = 0; i < t; i++){
-                int const j = mirror_output(c, i);
-                auto const p = mirror_allPoints(c, j);
+                int const j = materials.mirror_output_(c, i);
+                auto const p = materials.mirror_allPoints_(c, j);
                 std::cout << "Below line at cell " << c << ", Coordinate " << i << ": (";
 	        std::cout << p.x << ", "<< p.y << ") "<< std::endl;
             }
