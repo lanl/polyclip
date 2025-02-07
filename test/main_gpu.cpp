@@ -1,5 +1,6 @@
 #include "clippings_gpu.h"
 #include "mesh_gpu.h"
+#include "clipped_part_gpu.h"
 #include "intersect_gpu.h"
 #include <Kokkos_Core.hpp>
 #include <omp.h>
@@ -17,8 +18,11 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-        // Create mesh
+	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines, 3) Vertical overlapping lines 
+
+        // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
+	Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
 
         // All Nodes 
         mesh.add_points(0, {0.0, 0.0});
@@ -68,41 +72,82 @@ int main(int argc, char * argv[]) {
        	// CPU to GPU
         mesh.send_to_gpu();
 
-        //Kokkos::View<Line*> line("line", total _cells);
-        Kokkos::View<Line*> interface("interface", total_cells);
-        Kokkos::View<int**> output("output", total_cells, max_edges_per_cell);
-        Kokkos::View<int*> size_output("sizeoutput", total_cells);                                           
-        Kokkos::View<Point**> allPoints("allpoints", total_cells, (max_edges_per_cell + 2));    // Cell points + intersect points
-
-        // Max Threads
+        // Max Threads and Timer
         int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
-
-        // Timer
         auto start = timer::now();      
 
-        // Clipping below for Every Cell 
-        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
-            interface(c) = fake_intersect_cell(c);
-            clip_below_3(c, mesh.device_points_, mesh.device_cells_, interface(c),
-                         output, size_output, mesh.num_verts_per_cell_, mesh.signs_, allPoints);
+        // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
+        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
+	   if (line_rep == 1){	// Horizontal Lines
+	     switch(i){
+              case 0:     // Cell 0
+                 clipped_part.line_(i) = {{1, 0.125}, {-1, 0.125}};
+                 break;
+              case 1:     // Cell 1
+                 clipped_part.line_(i) = {{1, 0.125}, {-1, 0.125}};
+                 break;
+              case 2:     // Cell 2
+                 clipped_part.line_(i) = {{1.5, 0.5}, {-1, 0.5}};
+                 break;
+              case 3:     // Cell 3
+                 clipped_part.line_(i) = {{1.5, 0.75}, {-1, 0.75}};
+                 break;
+              default:
+                 clipped_part.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 break;
+                }
+	   } else if (line_rep == 2){	// Arbitrary Lines
+	      switch(i){
+              case 0:     // Cell 0
+                 clipped_part.line_(i) = {{0.625, -0.25}, {-0.125, 0.5}};
+                 break;
+              case 1:     // Cell 1
+                 clipped_part.line_(i) = {{.75, -0.125}, {0.375, 0.25}};
+                 break;
+              case 2:     // Cell 2
+                 clipped_part.line_(i) = {{0.875, 0.0}, {0.25, 0.625}};
+                 break;
+              case 3:     // Cell 3
+                 clipped_part.line_(i) = {{0.75, 0.5}, {0.375, 0.875}};
+                 break;
+              default:
+                 clipped_part.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 break;
+                }
+	   } else{
+	   switch(i){	// Vertical Lines
+              case 0:     // Cell 0
+                 clipped_part.line_(i) = {{0.375, -0.375}, {0.375, 0.5}};
+                 break;
+              case 1:     // Cell 1
+                 clipped_part.line_(i) = {{0.625, -0.375}, {0.625, 0.375}};
+                 break;
+              case 2:     // Cell 2
+                 clipped_part.line_(i) = {{0.75, 0.0}, {0.75, 0.75}};
+                 break;
+              case 3:     // Cell 3
+                 clipped_part.line_(i) = {{0.625, 0.375}, {0.625, 1.0}};
+                 break;
+              default:
+                 clipped_part.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 break;
+                }
+	   }
         });
 
-        auto const end = timer::elapsed(start);
+        // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
+        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
+	    clipped_part.intersect_points_(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, clipped_part.line_(c), mesh.num_verts_per_cell_);
+            clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
+                         clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, clipped_part.allPoints_);
+        });
+	
+	// Verify Results by Printing on the CPU //////////////////////////////////////////////////////////////// 
+        auto const end = timer::elapsed(start); // time deep copy
 
-        // CPU Copy 
-        auto mirror_output = Kokkos::create_mirror_view(output);
-	auto mirror_size_output = Kokkos::create_mirror_view(size_output);
-        auto mirror_allPoints = Kokkos::create_mirror_view(allPoints);
-        auto mirror_interface = Kokkos::create_mirror_view(interface);
-       // auto mirror_line = Kokkos::create_mirror_view(line);
-
-	Kokkos::deep_copy(mirror_output, output);
-	Kokkos::deep_copy(mirror_size_output, size_output);
-        Kokkos::deep_copy(mirror_allPoints, allPoints);
-        Kokkos::deep_copy(mirror_interface, interface);
-        //Kokkos::deep_copy(mirror_line, line);
-
+       	// Send to CPU
 	mesh.send_to_cpu();
+	clipped_part.send_to_cpu();
 
         auto const end_including_copy = timer::elapsed(start);
 
@@ -111,8 +156,6 @@ int main(int argc, char * argv[]) {
         std::cout << "Deep copy: " << end_including_copy << " µs" << std::endl;
         std::cout << "Max Threads: " << max_threads << std::endl << std::endl; 
 
-  
-        // GPU Results ///////////////////////////////////////////////////////////////////////
         // Print Cells 
         std::cout << std::endl;
         std::cout << "---------------- GPU Results ----------------" << std::endl;
@@ -139,13 +182,22 @@ int main(int argc, char * argv[]) {
                 std::cout << "Point " << j << ": (" << mesh.mirror_points_(j).x << ", " << mesh.mirror_points_(j).y << ")" << std::endl;
         
         }
-        
-	// Print Interface 
+
+	// Print Line
         std::cout << std::endl;
-        std::cout << "------ Interface ------" << std::endl;
+        std::cout << "------ Line ------" << std::endl;
         for (int j = 0; j < total_cells; ++j) {
-            auto const pa = mirror_interface(j).a;
-            auto const pb = mirror_interface(j).b;
+            auto const pa = clipped_part.mirror_line_(j).a;
+            auto const pb = clipped_part.mirror_line_(j).b;
+            std::cout << "Line at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
+        }
+        
+	// Print Intersect Points
+        std::cout << std::endl;
+        std::cout << "------ Intersect Points ------" << std::endl;
+        for (int j = 0; j < total_cells; ++j) {
+            auto const pa = clipped_part.mirror_intersect_points_(j).a;
+            auto const pb = clipped_part.mirror_intersect_points_(j).b;
             std::cout << "Intersection Points at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
         }
 
@@ -155,7 +207,7 @@ int main(int argc, char * argv[]) {
         for(int c = 0; c < total_cells; c++){
 		int t = mesh.mirror_num_verts_per_cell_(c) + 2;
             for(int i = 0; i < t; i++){
-                auto const p = mirror_allPoints(c, i);
+                auto const p = clipped_part.mirror_allPoints_(c, i);
                 std::cout << "Points at Cell  " << c << ": (" << p.x << ", "<< p.y << ") "<< std::endl;
             }
             std::cout << std::endl;
@@ -165,16 +217,30 @@ int main(int argc, char * argv[]) {
         std::cout << std::endl;
 	std::cout << "------ Output ------" << std::endl;
         for(int c = 0; c < total_cells; c++){
-	    int t = mirror_size_output(c); 
+	    int t = clipped_part.mirror_size_output_(c); 
+	   // std::cout << "Total outputs: " << t << std::endl;
 	    for(int i = 0; i < t; i++){
-                int const j = mirror_output(c, i);
-                auto const p = mirror_allPoints(c, j);
+                int const j = clipped_part.mirror_output_(c, i);
+                auto const p = clipped_part.mirror_allPoints_(c, j);
                 std::cout << "Below line at cell " << c << ", Coordinate " << i << ": (";
-		std::cout << p.x << ", "<< p.y << ") "<< std::endl;
+	        std::cout << p.x << ", "<< p.y << ") "<< std::endl;
             }
             std::cout << std::endl;
         }
+
+	// Print signs
+	std::cout << "------ Signs ------" << std::endl;
+        for(int i = 0; i < total_cells; i++){
+            int t = mesh.mirror_num_verts_per_cell_(i) + 2;
+            for(int j = 0; j < t; j++){
+                std::cout << "Sign at cell "<< i << ": " << mesh.mirror_signs_(i, j) << std::endl;
+            }
+            std::cout << std::endl;
+        }
+	
     }
+
+
     Kokkos::finalize();
     return EXIT_SUCCESS;
 }

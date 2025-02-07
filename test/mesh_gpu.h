@@ -23,13 +23,15 @@ namespace polyintersect {
 
     // mesh data members for host and device
     Kokkos::View<Point*, Kokkos::CudaSpace> device_points_;
-    Kokkos::View<int***, Kokkos::CudaSpace> device_cells_;
+    Kokkos::View<int***, Kokkos::CudaSpace> device_cells_;  // Cell ID, Edge ID, Edge Point ID's
     Kokkos::View<Point*>::HostMirror mirror_points_;
     Kokkos::View<int***,>::HostMirror mirror_cells_;
  
     Kokkos::View<int*, Kokkos::CudaSpace>  num_verts_per_cell_;
-    Kokkos::View<int**, Kokkos::CudaSpace> signs_;
+    Kokkos::View<int**, Kokkos::CudaSpace> signs_;  // Cell ID, All Points ID (Vertices + Intersect points) 
     Kokkos::View<int*>::HostMirror mirror_num_verts_per_cell_;
+    Kokkos::View<int**,>::HostMirror mirror_signs_;
+
   };
 }
 

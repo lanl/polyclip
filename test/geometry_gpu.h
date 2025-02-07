@@ -53,39 +53,56 @@ namespace polyintersect {
 
     // Finding the dot product of the array and vector //////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    double dotProduct(Point const &v, Point const &n){
-        double product = (v.x * n.x) + (v.y * n.y);
-        return product;
+    float dotProduct(Point const &v, Point const &n){
+        double const product = (v.x * n.x) + (v.y * n.y);
+	//float dpx = (v.x * n.x);
+	//float dpy = (v.y * n.y);
+	//float product = dpx + dpy;
+	
+	double const epsilon = 1.e-15;
+	// Dot Product 
+        return std::abs(product) < epsilon ? 0.0 : product;
     }
 
     // Point Vector /////////////////////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point pointVec(Point const &p, Line const& line){
-        double dx = p.x - line.a.x;
-        double dy = p.y - line.a.y;
-
+    Point pointVec(Point const &p, Point const& middle){
+        double dx = p.x - middle.x;
+        double dy = p.y - middle.y;
+	
+	// Direction Vector
         return {dx, dy};
+    }
+
+    // Middile Point of the Interface ////////////////////////////////////////////////////////
+    KOKKOS_INLINE_FUNCTION
+    Point middle_point(Line const& line){
+        double mx = (line.a.x + line.b.x) / 2;
+        double my = (line.a.y + line.b.y) / 2;
+
+        return {mx, my};
     }
 
     // Orientation of Every Node for Method 2 and 3 /////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
     void orientation_clip(int c, 
                           Kokkos::View<Point**> allPoints,
-                          Line interface, 
+                          Line line, 
                           Kokkos::View<int**> signs,
-                          int n){
+                          int const n){
 
         // Deduce the normal vector of the cutting line
-        auto normal = normVec(interface);
-       // int index = 0;
-        double dp;
+        Point normal = normVec(line);
+        //int index = 0;
+        Point middle = middle_point(line);
+        float dp;
 
         for(int p = 0; p < n; p++){ 
             // Vector of Node
-            auto const V = pointVec(allPoints(c, p), interface);
+            Point const V = pointVec(allPoints(c, p), middle);
 
             // Dot Product of normal and node vector
-            dp = dotProduct(normal, V);
+            dp = dotProduct(V, normal);
 
             // Convection of placement with respect to the line
             if (dp < 0) {           // Below the line
@@ -99,34 +116,16 @@ namespace polyintersect {
         }
     }
 
-    // Fake Intersect ///////////////////////////////////////////////////////////////////////
-    KOKKOS_INLINE_FUNCTION
-    Line fake_intersect_cell(int c){
-        switch(c){
-            case 0:	// Cell 0
-                return {{.5, 0.125}, {0, 0.125}}; 
-            case 1:	// Cell 1
-                return {{0.75, 0.125}, {0.5, 0.125}};
-            case 2:	// Cell 2
-                return {{0.9375, 0.5}, {0.375, 0.5}};
-            case 3:	// Cell 3
-                return {{0.875, 0.75}, {0.5, 0.75}};
-            default: 
-                return {{-1.0, -1.0}, {-1.0, -1.0}};
-        }
-    }
-
     // Find the Center Coordinate ///////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point center(Kokkos::View<Point*> nodes){
+    Point center(int c, int n, Kokkos::View<Point**> allPoints){
         double sumX = 0, sumY = 0;
 
         // Add up all the coordinates /////
-        for(int p = 0; p < 6; p++){ //(const auto &p: nodes) {
-            sumX += nodes(p).x;
-            sumY += nodes(p).y;
+        for(int p = 0; p < n; p++){ //(const auto &p: nodes) {
+            sumX += allPoints(c, p).x;
+            sumY += allPoints(c, p).y;
         }
-        double const n = nodes.size();
 
         // Store middle coordinates ///////
         return {sumX / n, sumY / n};
@@ -137,7 +136,7 @@ namespace polyintersect {
     void list_of_points(int cell,
                         Kokkos::View<Point*> points,
                         Kokkos::View<int***> cells,
-                        Line const &interface,
+                        Line const &line,
                         Kokkos::View<Point**> allPoints, 
                         Kokkos::View<int*> num_verts_per_cell) {
 
@@ -146,8 +145,38 @@ namespace polyintersect {
             int index = cells(cell, i, 0);
             allPoints(cell, i) = points(index);
         }
-        allPoints(cell, m) = interface.a;
-        allPoints(cell, m + 1) = interface.b;
+        allPoints(cell, m) = line.a;
+        allPoints(cell, (m + 1)) = line.b;
     }
+
+    // Compare Points ////////////////////////////////////////////////////////////////////
+    KOKKOS_INLINE_FUNCTION
+    bool compare_points(const Point p1, const Point p2, Point center_point){
+        double a1 = (std::atan2(p1.y - center_point.y, p1.x - center_point.x) * (180 / M_PI));
+        double a2 = (std::atan2(p2.y - center_point.y, p2.x - center_point.x) * (180 / M_PI));
+        return a1 < a2;
+    }
+
+    // Sort all points based on degrees ///////////////////////////////////////////////////
+    KOKKOS_INLINE_FUNCTION
+    void sorting(int c, int n, Kokkos::View<Point**> allPoints, Point center_point){
+        for (int i = 1; i < n; ++i) {
+            Point current_point = allPoints(c, i);
+            int insert_index = i;
+            for (int j = (i-1); j >= 0; j--){
+                if (compare_points(current_point, allPoints(c, j), center_point)){
+                    allPoints(c, (j + 1)) = allPoints(c, j);
+                    insert_index = j;
+                } 
+                else{
+                    break;
+                }
+            }
+            allPoints(c, insert_index) = current_point;
+        }
+
+    }
+
+
 }
 
