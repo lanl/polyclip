@@ -14,13 +14,14 @@ namespace polyintersect {
 
 
         int const n = num_verts_per_cell(c);
-	double x_min, y_min, x_max, y_max;
         Point pts[2];
 
         int k = 0;
         for (int i = 0; i < n; ++i) {
             int const a = cells(c, i, 0);
             int const b = cells(c, i, 1);
+	
+	    double x_min, y_min, x_max, y_max;
 
 	    // deduce bounds on coordinates of the edge we are currently viewing
             if(points(a).x > points(b).x){

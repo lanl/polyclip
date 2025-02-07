@@ -7,13 +7,13 @@
 namespace polyintersect {
 
 // Materials needed for the mesh
-  class Materials {
+  class Clipped_Part {
   public:
     // constructor
-    Materials(int total_points, int total_cells, int max_edges_per_cell);
+    Clipped_Part(int total_points, int total_cells, int max_edges_per_cell);
 
     // destructor
-    ~Materials() = default;
+    ~Clipped_Part() = default;
     
     // Verify results
     void send_to_cpu();

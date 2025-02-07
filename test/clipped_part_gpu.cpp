@@ -1,12 +1,12 @@
-#include "materials_gpu.h"
+#include "clipped_part_gpu.h"
 
 namespace polyintersect {
 
 // Create the Mesh //////////////////////////////////////////////////////////////////////
-  Materials::Materials(int total_points, int total_cells, int max_edges_per_cell) {
+  Clipped_Part::Clipped_Part(int total_points, int total_cells, int max_edges_per_cell) {
     Kokkos::resize(line_, total_cells);  // malloc
     Kokkos::resize(intersect_points_, total_cells);
-    Kokkos::resize(output_, total_cells, max_edges_per_cell);
+    Kokkos::resize(output_, total_cells, (max_edges_per_cell + 2));
     Kokkos::resize(size_output_, total_cells);	
     Kokkos::resize(allPoints_, total_cells, (max_edges_per_cell + 2));
 
@@ -19,7 +19,7 @@ namespace polyintersect {
   }
 
 // GPU to CPU ///////////////////////////////////////////////////////////////////////////////////////
-  void Materials::send_to_cpu(){
+  void Clipped_Part::send_to_cpu(){
     Kokkos::deep_copy(mirror_output_, output_);
     Kokkos::deep_copy(mirror_size_output_, size_output_);
     Kokkos::deep_copy(mirror_allPoints_, allPoints_);

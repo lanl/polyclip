@@ -54,13 +54,14 @@ namespace polyintersect {
     // Finding the dot product of the array and vector //////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
     float dotProduct(Point const &v, Point const &n){
-        //double product = (v.x * n.x) + (v.y * n.y);
-	float dpx = (v.x * n.x);
-	float dpy = (v.y * n.y);
-	float product = dpx + dpy;
-
+        double const product = (v.x * n.x) + (v.y * n.y);
+	//float dpx = (v.x * n.x);
+	//float dpy = (v.y * n.y);
+	//float product = dpx + dpy;
+	
+	double const epsilon = 1.e-15;
 	// Dot Product 
-        return product;
+        return std::abs(product) < epsilon ? 0.0 : product;
     }
 
     // Point Vector /////////////////////////////////////////////////////////////////////////

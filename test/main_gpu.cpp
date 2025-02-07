@@ -1,6 +1,6 @@
 #include "clippings_gpu.h"
 #include "mesh_gpu.h"
-#include "materials_gpu.h"
+#include "clipped_part_gpu.h"
 #include "intersect_gpu.h"
 #include <Kokkos_Core.hpp>
 #include <omp.h>
@@ -18,11 +18,11 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 2; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines, 3) Vertical overlapping lines 
+	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines, 3) Vertical overlapping lines 
 
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-	Materials materials(total_points, total_cells, max_edges_per_cell);
+	Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
 
         // All Nodes 
         mesh.add_points(0, {0.0, 0.0});
@@ -81,55 +81,55 @@ int main(int argc, char * argv[]) {
 	   if (line_rep == 1){	// Horizontal Lines
 	     switch(i){
               case 0:     // Cell 0
-                 materials.line_(i) = {{1, 0.125}, {-1, 0.125}};
+                 clipped_part.line_(i) = {{1, 0.125}, {-1, 0.125}};
                  break;
               case 1:     // Cell 1
-                 materials.line_(i) = {{1, 0.125}, {-1, 0.125}};
+                 clipped_part.line_(i) = {{1, 0.125}, {-1, 0.125}};
                  break;
               case 2:     // Cell 2
-                 materials.line_(i) = {{1.5, 0.5}, {-1, 0.5}};
+                 clipped_part.line_(i) = {{1.5, 0.5}, {-1, 0.5}};
                  break;
               case 3:     // Cell 3
-                 materials.line_(i) = {{1.5, 0.75}, {-1, 0.75}};
+                 clipped_part.line_(i) = {{1.5, 0.75}, {-1, 0.75}};
                  break;
               default:
-                 materials.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 clipped_part.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
                  break;
                 }
 	   } else if (line_rep == 2){	// Arbitrary Lines
 	      switch(i){
               case 0:     // Cell 0
-                 materials.line_(i) = {{0.625, -0.25}, {-0.125, 0.5}};
+                 clipped_part.line_(i) = {{0.625, -0.25}, {-0.125, 0.5}};
                  break;
               case 1:     // Cell 1
-                 materials.line_(i) = {{.75, -0.125}, {0.375, 0.25}};
+                 clipped_part.line_(i) = {{.75, -0.125}, {0.375, 0.25}};
                  break;
               case 2:     // Cell 2
-                 materials.line_(i) = {{0.875, 0.0}, {0.25, 0.625}};
+                 clipped_part.line_(i) = {{0.875, 0.0}, {0.25, 0.625}};
                  break;
               case 3:     // Cell 3
-                 materials.line_(i) = {{0.75, 0.5}, {0.375, 0.875}};
+                 clipped_part.line_(i) = {{0.75, 0.5}, {0.375, 0.875}};
                  break;
               default:
-                 materials.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 clipped_part.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
                  break;
                 }
 	   } else{
 	   switch(i){	// Vertical Lines
               case 0:     // Cell 0
-                 materials.line_(i) = {{0.375, -0.375}, {0.375, 0.5}};
+                 clipped_part.line_(i) = {{0.375, -0.375}, {0.375, 0.5}};
                  break;
               case 1:     // Cell 1
-                 materials.line_(i) = {{0.625, -0.375}, {0.625, 0.375}};
+                 clipped_part.line_(i) = {{0.625, -0.375}, {0.625, 0.375}};
                  break;
               case 2:     // Cell 2
-                 materials.line_(i) = {{0.75, 0.0}, {0.75, 0.75}};
+                 clipped_part.line_(i) = {{0.75, 0.0}, {0.75, 0.75}};
                  break;
               case 3:     // Cell 3
-                 materials.line_(i) = {{0.625, 0.375}, {0.625, 1.0}};
+                 clipped_part.line_(i) = {{0.625, 0.375}, {0.625, 1.0}};
                  break;
               default:
-                 materials.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 clipped_part.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
                  break;
                 }
 	   }
@@ -137,9 +137,9 @@ int main(int argc, char * argv[]) {
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
-	    materials.intersect_points_(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, materials.line_(c), mesh.num_verts_per_cell_);
-            clip_below_3(c, mesh.device_points_, mesh.device_cells_, materials.intersect_points_(c),
-                         materials.output_, materials.size_output_, mesh.num_verts_per_cell_, mesh.signs_, materials.allPoints_);
+	    clipped_part.intersect_points_(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, clipped_part.line_(c), mesh.num_verts_per_cell_);
+            clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
+                         clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, clipped_part.allPoints_);
         });
 	
 	// Verify Results by Printing on the CPU //////////////////////////////////////////////////////////////// 
@@ -147,7 +147,7 @@ int main(int argc, char * argv[]) {
 
        	// Send to CPU
 	mesh.send_to_cpu();
-	materials.send_to_cpu();
+	clipped_part.send_to_cpu();
 
         auto const end_including_copy = timer::elapsed(start);
 
@@ -187,8 +187,8 @@ int main(int argc, char * argv[]) {
         std::cout << std::endl;
         std::cout << "------ Line ------" << std::endl;
         for (int j = 0; j < total_cells; ++j) {
-            auto const pa = materials.mirror_line_(j).a;
-            auto const pb = materials.mirror_line_(j).b;
+            auto const pa = clipped_part.mirror_line_(j).a;
+            auto const pb = clipped_part.mirror_line_(j).b;
             std::cout << "Line at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
         }
         
@@ -196,8 +196,8 @@ int main(int argc, char * argv[]) {
         std::cout << std::endl;
         std::cout << "------ Intersect Points ------" << std::endl;
         for (int j = 0; j < total_cells; ++j) {
-            auto const pa = materials.mirror_intersect_points_(j).a;
-            auto const pb = materials.mirror_intersect_points_(j).b;
+            auto const pa = clipped_part.mirror_intersect_points_(j).a;
+            auto const pb = clipped_part.mirror_intersect_points_(j).b;
             std::cout << "Intersection Points at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
         }
 
@@ -207,7 +207,7 @@ int main(int argc, char * argv[]) {
         for(int c = 0; c < total_cells; c++){
 		int t = mesh.mirror_num_verts_per_cell_(c) + 2;
             for(int i = 0; i < t; i++){
-                auto const p = materials.mirror_allPoints_(c, i);
+                auto const p = clipped_part.mirror_allPoints_(c, i);
                 std::cout << "Points at Cell  " << c << ": (" << p.x << ", "<< p.y << ") "<< std::endl;
             }
             std::cout << std::endl;
@@ -217,11 +217,11 @@ int main(int argc, char * argv[]) {
         std::cout << std::endl;
 	std::cout << "------ Output ------" << std::endl;
         for(int c = 0; c < total_cells; c++){
-	    int t = materials.mirror_size_output_(c); 
+	    int t = clipped_part.mirror_size_output_(c); 
 	   // std::cout << "Total outputs: " << t << std::endl;
 	    for(int i = 0; i < t; i++){
-                int const j = materials.mirror_output_(c, i);
-                auto const p = materials.mirror_allPoints_(c, j);
+                int const j = clipped_part.mirror_output_(c, i);
+                auto const p = clipped_part.mirror_allPoints_(c, j);
                 std::cout << "Below line at cell " << c << ", Coordinate " << i << ": (";
 	        std::cout << p.x << ", "<< p.y << ") "<< std::endl;
             }
