@@ -42,10 +42,13 @@ namespace polyintersect {
 
     // Finding the normal vector between 2 Points ///////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point normVec(Line const &line){
+    Point normVec(Line const &line){ //Point a, Point b){ //(Line const &line){
         // Direction vec
         double dx = line.b.x - line.a.x;     // x2 - x1
         double dy = line.b.y - line.a.y;     // y2 - y1
+
+	//double dx = b.x - a.x;     // x2 - x1
+        //double dy = b.y - a.y;     // y2 - y1
 
         // Normal vec
         return {dy, -dx};
@@ -53,7 +56,7 @@ namespace polyintersect {
 
     // Finding the dot product of the array and vector //////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    float dotProduct(Point const &v, Point const &n){
+    double dotProduct(Point const &v, Point const &n){
         double const product = (v.x * n.x) + (v.y * n.y);
 	//float dpx = (v.x * n.x);
 	//float dpy = (v.y * n.y);
@@ -91,25 +94,34 @@ namespace polyintersect {
                           Kokkos::View<int**> signs,
                           int const n){
 
-        // Deduce the normal vector of the cutting line
-        Point normal = normVec(line);
-        //int index = 0;
-        Point middle = middle_point(line);
-        float dp;
+	double distance;
+	double signed_distance;
+
+        // Deduce the normal vector, middle point, and distance of the clipping line
+        Point normal = normVec(line);			// 1) Calculate normal of the line
+        Point middle = middle_point(line);		// 2) Calculate the middle point of the line
+	distance = -dotProduct(middle, normal);		// 3) Calculate the distance of the line
+        //double dp;
+	
 
         for(int p = 0; p < n; p++){ 
-            // Vector of Node
-            Point const V = pointVec(allPoints(c, p), middle);
+            // Current point
+	    Point p0 = allPoints(c, p);
 
+	    //Point normal = normVec(p0, p1);
+            //Point const V = pointVec(allPoints(c, p), middle);
             // Dot Product of normal and node vector
-            dp = dotProduct(V, normal);
+	    //distance = dotProduct(V, normal);
+
+	    // Find the signed distance of every vertex
+            signed_distance = dotProduct(p0, normal) + distance;
 
             // Convection of placement with respect to the line
-            if (dp < 0) {           // Below the line
+            if (signed_distance < 0) {           // Below the line
               signs(c, p) = -1;
-            } else if (dp > 0) {    // Above the line
+            } else if (signed_distance > 0) {    // Above the line
               signs(c, p) = 1;
-            } else {                // On the line
+            } else {               		 // On the line
               signs(c, p) = 0;
             }
            // index++;
