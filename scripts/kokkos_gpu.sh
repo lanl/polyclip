@@ -1,4 +1,4 @@
-if [-f "CMakeCache.txt"]
+if [ -f "CMakeCache.txt" ]; then
   rm CMakeCache.txt
 fi
 
