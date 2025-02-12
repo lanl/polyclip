@@ -30,9 +30,14 @@ namespace polyintersect {
         double y = 0.0;
     };
 
+    struct Intersect {
+    	Point a;
+	Point b;
+    };
+
     struct Line {
-        Point a;
-        Point b;
+        Point n;  // normal
+        double d; // distance
     };
 
     struct Edge {
@@ -42,13 +47,13 @@ namespace polyintersect {
 
     // Finding the normal vector between 2 Points ///////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point normVec(Line const &line){ //Point a, Point b){ //(Line const &line){
+    Point normVec(Point a, Point b){ //Point a, Point b){ //(Line const &line){
         // Direction vec
-        double dx = line.b.x - line.a.x;     // x2 - x1
-        double dy = line.b.y - line.a.y;     // y2 - y1
+        //double dx = line.b.x - line.a.x;     // x2 - x1
+        //double dy = line.b.y - line.a.y;     // y2 - y1
 
-	//double dx = b.x - a.x;     // x2 - x1
-        //double dy = b.y - a.y;     // y2 - y1
+	double dx = b.x - a.x;     // x2 - x1
+        double dy = b.y - a.y;     // y2 - y1
 
         // Normal vec
         return {dy, -dx};
@@ -66,7 +71,7 @@ namespace polyintersect {
 	// Dot Product 
         return std::abs(product) < epsilon ? 0.0 : product;
     }
-
+/*
     // Point Vector /////////////////////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
     Point pointVec(Point const &p, Point const& middle){
@@ -94,32 +99,32 @@ namespace polyintersect {
                           Kokkos::View<int**> signs,
                           int const n){
 
-	double distance;
-	double signed_distance;
+	//double distance;
+	//double signed_distance;
 
         // Deduce the normal vector, middle point, and distance of the clipping line
         Point normal = normVec(line);			// 1) Calculate normal of the line
         Point middle = middle_point(line);		// 2) Calculate the middle point of the line
-	distance = -dotProduct(middle, normal);		// 3) Calculate the distance of the line
-        //double dp;
+	//distance = -dotProduct(middle, normal);		// 3) Calculate the distance of the line
+        double dp;
 	
 
         for(int p = 0; p < n; p++){ 
             // Current point
-	    Point p0 = allPoints(c, p);
+	    //Point p0 = allPoints(c, p);
 
 	    //Point normal = normVec(p0, p1);
-            //Point const V = pointVec(allPoints(c, p), middle);
+            Point const V = pointVec(allPoints(c, p), middle);
             // Dot Product of normal and node vector
-	    //distance = dotProduct(V, normal);
+	    dp = dotProduct(V, normal);
 
 	    // Find the signed distance of every vertex
-            signed_distance = dotProduct(p0, normal) + distance;
+           // signed_distance = dotProduct(p0, normal) + distance;
 
             // Convection of placement with respect to the line
-            if (signed_distance < 0) {           // Below the line
+            if (dp < 0) {           // Below the line
               signs(c, p) = -1;
-            } else if (signed_distance > 0) {    // Above the line
+            } else if (dp > 0) {    // Above the line
               signs(c, p) = 1;
             } else {               		 // On the line
               signs(c, p) = 0;
@@ -187,7 +192,7 @@ namespace polyintersect {
             allPoints(c, insert_index) = current_point;
         }
 
-    }
+    } */
 
 
 }

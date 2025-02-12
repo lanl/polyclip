@@ -1,7 +1,8 @@
 #include "clippings_gpu.h"
 #include "mesh_gpu.h"
 #include "clipped_part_gpu.h"
-#include "intersect_gpu.h"
+//#include "intersect_gpu.h"
+#include "intersect_n_d_gpu.h"
 #include <Kokkos_Core.hpp>
 #include <omp.h>
 #include <cstdlib>
@@ -81,22 +82,22 @@ int main(int argc, char * argv[]) {
 	   if (line_rep == 1){	// Horizontal Lines
 	     switch(i){
               case 0:     // Cell 0
-                 clipped_part.line_(i) = {{1, 0.125}, {-1, 0.125}};
+                 clipped_part.line_(i) = {{0, 1}, -0.125};
                  break;
               case 1:     // Cell 1
-                 clipped_part.line_(i) = {{1, 0.125}, {-1, 0.125}};
+                 clipped_part.line_(i) = {{0, 1}, -0.125};
                  break;
               case 2:     // Cell 2
-                 clipped_part.line_(i) = {{1.5, 0.5}, {-1, 0.5}};
+                 clipped_part.line_(i) = {{0, 1}, -0.5};
                  break;
               case 3:     // Cell 3
-                 clipped_part.line_(i) = {{1.5, 0.75}, {-1, 0.75}};
+                 clipped_part.line_(i) = {{0, 1}, -0.75};
                  break;
               default:
-                 clipped_part.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 clipped_part.line_(i) = {{-1.0, -1.0}, -1};
                  break;
                 }
-	   } else if (line_rep == 2){	// Arbitrary Lines
+	   } /*else if (line_rep == 2){	// Arbitrary Lines
 	      switch(i){
               case 0:     // Cell 0
                  clipped_part.line_(i) = {{0.625, -0.25}, {-0.125, 0.5}};
@@ -132,14 +133,14 @@ int main(int argc, char * argv[]) {
                  clipped_part.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
                  break;
                 }
-	   }
+	   }*/
         });
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
-	    clipped_part.intersect_points_(c) = intersect_cell_with_line(mesh.device_points_, mesh.device_cells_, c, clipped_part.line_(c), mesh.num_verts_per_cell_);
-            clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
-                         clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, clipped_part.allPoints_);
+	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c, clipped_part.line_(c), mesh.num_verts_per_cell_);
+            //clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
+//                         clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, clipped_part.allPoints_);
         });
 	
 	// Verify Results by Printing on the CPU //////////////////////////////////////////////////////////////// 
@@ -160,7 +161,7 @@ int main(int argc, char * argv[]) {
         std::cout << std::endl;
         std::cout << "---------------- GPU Results ----------------" << std::endl;
 	std::cout << std::endl;
-
+/*
 	std::cout << "------ Cell + Edges ------" << std::endl;
         for(int j = 0; j < total_cells; j++){   // Cell
             std::cout << "Cell " << j << ":" << std::endl;
@@ -191,7 +192,7 @@ int main(int argc, char * argv[]) {
             auto const pb = clipped_part.mirror_line_(j).b;
             std::cout << "Line at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
         }
-        
+  */      
 	// Print Intersect Points
         std::cout << std::endl;
         std::cout << "------ Intersect Points ------" << std::endl;
@@ -201,7 +202,7 @@ int main(int argc, char * argv[]) {
             std::cout << "Intersection Points at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
         }
 
-	// Print all Points (Vertices + Intersect Points)
+/*	// Print all Points (Vertices + Intersect Points)
         std::cout << std::endl;
 	std::cout << "------ All Points ------" << std::endl;
         for(int c = 0; c < total_cells; c++){
@@ -236,7 +237,7 @@ int main(int argc, char * argv[]) {
                 std::cout << "Sign at cell "<< i << ": " << mesh.mirror_signs_(i, j) << std::endl;
             }
             std::cout << std::endl;
-        }
+        }*/
 	
     }
 
