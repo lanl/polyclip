@@ -48,3 +48,8 @@ else()
     target_link_libraries(allclips PUBLIC OpenMP::OpenMP_CXX)
   endif ()
  endif ()
+
+
+add_executable(gmv_writer)
+target_include_directories(gmv_writer PUBLIC gmv_tool)
+target_sources(gmv_writer PUBLIC  gmv_tool/gmv_writer.cpp)
