@@ -4,11 +4,11 @@
 namespace polyintersect {
 
 // Below the line using Degrees /////////////////////////////////////////////////////////
-/*  KOKKOS_INLINE_FUNCTION
+  KOKKOS_INLINE_FUNCTION
   void clip_below_3(int cell, 
                   Kokkos::View<Point*> points,
                   Kokkos::View<int***> cells,
-                  Line const &line,
+                  Intersect const &line,
                   Kokkos::View<int**> output,
                   Kokkos::View<int*> size_output,
                   Kokkos::View<int*> num_verts_per_cell,
@@ -37,5 +37,5 @@ namespace polyintersect {
     // keep track of number of vertices for the section of the cell
     // that is below the cutting plane
     size_output(cell) = count;
-  }*/
+  }
 }

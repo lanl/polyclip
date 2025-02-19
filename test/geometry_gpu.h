@@ -71,7 +71,7 @@ namespace polyintersect {
 	// Dot Product 
         return std::abs(product) < epsilon ? 0.0 : product;
     }
-/*
+
     // Point Vector /////////////////////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
     Point pointVec(Point const &p, Point const& middle){
@@ -84,7 +84,7 @@ namespace polyintersect {
 
     // Middile Point of the Interface ////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point middle_point(Line const& line){
+    Point middle_point(Intersect const& line){
         double mx = (line.a.x + line.b.x) / 2;
         double my = (line.a.y + line.b.y) / 2;
 
@@ -95,31 +95,20 @@ namespace polyintersect {
     KOKKOS_INLINE_FUNCTION
     void orientation_clip(int c, 
                           Kokkos::View<Point**> allPoints,
-                          Line line, 
+                          Intersect line, 
                           Kokkos::View<int**> signs,
                           int const n){
 
-	//double distance;
-	//double signed_distance;
-
         // Deduce the normal vector, middle point, and distance of the clipping line
-        Point normal = normVec(line);			// 1) Calculate normal of the line
+        Point normal = normVec(line.a, line.b);			// 1) Calculate normal of the line
         Point middle = middle_point(line);		// 2) Calculate the middle point of the line
-	//distance = -dotProduct(middle, normal);		// 3) Calculate the distance of the line
         double dp;
 	
-
         for(int p = 0; p < n; p++){ 
-            // Current point
-	    //Point p0 = allPoints(c, p);
-
-	    //Point normal = normVec(p0, p1);
             Point const V = pointVec(allPoints(c, p), middle);
-            // Dot Product of normal and node vector
+            
+	    // Dot Product of normal and node vector
 	    dp = dotProduct(V, normal);
-
-	    // Find the signed distance of every vertex
-           // signed_distance = dotProduct(p0, normal) + distance;
 
             // Convection of placement with respect to the line
             if (dp < 0) {           // Below the line
@@ -153,7 +142,7 @@ namespace polyintersect {
     void list_of_points(int cell,
                         Kokkos::View<Point*> points,
                         Kokkos::View<int***> cells,
-                        Line const &line,
+                        Intersect const &line,
                         Kokkos::View<Point**> allPoints, 
                         Kokkos::View<int*> num_verts_per_cell) {
 
@@ -192,7 +181,7 @@ namespace polyintersect {
             allPoints(c, insert_index) = current_point;
         }
 
-    } */
+    } 
 
 
 }
