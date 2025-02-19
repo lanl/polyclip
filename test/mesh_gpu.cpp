@@ -8,6 +8,8 @@
 
 namespace polyintersect {
 
+	Mesh_Kokkos::Mesh_Kokkos(){ }
+
 // Create the Mesh //////////////////////////////////////////////////////////////////////
   Mesh_Kokkos::Mesh_Kokkos(int total_points, int total_cells, int max_edges_per_cell) {
     Kokkos::resize(device_points_, total_points);  // malloc
