@@ -18,7 +18,7 @@ int main(int argc, char* argv[]){
 
     	// Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     	Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-    	Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
+   // 	Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
 
     	// All Nodes
     	mesh.add_points(0, {0.0, 0.0});
@@ -94,9 +94,9 @@ int main(int argc, char* argv[]){
   // test_file << "general 3";
   // test_file << "general 4";
   // test_file << "general 5";
-  test_file << "endgmv\n";
+ // test_file << "endgmv\n";
 
-  test_file.close();
+ // test_file.close();
   std::cout << "I like eggs. . " << std::endl;
 
 

@@ -15,6 +15,7 @@ if [ ! -f "../scripts/kokkos_config.txt" ]; then
 fi
 
 KOKKOS_ROOT=$(cat "../scripts/kokkos_config.txt")
+echo "Kokkos Root = ($KOKKOS_ROOT)"
 cmake \
   -DKokkos_ROOT="$KOKKOS_ROOT" \
   -DUSE_KOKKOS_GPU=ON \
