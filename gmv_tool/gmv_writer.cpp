@@ -4,6 +4,7 @@
 
 #include "gmv_writer.h"
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 
