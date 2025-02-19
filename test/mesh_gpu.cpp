@@ -20,6 +20,9 @@ namespace polyintersect {
     // CPU data members
     mirror_points_ = Kokkos::create_mirror_view(device_points_); 
     mirror_cells_ = Kokkos::create_mirror_view(device_cells_);
+
+	  //Let's set a sentinel value so we know when the cells ends.
+	  Kokkos::deep_copy(mirror_cells_, -1);
     mirror_num_verts_per_cell_ = Kokkos::create_mirror_view(num_verts_per_cell_);
     mirror_signs_ = Kokkos::create_mirror_view(signs_);
   }
