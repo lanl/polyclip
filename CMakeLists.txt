@@ -52,4 +52,4 @@ else()
 
 add_executable(gmv_writer)
 target_include_directories(gmv_writer PUBLIC gmv_tool)
-target_sources(gmv_writer PUBLIC  gmv_tool/gmv_writer.cpp)
+target_sources(gmv_writer PUBLIC  gmv_tool/main.cpp gmv_tool/gmv_writer.cpp test/mesh_gpu.cpp)

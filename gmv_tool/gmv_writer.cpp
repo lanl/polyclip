@@ -61,6 +61,7 @@ void gmvstream::write_gmv(polyintersect::Mesh_Kokkos mesh, const std::string& fi
   }
 
   gmv_file << "endgmv\n";
+  gmv_file.close();
 }
 
 polyintersect::Mesh_Kokkos gmvstream::read_gmv(std::string file_name) {
