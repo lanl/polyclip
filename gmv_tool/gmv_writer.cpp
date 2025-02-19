@@ -11,6 +11,11 @@ void gmvstream::set_header(std::fstream &gmv_file) {
   gmv_file << "gmvinput ascii\n";
 }
 
+void gmvstream::set_point(std::fstream &gmv_file, polyintersect::Point point) {
+  gmv_file << std::scientific << std::setprecision(17);
+  gmv_file << point.x  << " " << point.y << " " << 0.0 << "\n";
+}
+
 void gmvstream::set_node(std::fstream &gmv_file, polyintersect::Mesh_Kokkos mesh) {
   gmv_file << "nodev " << mesh.mirror_points_.extent(0) << "\n";
 
