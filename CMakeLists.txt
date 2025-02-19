@@ -54,5 +54,5 @@ add_executable(gmv_writer)
 target_include_directories(gmv_writer PUBLIC gmv_tool)
 target_sources(gmv_writer PUBLIC  gmv_tool/main.cpp gmv_tool/gmv_writer.cpp test/mesh_gpu.cpp test/clipped_part_gpu.cpp)
 find_package(Kokkos REQUIRED)
-target_link_libraries(clip_gpu PUBLIC Kokkos::kokkos)
+target_link_libraries(gmv_writer PUBLIC Kokkos::kokkos)
 
