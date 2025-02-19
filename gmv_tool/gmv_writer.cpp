@@ -61,7 +61,7 @@ void gmvstream::write_gmv(polyintersect::Mesh_Kokkos mesh, const std::string& fi
 
     auto& node_val = mesh.mirror_cells_(i,number_of_iterations-1, 0);
     if(node_val != -1) {
-      store_points += std::to_string(node_val);
+      store_points += std::to_string(node_val+1);
       number_of_vertex++;
       //gmv_file << edge_node.a;
     }
