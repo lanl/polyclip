@@ -66,7 +66,11 @@ int main(int argc, char* argv[]){
     	mesh.mirror_num_verts_per_cell_(3) = 4;
 
     	gmvstream::write_gmv(mesh, "test.gmv");
+
 	}
+
+	std::cout << "I like eggs. . " << std::endl;
+	Kokkos::finalize();
   // std::ofstream clear_file("test.gmv", std::ios::trunc);
   // std::ofstream test_file("test.gmv", std::ios::app);
   //
@@ -97,8 +101,6 @@ int main(int argc, char* argv[]){
  // test_file << "endgmv\n";
 
  // test_file.close();
-  std::cout << "I like eggs. . " << std::endl;
-
 
   return 0;
 }
