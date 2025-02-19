@@ -42,10 +42,11 @@ void gmvstream::write_gmv(polyintersect::Mesh_Kokkos mesh, const std::string& fi
     int number_of_iterations = mesh.mirror_cells_.extent(1);
     std::string store_points = "";
     for(int j = 0; j < number_of_iterations-1; j++) {
-      polyintersect::Edge const& edge_node = mesh.mirror_cells_(i, j);
-      if(edge_node != nullptr) {
+      //polyintersect::Edge const& edge_node = mesh.mirror_cells_(i, j);
+      auto& node_val = mesh.mirror_cells_(i, j, 0);
+      if(node_val != nullptr) {
         number_of_vertex++;
-        store_points += store_points + std::to_string(edge_node.a) + " ";
+        store_points += store_points + std::to_string(node_val) + " ";
         //gmv_file << edge_node.a << " ";
       }
     }
