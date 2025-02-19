@@ -19,7 +19,7 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines, 3) Vertical overlapping lines 
+	int line_rep = 3; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
 
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -82,7 +82,7 @@ int main(int argc, char * argv[]) {
 	   if (line_rep == 1){	// Horizontal Lines
 	     switch(i){
               case 0:     // Cell 0
-                 clipped_part.line_(i) = {{0, 1}, -0.125};
+                 clipped_part.line_(i) = {{0.0, 1}, -0.125};
                  break;
               case 1:     // Cell 1
                  clipped_part.line_(i) = {{0, 1}, -0.125};
@@ -94,46 +94,46 @@ int main(int argc, char * argv[]) {
                  clipped_part.line_(i) = {{0, 1}, -0.75};
                  break;
               default:
-                 clipped_part.line_(i) = {{-1.0, -1.0}, -1};
+                 clipped_part.line_(i) = {{-1.0, -1.0}, -1.0};
                  break;
-                }
-	   } /*else if (line_rep == 2){	// Arbitrary Lines
+                } 
+	   } else if (line_rep == 2){	// Arbitrary Lines
 	      switch(i){
               case 0:     // Cell 0
-                 clipped_part.line_(i) = {{0.625, -0.25}, {-0.125, 0.5}};
+                 clipped_part.line_(i) = {{1.0, 0.0}, -0.375};
                  break;
               case 1:     // Cell 1
-                 clipped_part.line_(i) = {{.75, -0.125}, {0.375, 0.25}};
+                 clipped_part.line_(i) = {{1.0, 0.0}, -0.625};
                  break;
               case 2:     // Cell 2
-                 clipped_part.line_(i) = {{0.875, 0.0}, {0.25, 0.625}};
+                 clipped_part.line_(i) = {{1.0, 0.0}, -0.75};
                  break;
               case 3:     // Cell 3
-                 clipped_part.line_(i) = {{0.75, 0.5}, {0.375, 0.875}};
+                 clipped_part.line_(i) = {{1.0, 0.0}, -0.625};
                  break;
               default:
-                 clipped_part.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 clipped_part.line_(i) = {{-1.0, -1.0}, -1.0};
                  break;
                 }
 	   } else{
 	   switch(i){	// Vertical Lines
               case 0:     // Cell 0
-                 clipped_part.line_(i) = {{0.375, -0.375}, {0.375, 0.5}};
+                 clipped_part.line_(i) = {{0.70710678, 0.70710678}, -0.26516504294495535};
                  break;
               case 1:     // Cell 1
-                 clipped_part.line_(i) = {{0.625, -0.375}, {0.625, 0.375}};
+                 clipped_part.line_(i) = {{0.70710678, 0.70710678}, -0.4419417382415923};
                  break;
               case 2:     // Cell 2
-                 clipped_part.line_(i) = {{0.75, 0.0}, {0.75, 0.75}};
+                 clipped_part.line_(i) = {{0.70710678, 0.70710678}, -0.618718433538229};
                  break;
               case 3:     // Cell 3
-                 clipped_part.line_(i) = {{0.625, 0.375}, {0.625, 1.0}};
+                 clipped_part.line_(i) = {{0.70710678, 0.70710678}, -0.8838834764831844};
                  break;
               default:
-                 clipped_part.line_(i) = {{-1.0, -1.0}, {-1.0, -1.0}};
+                 clipped_part.line_(i) = {{-1.0, -1.0}, -1.0};
                  break;
                 }
-	   }*/
+	   }
         });
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
