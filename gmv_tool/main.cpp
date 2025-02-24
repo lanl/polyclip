@@ -65,7 +65,7 @@ int main(int argc, char* argv[]){
     	mesh.mirror_num_verts_per_cell_(2) = 6;
     	mesh.mirror_num_verts_per_cell_(3) = 4;
 
-    	gmvstream::write_gmv(mesh, "test.gmv");
+    	gmvstream::write_gmv(mesh, "test");
 
 	}
 

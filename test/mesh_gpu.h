@@ -6,17 +6,15 @@
 
 namespace polyintersect {
 
-// Mesh containing the coordinates and the cell
+  // Mesh containing the coordinates and the cell
   class Mesh_Kokkos {
   public:
     // constructor
     Mesh_Kokkos(int total_points, int total_cells, int max_edges_per_cell);
 
-    Mesh_Kokkos();
-
     // destructor
     ~Mesh_Kokkos() = default;
-    
+
     // create list of all the points and create cells
     void add_points(int point_index, Point coordinates);
     void add_edge(int cell_index, int edge, Edge const& points);
@@ -28,7 +26,7 @@ namespace polyintersect {
     Kokkos::View<int***, Kokkos::CudaSpace> device_cells_;  // Cell ID, Edge ID, Edge Point ID's
     Kokkos::View<Point*>::HostMirror mirror_points_;
     Kokkos::View<int***,>::HostMirror mirror_cells_;
- 
+
     Kokkos::View<int*, Kokkos::CudaSpace>  num_verts_per_cell_;
     Kokkos::View<int**, Kokkos::CudaSpace> signs_;  // Cell ID, All Points ID (Vertices + Intersect points)
     Kokkos::View<int*>::HostMirror mirror_num_verts_per_cell_;
