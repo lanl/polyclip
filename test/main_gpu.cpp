@@ -19,7 +19,8 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 2; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
+	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
+	Intersect no_intersect = {{300, 300}, {300, 300}};
 
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -85,7 +86,7 @@ int main(int argc, char * argv[]) {
                  clipped_part.line_(i) = {{0.0, 1}, -0.125};
                  break;
               case 1:     // Cell 1
-                 clipped_part.line_(i) = {{0, 1}, -0.125};
+                 clipped_part.line_(i) = {{0, 1}, -0.5}; //-0.125};
                  break;
               case 2:     // Cell 2
                  clipped_part.line_(i) = {{0, 1}, -0.5};
@@ -139,8 +140,11 @@ int main(int argc, char * argv[]) {
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
 	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c, clipped_part.line_(c), mesh.num_verts_per_cell_);
-            clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
-                         clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, clipped_part.allPoints_);
+	    
+	    if(!(clipped_part.intersect_points_(c).a.x == no_intersect.a.x && clipped_part.intersect_points_(c).a.y == no_intersect.a.y && clipped_part.intersect_points_(c).b.x == no_intersect.b.x && clipped_part.intersect_points_(c).b.y == no_intersect.b.y )){
+            	clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
+                             clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, clipped_part.allPoints_);
+            }
         });
 	
 	// Verify Results by Printing on the CPU //////////////////////////////////////////////////////////////// 

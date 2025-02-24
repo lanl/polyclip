@@ -30,7 +30,7 @@ namespace polyintersect {
 	    Point const n2 = normVec(points(a),points(b));
 	    double const d2 = -dotProduct(points(a), n2); 
 
-	    // deduce bounds on coordinates of the edge we are currently viewing
+	    // Deduce bounds on coordinates of the edge we are currently viewing
             if(points(a).x > points(b).x){
                 x_max = points(a).x;
                 x_min = points(b).x;
@@ -48,25 +48,20 @@ namespace polyintersect {
                 y_min = points(a).y;
             }
 	    
-
 	    double const& a1 = n1.x;
 	    double const& b1 = n1.y;
 	    double const& a2 = n2.x;
 	    double const& b2 = n2.y;
-
+	    
+	    // Compute the determinate 
 	    double const  det = (a1 * b2) - (a2 * b1);
 
-            // fabs
             if (fabs(det) < 1.e-15) {
               continue;
-            } else {  
-	        //double const c1 = a1 * xa + b1 * ya;
-                //double const c2 = a2 * xp + b2 * yp;
-                //double const x = (b2 * c1 - b1 * c2) / det;
-                //double const y = (a1 * c2 - a2 * c1) / det;
-		
+            } else {
+    		// Compute intersection points using Cramers rule 		    
 		double const xa = (-d1 * b2) - (-d2 * b1);
-            	double const ya = (a1 * -d2) - (a2 *  -d1);
+            	double const ya = (a1 * -d2) - (a2 * -d1);
             	double const x = xa / det;
              	double const y = ya / det;
 
@@ -77,6 +72,9 @@ namespace polyintersect {
                 k++;
             }
         }
+	if(k == 0){
+		return {{300, 300}, {300, 300}};
+	}
         return {pts[0], pts[1]};
     }
 }
