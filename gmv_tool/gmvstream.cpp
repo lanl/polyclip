@@ -33,13 +33,14 @@ namespace polyintersect {
     std::string meta_name = basename + ".meta";
     std::string file_name = basename + ".gmv";
 
-    std::ofstream metadata_file(meta_name, std::ios::in);
-    std::ofstream gmv_file(file_name, std::ios::in);
+    std::fstream metadata_file(meta_name, std::ios::app);
+    std::fstream gmv_file(file_name, std::ios::app);
 
 
     metadata_file << "max_vertex " << mesh.mirror_cells_.extent(1) << "\n";
     metadata_file << "num_of_cells " << mesh.mirror_cells_.extent(0) << "\n";
     metadata_file << "num_of_nodes " << mesh.mirror_points_.extent(0) << "\n";
+    metadata_file.close();
 
     gmv_file << "gmvinput ascii\n";
     gmv_file << "nodev " << mesh.mirror_points_.extent(0) << "\n";
