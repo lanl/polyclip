@@ -86,7 +86,7 @@ int main(int argc, char * argv[]) {
                  clipped_part.line_(i) = {{0.0, 1}, -0.125};
                  break;
               case 1:     // Cell 1
-                 clipped_part.line_(i) = {{0, 1}, -0.5}; //-0.125};	Note: testing no intersection dummy value
+                 clipped_part.line_(i) = {{0, 1}, - 0.125}; //-0.5}; //-0.125};	Note: testing no intersection dummy value
                  break;
               case 2:     // Cell 2
                  clipped_part.line_(i) = {{0, 1}, -0.5};
@@ -223,15 +223,22 @@ int main(int argc, char * argv[]) {
         std::cout << std::endl;
 	std::cout << "------ Output ------" << std::endl;
         for(int c = 0; c < total_cells; c++){
-	    int t = clipped_part.mirror_size_output_(c); 
-	   // std::cout << "Total outputs: " << t << std::endl;
-	    for(int i = 0; i < t; i++){
-                int const j = clipped_part.mirror_output_(c, i);
+	    int below = clipped_part.mirror_size_output_(c, 0);
+	    int above = clipped_part.mirror_size_output_(c, 1);
+	    for(int i = 0; i < below; i++){
+                int const j = clipped_part.mirror_output_(c, 0, i);
                 auto const p = clipped_part.mirror_allPoints_(c, j);
-                std::cout << "Below line at cell " << c << ", Coordinate " << i << ": (";
+                std::cout << "BELOW line at cell " << c << ", Coordinate " << i << ": (";
 	        std::cout << p.x << ", "<< p.y << ") "<< std::endl;
             }
-            std::cout << std::endl;
+            
+	    for(int i = 0; i < above; i++){
+                int const j = clipped_part.mirror_output_(c, 1, i);
+                auto const p = clipped_part.mirror_allPoints_(c, j);
+                std::cout << "ABOVE line at cell " << c << ", Coordinate " << i << ": (";
+                std::cout << p.x << ", "<< p.y << ") "<< std::endl;
+            }
+	    std::cout << std::endl;
         }
 
 	// Print signs

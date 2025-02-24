@@ -9,8 +9,8 @@ namespace polyintersect {
                   Kokkos::View<Point*> points,
                   Kokkos::View<int***> cells,
                   Segment const &line,
-                  Kokkos::View<int**> output,
-                  Kokkos::View<int*> size_output,
+                  Kokkos::View<int***> output,
+                  Kokkos::View<int**> size_output,
                   Kokkos::View<int*> num_verts_per_cell,
                   Kokkos::View<int**> signs,
                   Kokkos::View<Point**> allPoints) {
@@ -28,14 +28,20 @@ namespace polyintersect {
     orientation_clip(cell, allPoints, line, signs, n);
 
     // Clip below
-    int count = 0;
+    int below = 0;
+    int above = 0;
+
     for (int p = 0; p < n; p++) {
         if (signs(cell, p) <= 0) {               
-            output(cell, count++) = p;
+            output(cell, 0, below++) = p;
         }
+	else{
+	    output(cell, 1, above++) = p;
+	}
     }
     // keep track of number of vertices for the section of the cell
     // that is below the cutting plane
-    size_output(cell) = count;
+    size_output(cell, 0) = below;
+    size_output(cell, 1) = above;
   }
 }
