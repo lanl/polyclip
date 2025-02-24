@@ -30,7 +30,7 @@ namespace polyintersect {
         double y = 0.0;
     };
 
-    struct Intersect {
+    struct Segment {
     	Point a;
 	Point b;
     };
@@ -84,7 +84,7 @@ namespace polyintersect {
 
     // Middile Point of the Interface ////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point middle_point(Intersect const& line){
+    Point middle_point(Segment const& line){
         double mx = (line.a.x + line.b.x) / 2;
         double my = (line.a.y + line.b.y) / 2;
 
@@ -95,7 +95,7 @@ namespace polyintersect {
     KOKKOS_INLINE_FUNCTION
     void orientation_clip(int c, 
                           Kokkos::View<Point**> allPoints,
-                          Intersect line, 
+                          Segment line, 
                           Kokkos::View<int**> signs,
                           int const n){
 
@@ -142,7 +142,7 @@ namespace polyintersect {
     void list_of_points(int cell,
                         Kokkos::View<Point*> points,
                         Kokkos::View<int***> cells,
-                        Intersect const &line,
+                        Segment const &line,
                         Kokkos::View<Point**> allPoints, 
                         Kokkos::View<int*> num_verts_per_cell) {
 

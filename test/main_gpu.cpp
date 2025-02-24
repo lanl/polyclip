@@ -20,7 +20,7 @@ int main(int argc, char * argv[]) {
         int max_edges_per_cell = 6;
 
 	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
-	Intersect no_intersect = {{300, 300}, {300, 300}};
+	Segment no_intersect = {{300, 300}, {300, 300}};
 
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -86,7 +86,7 @@ int main(int argc, char * argv[]) {
                  clipped_part.line_(i) = {{0.0, 1}, -0.125};
                  break;
               case 1:     // Cell 1
-                 clipped_part.line_(i) = {{0, 1}, -0.5}; //-0.125};
+                 clipped_part.line_(i) = {{0, 1}, -0.5}; //-0.125};	Note: testing no intersection dummy value
                  break;
               case 2:     // Cell 2
                  clipped_part.line_(i) = {{0, 1}, -0.5};
@@ -98,7 +98,7 @@ int main(int argc, char * argv[]) {
                  clipped_part.line_(i) = {{-1.0, -1.0}, -1.0};
                  break;
                 } 
-	   } else if (line_rep == 2){	// Arbitrary Lines
+	   } else if (line_rep == 2){	// Vertical Lines
 	      switch(i){
               case 0:     // Cell 0
                  clipped_part.line_(i) = {{1.0, 0.0}, -0.375};
@@ -117,7 +117,7 @@ int main(int argc, char * argv[]) {
                  break;
                 }
 	   } else{
-	   switch(i){	// Vertical Lines
+	   switch(i){	// Arbitrary Lines
               case 0:     // Cell 0
                  clipped_part.line_(i) = {{0.70710678, 0.70710678}, -0.26516504294495535};
                  break;
@@ -141,6 +141,7 @@ int main(int argc, char * argv[]) {
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
 	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c, clipped_part.line_(c), mesh.num_verts_per_cell_);
 	    
+	    // Check if cell contains intersect points
 	    if(!(clipped_part.intersect_points_(c).a.x == no_intersect.a.x && clipped_part.intersect_points_(c).a.y == no_intersect.a.y && clipped_part.intersect_points_(c).b.x == no_intersect.b.x && clipped_part.intersect_points_(c).b.y == no_intersect.b.y )){
             	clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
                              clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, clipped_part.allPoints_);

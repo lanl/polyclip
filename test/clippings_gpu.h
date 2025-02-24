@@ -8,7 +8,7 @@ namespace polyintersect {
   void clip_below_3(int cell, 
                   Kokkos::View<Point*> points,
                   Kokkos::View<int***> cells,
-                  Intersect const &line,
+                  Segment const &line,
                   Kokkos::View<int**> output,
                   Kokkos::View<int*> size_output,
                   Kokkos::View<int*> num_verts_per_cell,

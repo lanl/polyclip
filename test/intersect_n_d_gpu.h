@@ -6,7 +6,7 @@
 
 namespace polyintersect {
  KOKKOS_INLINE_FUNCTION	
- Intersect intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
+ Segment intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
                                    Kokkos::View<int***> cells,
                                    int c,
                                    Line const& line,
