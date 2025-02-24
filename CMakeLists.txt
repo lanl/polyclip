@@ -57,7 +57,7 @@ find_package(Kokkos REQUIRED)
 target_link_libraries(gmv_writer PUBLIC Kokkos::kokkos)
 
 
-add_executable(gmv_reader_test)
-target_include_directories(gmv_writer PUBLIC gmv_tool)
-target_sources(gmv_writer PUBLIC  gmv_tool/read_test.cpp)
+#add_executable(gmv_reader_test)
+#target_include_directories(gmv_writer PUBLIC gmv_tool)
+#target_sources(gmv_writer PUBLIC  gmv_tool/read_test.cpp)
 
