@@ -47,11 +47,8 @@ namespace polyintersect {
 
     // Finding the normal vector between 2 Points ///////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point normVec(Point a, Point b){ //Point a, Point b){ //(Line const &line){
+    Point normVec(Point a, Point b){ 
         // Direction vec
-        //double dx = line.b.x - line.a.x;     // x2 - x1
-        //double dy = line.b.y - line.a.y;     // y2 - y1
-
 	double dx = b.x - a.x;     // x2 - x1
         double dy = b.y - a.y;     // y2 - y1
 
@@ -59,16 +56,12 @@ namespace polyintersect {
         return {dy, -dx};
     }
 
-    // Finding the dot product of the array and vector //////////////////////////////////////
+    // Finding the dot product of the direction vector and normal of the line //////////////
     KOKKOS_INLINE_FUNCTION
     double dotProduct(Point const &v, Point const &n){
         double const product = (v.x * n.x) + (v.y * n.y);
-	//float dpx = (v.x * n.x);
-	//float dpy = (v.y * n.y);
-	//float product = dpx + dpy;
-	
-	double const epsilon = 1.e-15;
-	// Dot Product 
+
+	double const epsilon = 1.e-15; 
         return std::abs(product) < epsilon ? 0.0 : product;
     }
 
@@ -101,7 +94,7 @@ namespace polyintersect {
 
         // Deduce the normal vector, middle point, and distance of the clipping line
         Point normal = normVec(line.a, line.b);			// 1) Calculate normal of the line
-        Point middle = middle_point(line);		// 2) Calculate the middle point of the line
+        Point middle = middle_point(line);			// 2) Calculate the middle point of the line
         double dp;
 	
         for(int p = 0; p < n; p++){ 
@@ -115,10 +108,9 @@ namespace polyintersect {
               signs(c, p) = -1;
             } else if (dp > 0) {    // Above the line
               signs(c, p) = 1;
-            } else {               		 // On the line
+            } else {                // On the line
               signs(c, p) = 0;
             }
-           // index++;
         }
     }
 

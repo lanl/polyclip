@@ -72,8 +72,10 @@ namespace polyintersect {
                 k++;
             }
         }
+
+	// Check if line intersects
 	if(k == 0){
-		return {{300, 300}, {300, 300}};
+		return {{300, 300}, {300, 300}}; //dummy value
 	}
         return {pts[0], pts[1]};
     }
