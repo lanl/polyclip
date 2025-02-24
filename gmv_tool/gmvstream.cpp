@@ -81,41 +81,41 @@ namespace polyintersect {
     gmv_file.close();
   }
 
-  Mesh_Kokkos gmvstream::read_gmv(std::string& file_name) {
-
-   // Mesh_Kokkos new_mesh = Mesh_Kokkos();
-    std::fstream gmv_file(file_name, std::ios::in);
-    std::string buffer;
-
-    while(std::getline(gmv_file, buffer)) {
-      std::stringstream tokenizer(buffer);
-      std::string token;
-      while(tokenizer >> token) {
-
-        //Let's test if this parses correctly.
-        std::cout << token << std::endl;
-
-      }
-
-    }
-    //skip line 1 for now
-    //read the next lineot a buffer. tokenize it.
-    //if the first token is nodev, we extract the second token and store it as num_of_nodes
-    //read the next lines from i to num_of_nodes
-    //each read should be 3 tokens that we break each into a float.
-    //make a list of floats, that we store these into for later use.
-    //when we get to cells, we parse to see how many cells there are and store it into num_of_cells
-    //loop from i to num_of_cells
-    //each time tokenize the buffer.
-    // for this purpose, we will throw away the first and second token.
-    // third token = number of points
-    //from j to num_of_points
-    //we extract the remaining token and store it in a vector of vectors.
-
-    //Once we've gathered all the information, it is time to popular the mesh.
-    //
-
-    return new_mesh;
-  }
+  // Mesh_Kokkos gmvstream::read_gmv(std::string& file_name) {
+  //
+  //  // Mesh_Kokkos new_mesh = Mesh_Kokkos();
+  //   std::fstream gmv_file(file_name, std::ios::in);
+  //   std::string buffer;
+  //
+  //   while(std::getline(gmv_file, buffer)) {
+  //     std::stringstream tokenizer(buffer);
+  //     std::string token;
+  //     while(tokenizer >> token) {
+  //
+  //       //Let's test if this parses correctly.
+  //       std::cout << token << std::endl;
+  //
+  //     }
+  //
+  //   }
+  //   //skip line 1 for now
+  //   //read the next lineot a buffer. tokenize it.
+  //   //if the first token is nodev, we extract the second token and store it as num_of_nodes
+  //   //read the next lines from i to num_of_nodes
+  //   //each read should be 3 tokens that we break each into a float.
+  //   //make a list of floats, that we store these into for later use.
+  //   //when we get to cells, we parse to see how many cells there are and store it into num_of_cells
+  //   //loop from i to num_of_cells
+  //   //each time tokenize the buffer.
+  //   // for this purpose, we will throw away the first and second token.
+  //   // third token = number of points
+  //   //from j to num_of_points
+  //   //we extract the remaining token and store it in a vector of vectors.
+  //
+  //   //Once we've gathered all the information, it is time to popular the mesh.
+  //   //
+  //
+  //   return new_mesh;
+  // }
 }
 
