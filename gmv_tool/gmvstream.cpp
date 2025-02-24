@@ -83,7 +83,7 @@ namespace polyintersect {
 
   Mesh_Kokkos gmvstream::read_gmv(std::string& file_name) {
 
-    Mesh_Kokkos new_mesh = Mesh_Kokkos();
+   // Mesh_Kokkos new_mesh = Mesh_Kokkos();
     std::fstream gmv_file(file_name, std::ios::in);
     std::string buffer;
 
