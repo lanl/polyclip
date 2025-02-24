@@ -1,5 +1,5 @@
 
-#include "gmv_writer.h"
+#include "gmvstream.h"
 #include <iostream>
 #include <fstream>
 int main(int argc, char* argv[]){
