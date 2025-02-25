@@ -1,5 +1,5 @@
 
-#include "gmvstream.h"
+#include "io.h"
 #include <iostream>
 #include <fstream>
 int main(int argc, char* argv[]){
@@ -18,7 +18,6 @@ int main(int argc, char* argv[]){
 
     	// Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     	Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-   // 	Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
 
     	// All Nodes
     	mesh.add_points(0, {0.0, 0.0});
@@ -65,42 +64,11 @@ int main(int argc, char* argv[]){
     	mesh.mirror_num_verts_per_cell_(2) = 6;
     	mesh.mirror_num_verts_per_cell_(3) = 4;
 
-    	gmvstream::write_gmv(mesh, "test");
+    	io::write_gmv(mesh, "test");
 
 	}
 
 	std::cout << "I like eggs. . " << std::endl;
 	Kokkos::finalize();
-  // std::ofstream clear_file("test.gmv", std::ios::trunc);
-  // std::ofstream test_file("test.gmv", std::ios::app);
-  //
-  // test_file << "gmvinput ascii\n";
-  // test_file << "nodev 11\n";
-  // test_file << std::scientific << std::setprecision(17);
-  // test_file << 0.0  << " " << 0.0 << " " << 0.0 << "\n";
-  // test_file << 0.5  << " " << 0.0 << " " << 0.0 << "\n";
-  // test_file << 0.5  << " " << 0.25 << " " << 0.0 << "\n";
-  // test_file << 0.25  << " " << 0.375 << " " << 0.0 << "\n";
-  // test_file << 0.0  << " " << 0.25 << " " << 0.0 << "\n";
-  // test_file << 0.875  << " " << 0.25 << " " << 0.0 << "\n";
-  // test_file << 1.0  << " " << 0.375 << " " << 0.0 << "\n";
-  // test_file << 0.875  << " " << 0.625 << " " << 0.0 << "\n";
-  // test_file << 0.5  << " " << 0.625 << " " << 0.0 << "\n";
-  // test_file << 0.5  << " " << 0.875 << " " << 0.0 << "\n";
-  // test_file << 0.875  << " " << 0.875 << " " << 0.0 << "\n";
-  // test_file << "cells " << 4 << "\n";
-  // test_file << "general 1 5 1 2 3 4 5\n";
-  // test_file << "general 1 3 2 6 3\n";
-  // test_file << "general 1 6 3 6 7 8 9 4\n";
-  // test_file << "general 1 4 9 8 11 10\n";
-
-  // test_file << "general 2";
-  // test_file << "general 3";
-  // test_file << "general 4";
-  // test_file << "general 5";
- // test_file << "endgmv\n";
-
- // test_file.close();
-
   return 0;
 }

@@ -51,13 +51,9 @@ else()
 
 
 add_executable(gmv_writer)
-target_include_directories(gmv_writer PUBLIC gmv_tool)
-target_sources(gmv_writer PUBLIC  gmv_tool/main.cpp gmv_tool/gmvstream.cpp test/mesh_gpu.cpp test/clipped_part_gpu.cpp)
+target_include_directories(gmv_writer PUBLIC gmv)
+target_sources(gmv_writer PUBLIC gmv/test_write.cpp gmv/io.cpp test/mesh_gpu.cpp test/clipped_part_gpu.cpp)
 find_package(Kokkos REQUIRED)
 target_link_libraries(gmv_writer PUBLIC Kokkos::kokkos)
 
-
-#add_executable(gmv_reader_test)
-#target_include_directories(gmv_writer PUBLIC gmv_tool)
-#target_sources(gmv_writer PUBLIC  gmv_tool/read_test.cpp)
 
