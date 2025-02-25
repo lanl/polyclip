@@ -48,3 +48,12 @@ else()
     target_link_libraries(allclips PUBLIC OpenMP::OpenMP_CXX)
   endif ()
  endif ()
+
+
+add_executable(gmv_writer)
+target_include_directories(gmv_writer PUBLIC gmv)
+target_sources(gmv_writer PUBLIC gmv/test_write.cpp gmv/io.cpp test/mesh_gpu.cpp test/clipped_part_gpu.cpp)
+find_package(Kokkos REQUIRED)
+target_link_libraries(gmv_writer PUBLIC Kokkos::kokkos)
+
+
