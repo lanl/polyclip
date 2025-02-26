@@ -1,10 +1,10 @@
-//
-// Created by Jonathan Mathurin on 2/19/25.
-//
 
-using namespace polyintersect;
+#include "io.h"
+#include <iostream>
+#include <fstream>
 
 int main(int argc, char* argv[]){
+  using namespace polyintersect;
 
   if(argc < 2){
     std::cout << "You need to pass the file name bro." << std::endl;
@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
   {
     std::string file_name = argv[1];
     Mesh_Kokkos mesh = io::read_gmv(file_name);
-   
+
   }
 
 
