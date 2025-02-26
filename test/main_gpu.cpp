@@ -20,7 +20,7 @@ int main(int argc, char * argv[]) {
         int max_edges_per_cell = 6;
 
 	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
-	Segment no_intersect = {{300, 300}, {300, 300}};
+	//Segment no_intersect = {{300, 300}, {300, 300}};
 
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -142,10 +142,11 @@ int main(int argc, char * argv[]) {
 	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c, clipped_part.line_(c), mesh.num_verts_per_cell_);
 	    
 	    // Check if cell contains intersect points
-	    if(!(clipped_part.intersect_points_(c).a.x == no_intersect.a.x && clipped_part.intersect_points_(c).a.y == no_intersect.a.y && clipped_part.intersect_points_(c).b.x == no_intersect.b.x && clipped_part.intersect_points_(c).b.y == no_intersect.b.y )){
+	    //if(!(clipped_part.intersect_points_(c).a.x == no_intersect.a.x && clipped_part.intersect_points_(c).a.y == no_intersect.a.y && clipped_part.intersect_points_(c).b.x == no_intersect.b.x && clipped_part.intersect_points_(c).b.y == no_intersect.b.y )){
             	clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
-                             clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, clipped_part.allPoints_);
-            }
+                             clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, 
+			     clipped_part.allPoints_, clipped_part.line_(c));
+           //}
         });
 	
 	// Verify Results by Printing on the CPU //////////////////////////////////////////////////////////////// 

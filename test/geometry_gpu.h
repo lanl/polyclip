@@ -77,9 +77,9 @@ namespace polyintersect {
 
     // Middile Point of the Interface ////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point middle_point(Segment const& line){
-        double mx = (line.a.x + line.b.x) / 2;
-        double my = (line.a.y + line.b.y) / 2;
+    Point middle_point(Segment const& points){
+        double mx = (points.a.x + points.b.x) / 2;
+        double my = (points.a.y + points.b.y) / 2;
 
         return {mx, my};
     }
@@ -88,13 +88,13 @@ namespace polyintersect {
     KOKKOS_INLINE_FUNCTION
     void orientation_clip(int c, 
                           Kokkos::View<Point**> allPoints,
-                          Segment line, 
+                          Point normal, 
                           Kokkos::View<int**> signs,
-                          int const n){
+                          int const n,
+			  Segment intersect_points){
 
         // Deduce the normal vector, middle point, and distance of the clipping line
-        Point normal = normVec(line.a, line.b);			// 1) Calculate normal of the line
-        Point middle = middle_point(line);			// 2) Calculate the middle point of the line
+        Point middle = middle_point(intersect_points);		// 2) Calculate the middle point of the line
         double dp;
 	
         for(int p = 0; p < n; p++){ 
@@ -134,7 +134,7 @@ namespace polyintersect {
     void list_of_points(int cell,
                         Kokkos::View<Point*> points,
                         Kokkos::View<int***> cells,
-                        Segment const &line,
+                        Segment const &intersect_points,
                         Kokkos::View<Point**> allPoints, 
                         Kokkos::View<int*> num_verts_per_cell) {
 
@@ -143,8 +143,8 @@ namespace polyintersect {
             int index = cells(cell, i, 0);
             allPoints(cell, i) = points(index);
         }
-        allPoints(cell, m) = line.a;
-        allPoints(cell, (m + 1)) = line.b;
+        allPoints(cell, m) = intersect_points.a;
+        allPoints(cell, (m + 1)) = intersect_points.b;
     }
 
     // Compare Points ////////////////////////////////////////////////////////////////////

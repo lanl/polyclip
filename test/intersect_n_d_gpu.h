@@ -15,6 +15,7 @@ namespace polyintersect {
 
         int const n = num_verts_per_cell(c);    
         Point pts[2];
+	constexpr Point const DUMMY = {DBL_MAX, DBL_MAX};
 
         int k = 0;
         for (int i = 0; i < n; ++i) {
@@ -75,7 +76,7 @@ namespace polyintersect {
 
 	// Check if line intersects
 	if(k == 0){
-		return {{300, 300}, {300, 300}}; //dummy value
+		return {DUMMY, DUMMY}; //dummy value
 	}
         return {pts[0], pts[1]};
     }
