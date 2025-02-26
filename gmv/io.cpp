@@ -119,13 +119,21 @@ namespace polyintersect {
 
         if(token == "nodev") {
           for(int i = 0; i < 11; i++) {
+            std::stringstream out;
             std::getline(gmv_file, buffer);
             std::stringstream point_parser(buffer);
             std::string point_data;
 
             float x, y;
 
+
             point_parser >> point_data;
+            out << std::fixed << std::setprecision(17) << std::stof(point_data);
+
+            std::cout << "Point data  = " << point_data << "\n";
+
+            auto test_float = std::stof(out.str());
+            std::cout << "Out = " << test_float << "\n";
             x = std::stof(point_data);
 
             point_parser >> point_data;
