@@ -104,8 +104,10 @@ namespace polyintersect {
 
   Mesh_Kokkos read_gmv(std::string& file_name){
       Mesh_Kokkos mesh(11, 4, 6);
-      std::fstream gmv_file(file_name, std::ios::app);
+
+      std::ifstream gmv_file(file_name);
       std::string buffer;
+
 
       while(std::getline(gmv_file, buffer)) {
         std::stringstream tokenizer(buffer);
