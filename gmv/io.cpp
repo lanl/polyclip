@@ -151,6 +151,7 @@ namespace polyintersect {
 
             cell_parser >> cell_data;
             int num_of_edges = std::stoi(cell_data);
+            mesh.mirror_num_verts_per_cell_(i) = num_of_edges;
             std::vector<int> list_of_nodes(num_of_edges);
             for(int j = 0; j < num_of_edges; j++) {
               cell_parser >> cell_data;
