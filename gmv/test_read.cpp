@@ -26,7 +26,7 @@ int main(int argc, char* argv[]){
 
       std::cout << "Cell #" << i << ": ";
       for(int j = 0; j < mesh.mirror_num_verts_per_cell_(i); j++){
-        std::cout << mesh.mirror_cells_(i, j) << ", ";
+        std::cout << mesh.mirror_cells_(i, j, 0) << ", ";
       }
 
       std::cout << "\n";
