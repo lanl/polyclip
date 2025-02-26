@@ -115,7 +115,7 @@ namespace polyintersect {
 
         tokenizer >> token;
 
-        std::cout << "Token = " << token << "\n";
+        // std::cout << "Token = " << token << "\n";
         if(token == "gmvinput") {
           continue;
         }
@@ -131,12 +131,12 @@ namespace polyintersect {
 
 
             point_parser >> point_data;
-            out << std::fixed << std::setprecision(17) << std::stof(point_data);
+            // out << std::fixed << std::setprecision(17) << std::stof(point_data);
 
-            std::cout << "Point data  = " << point_data << "\n";
-
-            auto test_float = std::stof(out.str());
-            std::cout << "Out = " << test_float << "\n";
+            // std::cout << "Point data  = " << point_data << "\n";
+            //
+            // auto test_float = std::stof(out.str());
+            // std::cout << "Out = " << test_float << "\n";
             x = std::stof(point_data);
 
             point_parser >> point_data;
