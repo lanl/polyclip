@@ -113,6 +113,7 @@ namespace polyintersect {
 
         tokenizer >> token;
 
+        std::cout << "Token = " << token << "\n";
         if(token == "gmvinput") {
           continue;
         }
