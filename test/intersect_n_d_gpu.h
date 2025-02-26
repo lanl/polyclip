@@ -80,6 +80,37 @@ namespace polyintersect {
 	}
         return {pts[0], pts[1]};
     }
+
+
+   // first define this predicate in 'intersect_n_d_gpu.h'
+   KOKKOS_INLINE_FUNCTION
+   bool intersects(Kokkos::View<Point*> points,
+                   Kokkos::View<int***> cells,
+                   int c,
+                   Segment const& segment, 
+		   Kokkos::View<int*> num_verts_per_cell) {
+
+        // bounding box
+  	int const n = num_verts_per_cell(c);
+  	Point p_min = points(cells(c, 0, 0)); // first point of 'c'
+  	Point p_max = points(cells(c, 0, 0));
+
+
+  	for (int i = 1; i < n; ++i) {
+    	    int const a = cells(c, i, 0);
+       	    if (p_min.x > points(a).x) { p_min.x = points(a).x; }
+    	    if (p_min.y > points(a).y) { p_min.y = points(a).y; }
+    	    if (p_max.x < points(a).x) { p_max.x = points(a).x; }
+    	    if (p_max.y < points(a).y) { p_max.y = points(a).y; }
+  	}
+
+  	// now check 'segment'
+  	Point const& p = segment.a;
+  	Point const& q = segment.b;
+
+  	return !(p.x < p_min.x || p.y < p_min.y || p.x > p_max.x || p.y > p_max.y ||
+           q.x < p_min.x || q.y < p_min.y || q.x > p_max.x || q.y > p_max.y);
+	}	
 }
 
 
