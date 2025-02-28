@@ -19,8 +19,13 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
-
+	int line_rep = 2; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
+	
+	// Testing: distances for every cell
+	double horizontal[4] = {-0.125, -0.125, -0.5, -0.75}; 
+	double vertical[4] = {-1 /*-0.375*/, -0.625, -0.75, -0.625}; //Test dummy: replace -0.375 with -1
+	double arbitrary[4] = {-1 /*-0.26516504294495535*/, -0.4419417382415923, -0.618718433538229, -0.8838834764831844}; // Test dummy: replace with -1
+	
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
 	Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
@@ -77,64 +82,20 @@ int main(int argc, char * argv[]) {
         int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
         auto start = timer::now();      
 
+
         // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
-	   if (line_rep == 1){	// Horizontal Lines
-	     switch(i){
-              case 0:     // Cell 0
-                 clipped_part.line_(i) = {{0.0, 1}, -0.125};
-                 break;
-              case 1:     // Cell 1
-                 clipped_part.line_(i) = {{0, 1}, -0.5}; //-0.125};	Note: testing no intersection dummy value
-                 break;
-              case 2:     // Cell 2
-                 clipped_part.line_(i) = {{0, 1}, -0.5};
-                 break;
-              case 3:     // Cell 3
-                 clipped_part.line_(i) = {{0, 1}, -0.75};
-                 break;
-              default:
-                 clipped_part.line_(i) = {{-1.0, -1.0}, -1.0};
-                 break;
-                } 
-	   } else if (line_rep == 2){	// Vertical Lines
-	      switch(i){
-              case 0:     // Cell 0
-                 clipped_part.line_(i) = {{1.0, 0.0}, -0.375};
-                 break;
-              case 1:     // Cell 1
-                 clipped_part.line_(i) = {{1.0, 0.0}, -0.625};
-                 break;
-              case 2:     // Cell 2
-                 clipped_part.line_(i) = {{1.0, 0.0}, -0.75};
-                 break;
-              case 3:     // Cell 3
-                 clipped_part.line_(i) = {{1.0, 0.0}, -0.625};
-                 break;
-              default:
-                 clipped_part.line_(i) = {{-1.0, -1.0}, -1.0};
-                 break;
-                }
-	   } else{
-	   switch(i){	// Arbitrary Lines
-              case 0:     // Cell 0
-                 clipped_part.line_(i) = {{0.70710678, 0.70710678}, -0.26516504294495535};
-                 break;
-              case 1:     // Cell 1
-                 clipped_part.line_(i) = {{0.70710678, 0.70710678}, -0.4419417382415923};
-                 break;
-              case 2:     // Cell 2
-                 clipped_part.line_(i) = {{0.70710678, 0.70710678}, -0.618718433538229};
-                 break;
-              case 3:     // Cell 3
-                 clipped_part.line_(i) = {{0.70710678, 0.70710678}, -0.8838834764831844};
-                 break;
-              default:
-                 clipped_part.line_(i) = {{-1.0, -1.0}, -1.0};
-                 break;
-                }
-	   }
-        });
+	   if (line_rep == 1){				// Horizontal Lines
+	       clipped_part.line_(i).n = {0.0, 1.0};
+       	       clipped_part.line_(i).d = horizontal[i];
+	   } else if (line_rep == 2){			// Vertical Lines
+               clipped_part.line_(i).n = {1.0, 0.0};
+               clipped_part.line_(i).d = vertical[i];
+	   } else{					// Arbitrary Lines
+               clipped_part.line_(i).n = {0.70710678, 0.70710678};
+               clipped_part.line_(i).d = arbitrary[i];
+	     }
+        }); 
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
@@ -225,18 +186,16 @@ int main(int argc, char * argv[]) {
         for(int c = 0; c < total_cells; c++){
 	    int below = clipped_part.mirror_size_output_(c, 0);
 	    int above = clipped_part.mirror_size_output_(c, 1);
+	    std::cout << "Cell " << c << " Output: " << std::endl;
 	    for(int i = 0; i < below; i++){
                 int const j = clipped_part.mirror_output_(c, 0, i);
                 auto const p = clipped_part.mirror_allPoints_(c, j);
-                std::cout << "BELOW line at cell " << c << ", Coordinate " << i << ": (";
-	        std::cout << p.x << ", "<< p.y << ") "<< std::endl;
+	        std::cout << "Below: (" << p.x << ", "<< p.y << ") "<< std::endl;
             }
-            
 	    for(int i = 0; i < above; i++){
                 int const j = clipped_part.mirror_output_(c, 1, i);
                 auto const p = clipped_part.mirror_allPoints_(c, j);
-                std::cout << "ABOVE line at cell " << c << ", Coordinate " << i << ": (";
-                std::cout << p.x << ", "<< p.y << ") "<< std::endl;
+                std::cout << "Above: (" << p.x << ", "<< p.y << ") "<< std::endl;
             }
 	    std::cout << std::endl;
         }
