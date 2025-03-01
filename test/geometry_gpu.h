@@ -30,9 +30,14 @@ namespace polyintersect {
         double y = 0.0;
     };
 
+    struct Segment {
+    	Point a;
+	Point b;
+    };
+
     struct Line {
-        Point a;
-        Point b;
+        Point n;  // normal
+        double d; // distance
     };
 
     struct Edge {
@@ -42,25 +47,21 @@ namespace polyintersect {
 
     // Finding the normal vector between 2 Points ///////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point normVec(Line const &line){
+    Point normVec(Point a, Point b){ 
         // Direction vec
-        double dx = line.b.x - line.a.x;     // x2 - x1
-        double dy = line.b.y - line.a.y;     // y2 - y1
+	double dx = b.x - a.x;     // x2 - x1
+        double dy = b.y - a.y;     // y2 - y1
 
         // Normal vec
         return {dy, -dx};
     }
 
-    // Finding the dot product of the array and vector //////////////////////////////////////
+    // Finding the dot product of the direction vector and normal of the line //////////////
     KOKKOS_INLINE_FUNCTION
-    float dotProduct(Point const &v, Point const &n){
+    double dotProduct(Point const &v, Point const &n){
         double const product = (v.x * n.x) + (v.y * n.y);
-	//float dpx = (v.x * n.x);
-	//float dpy = (v.y * n.y);
-	//float product = dpx + dpy;
-	
-	double const epsilon = 1.e-15;
-	// Dot Product 
+
+	double const epsilon = 1.e-15; 
         return std::abs(product) < epsilon ? 0.0 : product;
     }
 
@@ -76,9 +77,9 @@ namespace polyintersect {
 
     // Middile Point of the Interface ////////////////////////////////////////////////////////
     KOKKOS_INLINE_FUNCTION
-    Point middle_point(Line const& line){
-        double mx = (line.a.x + line.b.x) / 2;
-        double my = (line.a.y + line.b.y) / 2;
+    Point middle_point(Segment const& points){
+        double mx = (points.a.x + points.b.x) / 2;
+        double my = (points.a.y + points.b.y) / 2;
 
         return {mx, my};
     }
@@ -87,22 +88,20 @@ namespace polyintersect {
     KOKKOS_INLINE_FUNCTION
     void orientation_clip(int c, 
                           Kokkos::View<Point**> allPoints,
-                          Line line, 
+                          Point normal, 
                           Kokkos::View<int**> signs,
-                          int const n){
+                          int const n,
+			  Segment intersect_points){
 
-        // Deduce the normal vector of the cutting line
-        Point normal = normVec(line);
-        //int index = 0;
-        Point middle = middle_point(line);
-        float dp;
-
+        // Deduce the normal vector, middle point, and distance of the clipping line
+        Point middle = middle_point(intersect_points);		// 2) Calculate the middle point of the line
+        double dp;
+	
         for(int p = 0; p < n; p++){ 
-            // Vector of Node
             Point const V = pointVec(allPoints(c, p), middle);
-
-            // Dot Product of normal and node vector
-            dp = dotProduct(V, normal);
+            
+	    // Dot Product of normal and node vector
+	    dp = dotProduct(V, normal);
 
             // Convection of placement with respect to the line
             if (dp < 0) {           // Below the line
@@ -112,7 +111,6 @@ namespace polyintersect {
             } else {                // On the line
               signs(c, p) = 0;
             }
-           // index++;
         }
     }
 
@@ -136,7 +134,7 @@ namespace polyintersect {
     void list_of_points(int cell,
                         Kokkos::View<Point*> points,
                         Kokkos::View<int***> cells,
-                        Line const &line,
+                        Segment const &intersect_points,
                         Kokkos::View<Point**> allPoints, 
                         Kokkos::View<int*> num_verts_per_cell) {
 
@@ -145,8 +143,8 @@ namespace polyintersect {
             int index = cells(cell, i, 0);
             allPoints(cell, i) = points(index);
         }
-        allPoints(cell, m) = line.a;
-        allPoints(cell, (m + 1)) = line.b;
+        allPoints(cell, m) = intersect_points.a;
+        allPoints(cell, (m + 1)) = intersect_points.b;
     }
 
     // Compare Points ////////////////////////////////////////////////////////////////////
@@ -175,7 +173,7 @@ namespace polyintersect {
             allPoints(c, insert_index) = current_point;
         }
 
-    }
+    } 
 
 
 }
