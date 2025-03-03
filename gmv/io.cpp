@@ -106,6 +106,7 @@ namespace polyintersect {
   Mesh_Kokkos io::read_gmv(const std::string& file_name){
 
 
+      std::cout << "File name: " << file_name << "\n";
       Mesh_Kokkos mesh = Mesh_Kokkos();
     //  Mesh_Kokkos mesh(11, 4, 6);
      // std::string file_name = basename + ".gmv";
@@ -117,6 +118,7 @@ namespace polyintersect {
         std::stringstream tokenizer(buffer);
         std::string token;
 
+        std::cout << "Testing if whipe loop is parsing. . ."
         tokenizer >> token;
 
         // std::cout << "Token = " << token << "\n";
