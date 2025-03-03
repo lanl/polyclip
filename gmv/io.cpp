@@ -106,7 +106,7 @@ namespace polyintersect {
   Mesh_Kokkos io::read_gmv(const std::string& file_name){
 
 
-      std::cout << "File name: " << file_name << "\n";
+      // std::cout << "File name: " << file_name << "\n";
       Mesh_Kokkos mesh = Mesh_Kokkos();
     //  Mesh_Kokkos mesh(11, 4, 6);
      // std::string file_name = basename + ".gmv";
@@ -118,7 +118,7 @@ namespace polyintersect {
         std::stringstream tokenizer(buffer);
         std::string token;
 
-        std::cout << "Testing if whipe loop is parsing. . .\n";
+        // std::cout << "Testing if whipe loop is parsing. . .\n";
         tokenizer >> token;
 
         // std::cout << "Token = " << token << "\n";
@@ -190,6 +190,8 @@ namespace polyintersect {
 
             cell_parser >> cell_data;
             int num_of_edges = std::stoi(cell_data);
+            std::cout << "num_of_edges. . . " << num_of_edges << "\n";
+
             mesh.mirror_num_verts_per_cell_(i) = num_of_edges;
             std::vector<int> list_of_nodes(num_of_edges);
             for(int j = 0; j < num_of_edges; j++) {
@@ -200,6 +202,7 @@ namespace polyintersect {
             for(int k = 0; k < num_of_edges; k++) {
               auto edge_x = list_of_nodes[k];
               auto edge_y = list_of_nodes[(k+1) % (num_of_edges-1)];
+              std::cout << "edge_x/edge_y = " << "( " << edge_x << ", " << edge_y << " )\n";
               mesh.add_edge(i, k, {edge_x, edge_y});
             }
           }
