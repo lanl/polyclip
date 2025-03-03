@@ -36,7 +36,7 @@ int main(int argc, char* argv[]){
 
 
     std::cout << "Now let's write this to a new file called tester2.gmv\n";
-    write_gmv(mesh, "tester2.gmv");
+    io::write_gmv(mesh, "tester2.gmv");
 
 
   }
