@@ -6,11 +6,7 @@
 
 namespace polyintersect {
 
-<<<<<<< HEAD
   void io::write_gmv(Mesh_Kokkos mesh, Clipped_Part clipped_part, int num_total_nodes, int num_total_polys, const std::string& basename) {
-=======
-  void io::write_gmv(Mesh_Kokkos mesh, const std::string& file_name) {
->>>>>>> d3937a4 (Fixed some redundant code. Added a better test for both the read and write.)
 
     // std::string file_name = basename + ".gmv";
     std::fstream gmv_file(file_name, std::ios::app);
@@ -132,6 +128,9 @@ namespace polyintersect {
           std::string node_value;
           tokenizer >> node_value;
           int num_of_nodes = std::stoi(node_value);
+          std::cout << "Node value is. . . " << num_of_nodes << "\n";
+
+
           Kokkos::resize(mesh.device_points_, num_of_nodes);  // malloc
           mesh.mirror_points_ = Kokkos::create_mirror_view(mesh.device_points_);
 
@@ -157,6 +156,8 @@ namespace polyintersect {
 
             y = std::stof(point_data);
 
+            std::cout << "{x, y} = " << x << " " << y << " " << "\n";
+
             mesh.add_points(i, {x, y});
 
           }
@@ -166,6 +167,8 @@ namespace polyintersect {
           std::string cell_value;
           tokenizer >> cell_value;
           int num_of_cells = std::stoi(cell_value);
+          std::cout << "Num Of Cells. . . " << num_of_cells << "\n";
+
           Kokkos::resize(mesh.device_cells_, num_of_cells, MAX_NUM_EDGES_PER_CELL, 2);
           Kokkos::resize(mesh.num_verts_per_cell_, num_of_cells);
           mesh.mirror_num_verts_per_cell_ = Kokkos::create_mirror_view(mesh.num_verts_per_cell_);
