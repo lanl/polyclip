@@ -12,7 +12,7 @@ namespace polyintersect {
   public:
 
     //We need a regular constructor that doesn't initialize anything.
-    Mesh_Kokkos();
+    Mesh_Kokkos() = default;
     // constructor
     Mesh_Kokkos(int total_points, int total_cells, int max_edges_per_cell);
 
