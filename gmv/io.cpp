@@ -172,6 +172,7 @@ namespace polyintersect {
           std::cout << "Num Of Cells. . . " << num_of_cells << "\n";
 
           Kokkos::resize(mesh.device_cells_, num_of_cells, MAX_NUM_EDGES_PER_CELL, 2);
+          mesh.mirror_cells_ = Kokkos::create_mirror_view(mesh.device_cells_);
           Kokkos::resize(mesh.num_verts_per_cell_, num_of_cells);
           mesh.mirror_num_verts_per_cell_ = Kokkos::create_mirror_view(mesh.num_verts_per_cell_);
           Kokkos::resize(mesh.signs_, num_of_cells, MAX_NUM_EDGES_PER_CELL + 2);
