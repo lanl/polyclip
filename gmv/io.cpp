@@ -118,7 +118,7 @@ namespace polyintersect {
         std::stringstream tokenizer(buffer);
         std::string token;
 
-        std::cout << "Testing if whipe loop is parsing. . ."
+        std::cout << "Testing if whipe loop is parsing. . .\n";
         tokenizer >> token;
 
         // std::cout << "Token = " << token << "\n";
