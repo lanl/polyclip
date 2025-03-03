@@ -197,11 +197,12 @@ namespace polyintersect {
             for(int j = 0; j < num_of_edges; j++) {
               cell_parser >> cell_data;
               list_of_nodes[j] = std::stoi(cell_data) - 1;
+              std::cout << "Value added is: " << std::stoi(cell_data) - 1 << "\n";
             }
 
             for(int k = 0; k < num_of_edges; k++) {
               auto edge_x = list_of_nodes[k];
-              auto edge_y = list_of_nodes[(k+1) % (num_of_edges-1)];
+              auto edge_y = list_of_nodes[(k+1) % (num_of_edges)];
               std::cout << "edge_x/edge_y = " << "( " << edge_x << ", " << edge_y << " )\n";
               mesh.add_edge(i, k, {edge_x, edge_y});
             }
