@@ -71,8 +71,9 @@ int main(int argc, char* argv[]){
     	mesh.mirror_num_verts_per_cell_(1) = 3;
     	mesh.mirror_num_verts_per_cell_(2) = 6;
     	mesh.mirror_num_verts_per_cell_(3) = 4;
-
-    //	io::write_gmv(mesh, "test");
+	
+	// CPU to GPU
+	mesh.send_to_gpu();
 
 	// Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
@@ -100,6 +101,10 @@ int main(int argc, char* argv[]){
 			     clipped_part.allPoints_, clipped_part.line_(c));
            }
         });
+	
+	// Send to CPU
+	mesh.send_to_cpu();
+	clipped_part.send_to_cpu();
 
 	io::write_gmv(mesh, clipped_part , "test");
 	}
