@@ -15,6 +15,18 @@ int main(int argc, char* argv[]){
     	int total_cells = 4;
     	int max_edges_per_cell = 6;
 
+	// GMV variable counters
+/*	Kokkos::View<int*, Kokkos::CudaSpace> num_total_nodes("totalnodes", 1); // nnodes
+	Kokkos::View<int*, Kokkos::CudaSpace> num_total_polys("totalcells", 1);	// ncells
+	Kokkos::View<int*>::HostMirror mirror_total_nodes;			// cpu nodes
+	Kokkos::View<int*>::HostMirror mirror_total_polys;			// cpu polys
+	
+	mirror_total_nodes = Kokkos::create_mirror_view(num_total_nodes);
+    	mirror_total_polys = Kokkos::create_mirror_view(num_total_polys);
+	
+	Kokkos::deep_copy(num_total_nodes, 0);
+	Kokkos::deep_copy(num_total_polys, 0);*/
+	
     	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines, 3) Vertical overlapping lines
 
     	// Distance for Every Cell 
@@ -90,23 +102,42 @@ int main(int argc, char* argv[]){
         });
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {
+        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {//, int  &n, int &p) {
 	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c, 
 			                                                     clipped_part.line_(c), mesh.num_verts_per_cell_);
+	     
+	    // GMV counter
+	    //n += mesh.num_verts_per_cell_(c);
+	    //p++;
+	    //Kokkos::atomic_fetch_add(&num_total_nodes(0), mesh.num_verts_per_cell_(c));
+	    //Kokkos::atomic_fetch_add(&num_total_polys(0), 1);
 
 	    // Check if cell contains intersect points
 	    if(intersects(mesh.device_points_, mesh.device_cells_, c, clipped_part.intersect_points_(c), mesh.num_verts_per_cell_)){
             	clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
                              clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_,
 			     clipped_part.allPoints_, clipped_part.line_(c));
-           }
-        });
+           	
+		// GMV counter
+		//n += 2;
+		//p++;
+		//Kokkos::atomic_fetch_add(&num_total_nodes(0), 2);
+		//Kokkos::atomic_fetch_add(&num_total_polys(0), 1);
+	     }
+        });//, num_total_nodes, num_total_polys);
 	
 	// Send to CPU
+	//Kokkos::deep_copy(mirror_total_nodes, num_total_nodes);
+    	//Kokkos::deep_copy(mirror_total_polys, num_total_polys);
 	mesh.send_to_cpu();
 	clipped_part.send_to_cpu();
 
-	io::write_gmv(mesh, clipped_part , "test");
+	//std::cout << mirror_total_nodes(0) << " " << mirror_total_polys(0) << std::endl;
+
+	int num_total_nodes = 26;
+        int num_total_polys = 8;
+
+	io::write_gmv(mesh, clipped_part, num_total_nodes, num_total_polys, "test");
 	}
 
 	std::cout << "I like eggs. . " << std::endl;
