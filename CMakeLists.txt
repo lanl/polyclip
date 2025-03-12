@@ -57,3 +57,9 @@ find_package(Kokkos REQUIRED)
 target_link_libraries(gmv_writer PUBLIC Kokkos::kokkos)
 
 
+add_executable(gmv_reader)
+target_include_directories(gmv_reader PUBLIC gmv)
+target_sources(gmv_reader PUBLIC gmv/test_read.cpp gmv/io.cpp test/mesh_gpu.cpp test/clipped_part_gpu.cpp)
+find_package(Kokkos REQUIRED)
+target_link_libraries(gmv_reader PUBLIC Kokkos::kokkos)
+

@@ -100,5 +100,72 @@ namespace polyintersect {
 
     gmv_file << "endgmv\n";
     gmv_file.close();
- }
+  }
+
+  Mesh_Kokkos read_gmv(std::string& file_name){
+      Mesh_Kokkos mesh(11, 4, 6);
+      std::fstream gmv_file(file_name, std::ios::app);
+      std::string buffer;
+
+      while(std::getline(gmv_file, buffer)) {
+        std::stringstream tokenizer(buffer);
+        std::string token;
+
+        tokenizer >> token;
+
+        if(token == "gmvinput") {
+          continue;
+        }
+
+        if(token == "nodev") {
+          for(int i = 0; i < 11; i++) {
+            std::getline(gmv_file, buffer);
+            std::stringstream point_parser(buffer);
+            std::string point_data;
+
+            float x, y;
+
+            point_parser >> point_data;
+            x = std::stof(point_data);
+
+            point_parser >> point_data;
+
+            y = std::stof(point_data);
+
+            mesh.add_points(i, {x, y});
+
+          }
+        }
+
+        else if(token == "cells") {
+          for(int i = 0; i < 4; i++) {
+            std::getline(gmv_file, buffer);
+            std::stringstream cell_parser(buffer);
+            std::string cell_data;
+
+            //Let's discard the general token and the cell id token.
+            cell_parser >> cell_data;
+            cell_parser >> cell_data;
+
+            //The next token will signify the # of edges for the cell.
+
+            cell_parser >> cell_data;
+            int num_of_edges = std::stoi(cell_data);
+            std::vector<int> list_of_nodes(num_of_edges);
+            for(int j = 0; j < num_of_edges; j++) {
+              cell_parser >> cell_data;
+              list_of_nodes[j] = std::stoi(cell_data) - 1;
+            }
+
+            for(int k = 0; k < num_of_edges; k++) {
+              auto edge_x = list_of_nodes[k];
+              auto edge_y = list_of_nodes[(k+1) % (num_of_edges-1)];
+              mesh.add_edge(i, k, {edge_x, edge_y});
+            }
+          }
+        }
+      }
+
+    return mesh;
+  }
 }
