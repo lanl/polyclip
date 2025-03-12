@@ -27,7 +27,7 @@ int main(int argc, char* argv[]){
 	Kokkos::deep_copy(num_total_nodes, 0);
 	Kokkos::deep_copy(num_total_polys, 0);
 	
-    	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines, 3) Vertical overlapping lines
+    	int line_rep = 3; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines, 3) Vertical overlapping lines
 
     	// Distance for Every Cell 
 	double horizontal[4] = {-0.125, -0.125, -0.5, -0.75}; 
@@ -122,6 +122,16 @@ int main(int argc, char* argv[]){
 		// GMV counter
 		num_total_nodes(0) += 2;
 		num_total_polys(0)++;
+	     }
+	     else{
+	     	int const m = mesh.num_verts_per_cell_(c); 
+	     	for(int i = 0; i < m; i++){
+			int index = mesh.device_cells_(c, i, 0);
+            		clipped_part.allPoints_(c, i) = mesh.device_points_(index);
+		}
+		// Order counter-clockwise
+		Point center_point = center(c, m, clipped_part.allPoints_);
+		sorting(c, m, clipped_part.allPoints_, center_point);
 	     }
 	   }
         });

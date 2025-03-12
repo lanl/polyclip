@@ -21,7 +21,16 @@ namespace polyintersect {
 
     // Print all points ////////////////////////////////////////////////////////////////////////////////////
     for(int c = 0; c < total_cells; c++){
-        int v = mesh.mirror_num_verts_per_cell_(c) + 2;
+	int below = clipped_part.mirror_size_output_(c, 0);
+	int v;
+
+	// Check if its a Clipped Cell
+	if(below == 0){		// Non-clipped cell
+        	v = mesh.mirror_num_verts_per_cell_(c);
+	}else{			// Clipped cell
+		v = mesh.mirror_num_verts_per_cell_(c) + 2;
+	}
+
         for(int i = 0; i < v; i++){
             gmv_file << std::scientific << std::setprecision(17);
             auto const p = clipped_part.mirror_allPoints_(c, i);

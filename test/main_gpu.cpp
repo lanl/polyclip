@@ -19,7 +19,7 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
+	int line_rep = 2; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
 	
 	// Testing: distances for every cell
 	double horizontal[4] = {-0.125, -0.125, -0.5, -0.75}; 
