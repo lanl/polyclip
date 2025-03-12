@@ -102,9 +102,13 @@ namespace polyintersect {
     gmv_file.close();
   }
 
-  Mesh_Kokkos read_gmv(std::string& file_name){
-      Mesh_Kokkos mesh(11, 4, 6);
 
+  Mesh_Kokkos io::read_gmv(const std::string& basename){
+
+
+      Mesh_Kokkos mesh = Mesh_Kokkos();
+    //  Mesh_Kokkos mesh(11, 4, 6);
+      std::string file_name = basename + ".gmv";
       std::ifstream gmv_file(file_name);
       std::string buffer;
 
@@ -121,7 +125,13 @@ namespace polyintersect {
         }
 
         if(token == "nodev") {
-          for(int i = 0; i < 11; i++) {
+          std::string node_value;
+          tokenizer >> node_value;
+          int num_of_nodes = std::stoi(node_value);
+          Kokkos::resize(mesh.device_points_, num_of_nodes);  // malloc
+          mesh.mirror_points_ = Kokkos::create_mirror_view(mesh.device_points_);
+
+          for(int i = 0; i < num_of_nodes; i++) {
             std::stringstream out;
             std::getline(gmv_file, buffer);
             std::stringstream point_parser(buffer);
@@ -149,7 +159,16 @@ namespace polyintersect {
         }
 
         else if(token == "cells") {
-          for(int i = 0; i < 4; i++) {
+          std::string cell_value;
+          tokenizer >> cell_value;
+          int num_of_cells = std::stoi(cell_value);
+          Kokkos::resize(mesh.device_cells_, num_of_cells, MAX_NUM_EDGES_PER_CELL, 2);
+          Kokkos::resize(mesh.num_verts_per_cell_, num_of_cells);
+          mesh.mirror_num_verts_per_cell_ = Kokkos::create_mirror_view(mesh.num_verts_per_cell_);
+          Kokkos::resize(mesh.signs_, num_of_cells, MAX_NUM_EDGES_PER_CELL + 2);
+          mesh.mirror_signs_ = Kokkos::create_mirror_view(mesh.signs_);
+
+          for(int i = 0; i < num_of_cells; i++) {
             std::getline(gmv_file, buffer);
             std::stringstream cell_parser(buffer);
             std::string cell_data;
