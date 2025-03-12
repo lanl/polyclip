@@ -19,7 +19,7 @@ int main(int argc, char* argv[]){
 		}
 		std::string file_name = argv[1];
 
-	{
+	  Kokkos::initialize(argc, argv);{
 	// initialize variables for the unstructured mesh
     	int total_points = 11;
     	int total_cells = 4;
