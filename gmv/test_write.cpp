@@ -8,7 +8,17 @@ int main(int argc, char* argv[]){
 
     using namespace polyintersect;
 
-    Kokkos::initialize(argc, argv);
+
+		int num_of_threads = 1;
+		if(argc < 2) {
+			std::cout << "Usage: gmv_writer [file_name]\n";
+			std::cout << "Usage: gmv_writer [file_name] [NUM_OF_THREADS]\n";
+		}
+		if(argc > 2) {
+			num_of_threads = std::stoi(argv[2]);
+		}
+		std::string file_name = argv[1];
+
 	{
 	// initialize variables for the unstructured mesh
     	int total_points = 11;
