@@ -9,15 +9,15 @@ int main(int argc, char* argv[]){
     using namespace polyintersect;
 
 
-		int num_of_threads = 1;
-		if(argc < 2) {
-			std::cout << "Usage: gmv_writer [file_name]\n";
-			std::cout << "Usage: gmv_writer [file_name] [NUM_OF_THREADS]\n";
-		}
-		if(argc > 2) {
-			num_of_threads = std::stoi(argv[2]);
-		}
-		std::string file_name = argv[1];
+		// int num_of_threads = 1;
+		// if(argc < 2) {
+		// 	std::cout << "Usage: gmv_writer [file_name]\n";
+		// 	std::cout << "Usage: gmv_writer [file_name] [NUM_OF_THREADS]\n";
+		// }
+		// if(argc > 2) {
+		// 	num_of_threads = std::stoi(argv[2]);
+		// }
+		// std::string file_name = argv[1];
 
 	  Kokkos::initialize(argc, argv);{
 	// initialize variables for the unstructured mesh
@@ -104,18 +104,19 @@ int main(int argc, char* argv[]){
         });
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
+				int dummy = 1;
+        Kokkos::parallel_for(dummy, KOKKOS_LAMBDA(int d) {
+	        for(int c = 0; c < total_cells; c++){
+					 clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c,
+																										 clipped_part.line_(c), mesh.num_verts_per_cell_);
 
-        Kokkos::parallel_for(num_of_threads, KOKKOS_LAMBDA(int d) {
-	   for(int c = 0; c < total_cells; c++){
-	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c,
-			                                                     clipped_part.line_(c), mesh.num_verts_per_cell_);
-
-	    // Check if cell contains intersect points
-	    if(intersects(mesh.device_points_, mesh.device_cells_, c, clipped_part.intersect_points_(c), mesh.num_verts_per_cell_)){
-            	clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
-                             clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_,
-			     clipped_part.allPoints_, clipped_part.line_(c));
-	     }
+					 // Check if cell contains intersect points
+					 if(intersects(mesh.device_points_, mesh.device_cells_, c, clipped_part.intersect_points_(c), mesh.num_verts_per_cell_)){
+									 clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
+																	clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_,
+								clipped_part.allPoints_, clipped_part.line_(c));
+						}
+					 }
         });
 	
 	// Send to CPU

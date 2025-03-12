@@ -1,7 +1,9 @@
-if [ -f "CMakeCache.txt" ]; then
-  rm CMakeCache.txt
-fi
 
+if [ -z "$1" ]; then
+  if [ -f "CMakeCache.txt" ]; then
+    rm CMakeCache.txt
+  fi
+fi
 base_directory=$(basename "$PWD")
 
 if [[ "$base_directory" != "build" && "$base_directory" != "cmake-build-debug" ]]; then
