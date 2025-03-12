@@ -8,7 +8,7 @@
 
 namespace polyintersect::io {
 
-  void write_gmv(Mesh_Kokkos mesh, Clipped_Part clipped_part, int num_total_nodes, int num_total_polys, const std::string& basename);
+  void write_gmv(Mesh_Kokkos mesh, Clipped_Part clipped_part, int num_total_nodes, int num_total_polys, const std::string& file_name);
   Mesh_Kokkos read_gmv(std::string& file_name);
 
 }

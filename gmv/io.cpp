@@ -6,9 +6,8 @@
 
 namespace polyintersect {
 
-  void io::write_gmv(Mesh_Kokkos mesh, Clipped_Part clipped_part, int num_total_nodes, int num_total_polys, const std::string& basename) {
+  void io::write_gmv(Mesh_Kokkos mesh, Clipped_Part clipped_part, int num_total_nodes, int num_total_polys, const std::string& file_name) {
 
-    // std::string file_name = basename + ".gmv";
     std::fstream gmv_file(file_name, std::ios::app);
 
     // Original cells and points
@@ -103,7 +102,7 @@ namespace polyintersect {
   }
 
 
-  Mesh_Kokkos io::read_gmv(const std::string& file_name){
+  Mesh_Kokkos io::read_gmv(std::string& file_name){
 
 
       // std::cout << "File name: " << file_name << "\n";
