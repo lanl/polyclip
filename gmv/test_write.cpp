@@ -104,8 +104,10 @@ int main(int argc, char* argv[]){
         });
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {
-	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c, 
+
+        Kokkos::parallel_for(num_of_threads, KOKKOS_LAMBDA(int d) {
+	   for(int c = 0; c < total_cells; c++){
+	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c,
 			                                                     clipped_part.line_(c), mesh.num_verts_per_cell_);
 
 	    // Check if cell contains intersect points
