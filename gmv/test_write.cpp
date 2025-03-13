@@ -16,23 +16,15 @@ int main(int argc, char* argv[]){
     	int max_edges_per_cell = 6;
 
 	// GMV variable counters
-	Kokkos::View<int*, Kokkos::CudaSpace> num_total_nodes("totalnodes", 1); // nnodes
-	Kokkos::View<int*, Kokkos::CudaSpace> num_total_polys("totalcells", 1);	// ncells
-	Kokkos::View<int*>::HostMirror mirror_total_nodes;			// cpu nodes
-	Kokkos::View<int*>::HostMirror mirror_total_polys;			// cpu polys
-	
-	mirror_total_nodes = Kokkos::create_mirror_view(num_total_nodes);
-    	mirror_total_polys = Kokkos::create_mirror_view(num_total_polys);
-	
-	Kokkos::deep_copy(num_total_nodes, 0);
-	Kokkos::deep_copy(num_total_polys, 0);
-	
-    	int line_rep = 3; // 1) Horizontal overlapping lines, 2) Arbitrary overlapping lines, 3) Vertical overlapping lines
+	int num_total_nodes = 0;
+	int num_total_polys = 0;
+
+    	int line_rep = 2; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines, 3) Arbitrary overlapping lines
 
     	// Distance for Every Cell 
 	double horizontal[4] = {-0.125, -0.125, -0.5, -0.75}; 
-	double vertical[4] = {-1 /*-0.375*/, -0.625, -0.75, -0.625}; //Test dummy: replace -0.375 with -1
-	double arbitrary[4] = {-1 /*-0.26516504294495535*/, -0.4419417382415923, -0.618718433538229, -0.8838834764831844}; // Test dummy: replace with -1
+	double vertical[4] = {/*-1*/ -0.375, -0.625, -0.75, -0.625}; //Test dummy: replace -0.375 with -1
+	double arbitrary[4] = {/*-1*/ -0.26516504294495535, -0.4419417382415923, -0.618718433538229, -0.8838834764831844}; // Test dummy: replace with -1
 
 	
 	// Create mesh /////////////////////////////////////////////////////////////////////////////////////////
@@ -100,51 +92,40 @@ int main(int argc, char* argv[]){
                clipped_part.line_(i).d = arbitrary[i];
 	     }
         });
-	
-	int dummy = 1;
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-        Kokkos::parallel_for(dummy, KOKKOS_LAMBDA(int d) {
-	   for(int c = 0; c < total_cells; c++){
+        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {
 	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c, 
 			                                                     clipped_part.line_(c), mesh.num_verts_per_cell_);
-	     
-	    // GMV counter
-	    num_total_nodes(0) += mesh.num_verts_per_cell_(c);
-	    num_total_polys(0)++;
 
 	    // Check if cell contains intersect points
 	    if(intersects(mesh.device_points_, mesh.device_cells_, c, clipped_part.intersect_points_(c), mesh.num_verts_per_cell_)){
             	clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
                              clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_,
 			     clipped_part.allPoints_, clipped_part.line_(c));
-           	
-		// GMV counter
-		num_total_nodes(0) += 2;
-		num_total_polys(0)++;
 	     }
-	     else{
-	     	int const m = mesh.num_verts_per_cell_(c); 
-	     	for(int i = 0; i < m; i++){
-			int index = mesh.device_cells_(c, i, 0);
-            		clipped_part.allPoints_(c, i) = mesh.device_points_(index);
-		}
-		// Order counter-clockwise
-		Point center_point = center(c, m, clipped_part.allPoints_);
-		sorting(c, m, clipped_part.allPoints_, center_point);
-	     }
-	   }
         });
 	
 	// Send to CPU
-	Kokkos::deep_copy(mirror_total_nodes, num_total_nodes);
-    	Kokkos::deep_copy(mirror_total_polys, num_total_polys);
 	mesh.send_to_cpu();
 	clipped_part.send_to_cpu();
+	
+	// GMV counter
+	for(int c = 0; c < total_cells; c++){	//Increase at every cell
+	    int below = clipped_part.mirror_size_output_(c, 0);
+	    num_total_nodes += mesh.mirror_num_verts_per_cell_(c);
+            num_total_polys++;
 
-	std::cout << mirror_total_nodes(0) << " " << mirror_total_polys(0) << std::endl;
+	    if(below > 0){	//Increase at every clipped cell
+		num_total_nodes += 2;
+            	num_total_polys++;
+	    }
+	}
 
-	io::write_gmv(mesh, clipped_part, mirror_total_nodes(0), mirror_total_polys(0), "test");
+	std::cout << num_total_nodes << " " << num_total_polys << std::endl;
+
+
+	io::write_gmv(mesh, clipped_part, num_total_nodes, num_total_polys, "test");
 	}
 
 	std::cout << "I like eggs. . " << std::endl;

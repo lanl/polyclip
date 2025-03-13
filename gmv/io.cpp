@@ -27,15 +27,20 @@ namespace polyintersect {
 	// Check if its a Clipped Cell
 	if(below == 0){		// Non-clipped cell
         	v = mesh.mirror_num_verts_per_cell_(c);
+		for(int i = 0; i < v; i++){
+		    gmv_file << std::scientific << std::setprecision(17);
+		    int id = mesh.mirror_cells_(c, i, 0);
+		    auto const p = mesh.mirror_points_(id);
+		    gmv_file << p.x << " "<< p.y << " " << 0.0 << "\n";
+		}
 	}else{			// Clipped cell
 		v = mesh.mirror_num_verts_per_cell_(c) + 2;
+		for(int i = 0; i < v; i++){
+            	    gmv_file << std::scientific << std::setprecision(17);
+            	    auto const p = clipped_part.mirror_allPoints_(c, i);
+            	    gmv_file << p.x << " "<< p.y << " " << 0.0 << "\n";
+        	}
 	}
-
-        for(int i = 0; i < v; i++){
-            gmv_file << std::scientific << std::setprecision(17);
-            auto const p = clipped_part.mirror_allPoints_(c, i);
-            gmv_file << p.x << " "<< p.y << " " << 0.0 << "\n";
-        }
     }
 
     // Print Cells + All Clipped Cells
