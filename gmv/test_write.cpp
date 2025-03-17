@@ -8,18 +8,8 @@ int main(int argc, char* argv[]){
 
     using namespace polyintersect;
 
-
-		// int num_of_threads = 1;
-		// if(argc < 2) {
-		// 	std::cout << "Usage: gmv_writer [file_name]\n";
-		// 	std::cout << "Usage: gmv_writer [file_name] [NUM_OF_THREADS]\n";
-		// }
-		// if(argc > 2) {
-		// 	num_of_threads = std::stoi(argv[2]);
-		// }
-		// std::string file_name = argv[1];
-
-	  Kokkos::initialize(argc, argv);{
+    Kokkos::initialize(argc, argv);
+	{
 	// initialize variables for the unstructured mesh
     	int total_points = 11;
     	int total_cells = 4;
@@ -31,12 +21,12 @@ int main(int argc, char* argv[]){
 
     	int line_rep = 2; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines, 3) Arbitrary overlapping lines
 
-    	// Distance for Every Cell 
-	double horizontal[4] = {-0.125, -0.125, -0.5, -0.75}; 
+    	// Distance for Every Cell
+	double horizontal[4] = {-0.125, -0.125, -0.5, -0.75};
 	double vertical[4] = {/*-1*/ -0.375, -0.625, -0.75, -0.625}; //Test dummy: replace -0.375 with -1
 	double arbitrary[4] = {/*-1*/ -0.26516504294495535, -0.4419417382415923, -0.618718433538229, -0.8838834764831844}; // Test dummy: replace with -1
 
-	
+
 	// Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     	Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
 	Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
@@ -85,7 +75,7 @@ int main(int argc, char* argv[]){
     	mesh.mirror_num_verts_per_cell_(1) = 3;
     	mesh.mirror_num_verts_per_cell_(2) = 6;
     	mesh.mirror_num_verts_per_cell_(3) = 4;
-	
+
 	// CPU to GPU
 	mesh.send_to_gpu();
 
@@ -104,25 +94,22 @@ int main(int argc, char* argv[]){
         });
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-				int dummy = 1;
-        Kokkos::parallel_for(dummy, KOKKOS_LAMBDA(int d) {
-	        for(int c = 0; c < total_cells; c++){
-					 clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c,
-																										 clipped_part.line_(c), mesh.num_verts_per_cell_);
+        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {
+	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c,
+			                                                     clipped_part.line_(c), mesh.num_verts_per_cell_);
 
-					 // Check if cell contains intersect points
-					 if(intersects(mesh.device_points_, mesh.device_cells_, c, clipped_part.intersect_points_(c), mesh.num_verts_per_cell_)){
-									 clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
-																	clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_,
-								clipped_part.allPoints_, clipped_part.line_(c));
-						}
-					 }
+	    // Check if cell contains intersect points
+	    if(intersects(mesh.device_points_, mesh.device_cells_, c, clipped_part.intersect_points_(c), mesh.num_verts_per_cell_)){
+            	clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
+                             clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_,
+			     clipped_part.allPoints_, clipped_part.line_(c));
+	     }
         });
-	
+
 	// Send to CPU
 	mesh.send_to_cpu();
 	clipped_part.send_to_cpu();
-	
+
 	// GMV counter
 	for(int c = 0; c < total_cells; c++){	//Increase at every cell
 	    int below = clipped_part.mirror_size_output_(c, 0);
