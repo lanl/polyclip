@@ -102,7 +102,7 @@ namespace polyintersect {
   }
 
 
-  Mesh_Kokkos io::read_gmv(std::string& file_name){
+  Mesh_Kokkos io::read_gmv(std::string& file_name, Clipped_Part clipped_part,){
 
 
       // std::cout << "File name: " << file_name << "\n";
@@ -129,11 +129,12 @@ namespace polyintersect {
           std::string node_value;
           tokenizer >> node_value;
           int num_of_nodes = std::stoi(node_value);
-          std::cout << "Node value is. . . " << num_of_nodes << "\n";
+          // std::cout << "Node value is. . . " << num_of_nodes << "\n";
 
 
           Kokkos::resize(mesh.device_points_, num_of_nodes);  // malloc
           mesh.mirror_points_ = Kokkos::create_mirror_view(mesh.device_points_);
+
 
           for(int i = 0; i < num_of_nodes; i++) {
             std::stringstream out;
