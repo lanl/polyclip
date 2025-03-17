@@ -97,10 +97,6 @@ int main(int argc, char* argv[]){
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {
 	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c,
 			                                                     clipped_part.line_(c), mesh.num_verts_per_cell_);
-	     
-	    // GMV counter
-	    num_total_nodes(c) += mesh.num_verts_per_cell_(c);
-	    num_total_polys(c)++;
 
 	    // Check if cell contains intersect points
 	    if(intersects(mesh.device_points_, mesh.device_cells_, c, clipped_part.intersect_points_(c), mesh.num_verts_per_cell_)){
