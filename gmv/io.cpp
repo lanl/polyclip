@@ -10,7 +10,7 @@ namespace polyintersect {
 
     std::fstream gmv_file(file_name, std::ios::app);
 
-    // Original cells and points
+    // Original cells and pointsf
     int total_cells = mesh.mirror_cells_.extent(0);
     int points = mesh.mirror_points_.extent(0);
 
@@ -96,6 +96,19 @@ namespace polyintersect {
 
         }
     }
+
+    gmv_file << "material\n";
+    gmv_file << num_total_polys << " 0\n";
+    for(int i = 1; i <= num_total_polys; i++) {
+      gmv_file << "mat" << i << "\n";
+    }
+
+    for(int i = 0; i < num_total_polys; i++) {
+      gmv_file << i << " ";
+    }
+
+    gmv_file << "\n";
+
 
     gmv_file << "endgmv\n";
     gmv_file.close();
