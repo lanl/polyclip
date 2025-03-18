@@ -112,23 +112,25 @@ int main(int argc, char* argv[]){
 
 	// GMV counter
 	for(int c = 0; c < total_cells; c++){	//Increase at every cell
-	    int below = clipped_part.mirror_size_output_(c, 0);
-	    num_total_nodes += mesh.mirror_num_verts_per_cell_(c);
-            num_total_polys++;
 
-	    if(below > 0){	//Increase at every clipped cell
-		num_total_nodes += 2;
-            	num_total_polys++;
+		int below = clipped_part.mirror_size_output_(c, 0);
+		num_total_nodes += mesh.mirror_num_verts_per_cell_(c);
+		num_total_polys++;
+
+		if(below > 0){	//Increase at every clipped cell
+	    	num_total_nodes += 2;
+	    	num_total_polys++;
 	    }
 	}
 
-	std::cout << num_total_nodes << " " << num_total_polys << std::endl;
+    	std::cout << num_total_nodes << " " << num_total_polys << std::endl;
 
 
-	io::write_clipped_gmv(mesh, clipped_part, num_total_nodes, num_total_polys, "test");
+    	io::write_clipped_gmv(mesh, clipped_part, num_total_nodes, num_total_polys, "test_clipped");
+    	io::write_gmv(mesh, "test_mesh");
+
 	}
 
-	std::cout << "I like eggs. . " << std::endl;
 	Kokkos::finalize();
   return 0;
 }
