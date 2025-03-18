@@ -103,7 +103,7 @@ namespace polyintersect {
       gmv_file << "mat" << i << "\n";
     }
 
-    for(int i = 0; i < num_total_polys; i++) {
+    for(int i = 1; i <= num_total_polys; i++) {
       gmv_file << i << " ";
     }
 
@@ -157,7 +157,7 @@ namespace polyintersect {
       gmv_file << "mat" << i << "\n";
     }
 
-    for(int i = 0; i < total_cells; i++) {
+    for(int i = 1; i <= total_cells; i++) {
       gmv_file << i << " ";
     }
 
