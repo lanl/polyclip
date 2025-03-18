@@ -125,7 +125,7 @@ int main(int argc, char* argv[]){
 	std::cout << num_total_nodes << " " << num_total_polys << std::endl;
 
 
-	io::write_gmv(mesh, clipped_part, num_total_nodes, num_total_polys, "test");
+	io::write_clipped_gmv(mesh, clipped_part, num_total_nodes, num_total_polys, "test");
 	}
 
 	std::cout << "I like eggs. . " << std::endl;

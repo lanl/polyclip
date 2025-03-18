@@ -6,7 +6,7 @@
 
 namespace polyintersect {
 
-  void io::write_gmv(Mesh_Kokkos mesh, Clipped_Part clipped_part, int num_total_nodes, int num_total_polys, const std::string& file_name) {
+  void io::write_clipped_gmv(Mesh_Kokkos mesh, Clipped_Part clipped_part, int num_total_nodes, int num_total_polys, const std::string& file_name) {
 
     std::fstream gmv_file(file_name, std::ios::app);
 
@@ -104,6 +104,59 @@ namespace polyintersect {
     }
 
     for(int i = 0; i < num_total_polys; i++) {
+      gmv_file << i << " ";
+    }
+
+    gmv_file << "\n";
+
+
+    gmv_file << "endgmv\n";
+    gmv_file.close();
+  }
+
+
+
+  void io::write_gmv(Mesh_Kokkos mesh, const std::string& file_name) {
+
+    std::fstream gmv_file(file_name, std::ios::app);
+
+    // Original cells and pointsf
+    int total_cells = mesh.mirror_cells_.extent(0);
+    int points = mesh.mirror_points_.extent(0);
+
+    // Print all points
+    gmv_file << "gmvinput ascii\n";
+    gmv_file << "nodev " << points << "\n";
+
+    // Print all points ////////////////////////////////////////////////////////////////////////////////////
+    for(int c = 0; c < mesh.mirror_points_.extent(0); c++){
+      auto const p = mesh.mirror_points_(c);
+      gmv_file << p.x << " "<< p.y << " " << 0.0 << "\n";
+
+    }
+
+    // Print Cell Nodes ////////////////////////////////////////////////////////////////////////////////////
+    int node_increment = 0;	// keep track of what node we are on with respect to the gmv file
+    for(int c = 0; c < total_cells; c++){
+        gmv_file << "general 1 ";
+        std::string store_points = "";
+        int num_verts = mesh.mirror_num_verts_per_cell_(c);
+
+
+      for(int j = 0; j < num_verts ; j++) {
+        int const node_id = j + node_increment;
+        store_points += std::to_string(node_id + 1) + " ";
+      }
+      gmv_file << std::to_string(num_verts) << " " << store_points << "\n";
+    }
+
+    gmv_file << "material\n";
+    gmv_file << total_cells << " 0\n";
+    for(int i = 1; i <= total_cells; i++) {
+      gmv_file << "mat" << i << "\n";
+    }
+
+    for(int i = 0; i < total_cells; i++) {
       gmv_file << i << " ";
     }
 
