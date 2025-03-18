@@ -130,6 +130,7 @@ namespace polyintersect {
 
     // Print all points ////////////////////////////////////////////////////////////////////////////////////
     for(int c = 0; c < mesh.mirror_points_.extent(0); c++){
+      gmv_file << std::scientific << std::setprecision(17);
       auto const p = mesh.mirror_points_(c);
       gmv_file << p.x << " "<< p.y << " " << 0.0 << "\n";
 
