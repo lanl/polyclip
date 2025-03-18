@@ -168,7 +168,7 @@ namespace polyintersect {
   }
 
 
-  Mesh_Kokkos io::read_gmv(std::string& file_name, Clipped_Part clipped_part,){
+  Mesh_Kokkos io::read_gmv(std::string& file_name, Clipped_Part clipped_part){
 
 
       // std::cout << "File name: " << file_name << "\n";
