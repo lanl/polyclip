@@ -150,20 +150,6 @@ namespace polyintersect {
       }
       gmv_file << std::to_string(num_verts) << " " << store_points << "\n";
     }
-
-    gmv_file << "material\n";
-    gmv_file << total_cells << " 0\n";
-    for(int i = 1; i <= total_cells; i++) {
-      gmv_file << "mat" << i << "\n";
-    }
-
-    for(int i = 1; i <= total_cells; i++) {
-      gmv_file << i << " ";
-    }
-
-    gmv_file << "\n";
-
-
     gmv_file << "endgmv\n";
     gmv_file.close();
   }
