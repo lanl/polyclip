@@ -1,5 +1,6 @@
 #include "clippings_gpu.h"
 #include "mesh_gpu.h"
+#include "print_gpu.h"
 #include "clipped_part_gpu.h"
 //#include "intersect_gpu.h"
 #include "intersect_n_d_gpu.h"
@@ -19,7 +20,7 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 2; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
+	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
 	
 	// Testing: distances for every cell
 	double horizontal[4] = {-0.125, -0.125, -0.5, -0.75}; 
@@ -108,107 +109,19 @@ int main(int argc, char * argv[]) {
 			     clipped_part.allPoints_, clipped_part.line_(c));
            }
         });
-	
-	// Verify Results by Printing on the CPU //////////////////////////////////////////////////////////////// 
-        auto const end = timer::elapsed(start); // time deep copy
+
+        int const end = timer::elapsed(start); // time deep copy
 
        	// Send to CPU
 	mesh.send_to_cpu();
 	clipped_part.send_to_cpu();
-
-        auto const end_including_copy = timer::elapsed(start);
-
-        // Print elapsed time 
-        std::cout << "Duration: " << end << " µs" << std::endl;
-        std::cout << "Deep copy: " << end_including_copy << " µs" << std::endl;
-        std::cout << "Max Threads: " << max_threads << std::endl << std::endl; 
-
-        // Print Cells 
-        std::cout << std::endl;
-        std::cout << "---------------- GPU Results ----------------" << std::endl;
-	std::cout << std::endl;
-
-	std::cout << "------ Cell + Edges ------" << std::endl;
-        for(int j = 0; j < total_cells; j++){   // Cell
-            std::cout << "Cell " << j << ":" << std::endl;
-            for (int i = 0; i < max_edges_per_cell; i++) {      // Edge       
-                std::cout << "Edge " << i << " (" << mesh.mirror_cells_(j , i, 0) << ", ";
-                std::cout << mesh.mirror_cells_(j, i, 1) << ") ";
-
-                if(j == 0 && i == 4 || j == 1 && i == 2 || j == 3 && i == 3){   
-                    break;
-                }
-            }
-            std::cout << std::endl;
-        }
-        std::cout << std::endl;
-
-        // Print Point Coordinates
-	std::cout << "------ Cell Vertices ------" << std::endl;
-        for (int j = 0; j < total_points; j++) {             // All Points
-                std::cout << "Point " << j << ": (" << mesh.mirror_points_(j).x << ", " << mesh.mirror_points_(j).y << ")" << std::endl;
-        
-        }
-
-	// Print Line
-        std::cout << std::endl;
-        std::cout << "------ Line ------" << std::endl;
-        for (int j = 0; j < total_cells; ++j) {
-            auto const pa = clipped_part.mirror_line_(j).n;
-            auto const dist = clipped_part.mirror_line_(j).d;
-            std::cout << "Line at Cell  "<< j << ": normal = ("<< pa.x << ", "<< pa.y << ") and distance = " << dist << std::endl;
-        }
-       
-	// Print Intersect Points
-        std::cout << std::endl;
-        std::cout << "------ Intersect Points ------" << std::endl;
-        for (int j = 0; j < total_cells; ++j) {
-            auto const pa = clipped_part.mirror_intersect_points_(j).a;
-            auto const pb = clipped_part.mirror_intersect_points_(j).b;
-            std::cout << "Intersection Points at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
-        }
-
-	// Print all Points (Vertices + Intersect Points)
-        std::cout << std::endl;
-	std::cout << "------ All Points ------" << std::endl;
-        for(int c = 0; c < total_cells; c++){
-		int t = mesh.mirror_num_verts_per_cell_(c) + 2;
-            for(int i = 0; i < t; i++){
-                auto const p = clipped_part.mirror_allPoints_(c, i);
-                std::cout << "Points at Cell  " << c << ": (" << p.x << ", "<< p.y << ") "<< std::endl;
-            }
-            std::cout << std::endl;
-        }
-
-        // Output Results
-        std::cout << std::endl;
-	std::cout << "------ Output ------" << std::endl;
-        for(int c = 0; c < total_cells; c++){
-	    int below = clipped_part.mirror_size_output_(c, 0);
-	    int above = clipped_part.mirror_size_output_(c, 1);
-	    std::cout << "Cell " << c << " Output: " << std::endl;
-	    for(int i = 0; i < below; i++){
-                int const j = clipped_part.mirror_output_(c, 0, i);
-                auto const p = clipped_part.mirror_allPoints_(c, j);
-	        std::cout << "Below: (" << p.x << ", "<< p.y << ") "<< std::endl;
-            }
-	    for(int i = 0; i < above; i++){
-                int const j = clipped_part.mirror_output_(c, 1, i);
-                auto const p = clipped_part.mirror_allPoints_(c, j);
-                std::cout << "Above: (" << p.x << ", "<< p.y << ") "<< std::endl;
-            }
-	    std::cout << std::endl;
-        }
-
-	// Print signs
-	std::cout << "------ Signs ------" << std::endl;
-        for(int i = 0; i < total_cells; i++){
-            int t = mesh.mirror_num_verts_per_cell_(i) + 2;
-            for(int j = 0; j < t; j++){
-                std::cout << "Sign at cell "<< i << ": " << mesh.mirror_signs_(i, j) << std::endl;
-            }
-            std::cout << std::endl;
-        }
+	int const end_including_copy = timer::elapsed(start);
+	
+	// Verify Results by Printing on the CPU ////////////////////////////////////////////////////////////////
+	print_results(end, end_including_copy, max_threads, total_cells, total_points, mesh.mirror_points_, 
+                      mesh.mirror_cells_, clipped_part.mirror_intersect_points_, clipped_part.mirror_line_, 
+                      mesh.mirror_num_verts_per_cell_, clipped_part.mirror_allPoints_, 
+                      clipped_part.mirror_size_output_, clipped_part.mirror_output_, mesh.mirror_signs_);
 	
     }
 
