@@ -41,7 +41,7 @@ cmake \
   -DKokkos_ENABLE_TESTS=On \
   -DKokkos_ENABLE_CUDA=On \
   -DCMAKE_CXX_EXTENSIONS=On \
-  -D{$KOKKOS_ARCHITECTURE}=On \
+  -D$KOKKOS_ARCHITECTURE=On \
 ..
 
 make -j 10
