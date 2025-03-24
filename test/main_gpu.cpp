@@ -1,6 +1,7 @@
 #include "clippings_gpu.h"
 #include "mesh_gpu.h"
 #include "print_gpu.h"
+#include "clip_gpu.h"
 #include "clipped_part_gpu.h"
 //#include "intersect_gpu.h"
 #include "intersect_n_d_gpu.h"
@@ -99,16 +100,8 @@ int main(int argc, char * argv[]) {
         }); 
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
-	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c, clipped_part.line_(c), mesh.num_verts_per_cell_);
-	    
-	    // Check if cell contains intersect points
-	    if(intersects(mesh.device_points_, mesh.device_cells_, c, clipped_part.intersect_points_(c), mesh.num_verts_per_cell_)){
-            	clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
-                             clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, 
-			     clipped_part.allPoints_, clipped_part.line_(c));
-           }
-        });
+       	clip(total_cells, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_, clipped_part.line_, mesh.num_verts_per_cell_,
+	      clipped_part.allPoints_, clipped_part.size_output_, clipped_part.output_, mesh.signs_);
 
         int const end = timer::elapsed(start); // time deep copy
 
