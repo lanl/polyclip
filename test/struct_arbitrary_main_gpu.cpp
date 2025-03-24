@@ -25,7 +25,7 @@ int main(int argc, char * argv[]) {
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
 	Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
-        double horizontal[16] = {-2, -2, -2, -2, -2, -2, -2, -2, -0.625, -0.625, -0.625, -0.625, -2, -2, -2, -2}; 
+        double arbitrary[1] = {/*0.0*/-0.08838834765}; 
 
         // All Nodes 
 	double lengthPerAxis = 1.0;
@@ -74,14 +74,15 @@ int main(int argc, char * argv[]) {
 
         // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
-	       clipped_part.line_(i).n = {0.0, 1.0};        // Horizontal Lines
-       	   clipped_part.line_(i).d = horizontal[i];
+	       clipped_part.line_(i).n = {-0.7071067812, 0.7071067812};        // Arbitrary Lines
+       	   clipped_part.line_(i).d = arbitrary[0];
         }); 
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-        clip(total_cells, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_, clipped_part.line_, mesh.num_verts_per_cell_,
+       	clip(total_cells, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_, clipped_part.line_, mesh.num_verts_per_cell_,
 	      clipped_part.allPoints_, clipped_part.size_output_, clipped_part.output_, mesh.signs_);
  
+
         auto const end = timer::elapsed(start); // time deep copy
 
        	// Send to CPU
@@ -95,6 +96,7 @@ int main(int argc, char * argv[]) {
                       mesh.mirror_cells_, clipped_part.mirror_intersect_points_, clipped_part.mirror_line_,
                       mesh.mirror_num_verts_per_cell_, clipped_part.mirror_allPoints_,
                       clipped_part.mirror_size_output_, clipped_part.mirror_output_, mesh.mirror_signs_);
+
 	
     }
 
@@ -102,4 +104,5 @@ int main(int argc, char * argv[]) {
     Kokkos::finalize();
     return EXIT_SUCCESS;
 }
+
 

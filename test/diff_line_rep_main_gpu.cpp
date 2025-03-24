@@ -134,18 +134,9 @@ int main(int argc, char * argv[]) {
         }); 
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
-	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c, clipped_part.line_(c), mesh.num_verts_per_cell_);
-	    
-	    // Check if cell contains intersect points
-	    if(intersects(mesh.device_points_, mesh.device_cells_, c, clipped_part.intersect_points_(c), mesh.num_verts_per_cell_)){
-            	clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
-                             clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, 
-			    clipped_part.allPoints_, clipped_part.line_(c));
-           }
-        });
+	clip(total_cells, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_, clipped_part.line_, mesh.num_verts_per_cell_,
+	      clipped_part.allPoints_, clipped_part.size_output_, clipped_part.output_, mesh.signs_);
 	
-	// Verify Results by Printing on the CPU //////////////////////////////////////////////////////////////// 
         auto const end = timer::elapsed(start); // time deep copy
 
        	// Send to CPU
@@ -154,106 +145,11 @@ int main(int argc, char * argv[]) {
 
         auto const end_including_copy = timer::elapsed(start);
 
-        // Print elapsed time 
-        std::cout << "Duration: " << end << " µs" << std::endl;
-        std::cout << "Deep copy: " << end_including_copy << " µs" << std::endl;
-        std::cout << "Max Threads: " << max_threads << std::endl << std::endl; 
-
-        // Print Cells 
-        std::cout << std::endl;
-        std::cout << "---------------- GPU Results ----------------" << std::endl;
-	std::cout << std::endl;
-
-	std::cout << "------ Cell + Edges ------" << std::endl;
-        for(int j = 0; j < total_cells; j++){   // Cell
-            std::cout << "Cell " << j << ":" << std::endl;
-	    int t = mesh.mirror_num_verts_per_cell_(j);
-            for (int i = 0; i < t; i++) {      // Edge       
-                std::cout << "Edge " << i << " (" << mesh.mirror_cells_(j , i, 0) << ", ";
-                std::cout << mesh.mirror_cells_(j, i, 1) << ") ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout << std::endl;
-
-        // Print Point Coordinates
-	std::cout << "------ Cell Vertices ------" << std::endl;
-        for (int j = 0; j < total_points; j++) {             // All Points
-                std::cout << "Point " << j << ": (" << mesh.mirror_points_(j).x << ", " << mesh.mirror_points_(j).y << ")" << std::endl;
-        
-        }
-
-	// Print Line
-        std::cout << std::endl;
-        std::cout << "------ Line ------" << std::endl;
-        for (int j = 0; j < total_cells; ++j) {
-            auto const pa = clipped_part.mirror_line_(j).n;
-            auto const dist = clipped_part.mirror_line_(j).d;
-            std::cout << "Line at Cell  "<< j << ": normal = ("<< pa.x << ", "<< pa.y << ") and distance = " << dist << std::endl;
-        }
-       
-	// Print Intersect Points
-        std::cout << std::endl;
-        std::cout << "------ Intersect Points ------" << std::endl;
-        for (int j = 0; j < total_cells; ++j) {
-            auto const pa = clipped_part.mirror_intersect_points_(j).a;
-            auto const pb = clipped_part.mirror_intersect_points_(j).b;
-            std::cout << "Intersection Points at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
-        }
-
-	// Print all Points (Vertices + Intersect Points)
-        std::cout << std::endl;
-	std::cout << "------ All Points ------" << std::endl;
-        for(int c = 0; c < total_cells; c++){
-            int below = clipped_part.mirror_size_output_(c, 0);
-            int t;
-            if(below == 0){
-                t = mesh.mirror_num_verts_per_cell_(c);
-            }
-            else{
-	        t = mesh.mirror_num_verts_per_cell_(c) + 2;
-            }
-            for(int i = 0; i < t; i++){
-                auto const p = clipped_part.mirror_allPoints_(c, i);
-                std::cout << "Points at Cell  " << c << ": (" << p.x << ", "<< p.y << ") "<< std::endl;
-            }
-            std::cout << std::endl;
-        }
-
-        // Output Results
-        std::cout << std::endl;
-	std::cout << "------ Output ------" << std::endl;
-        for(int c = 0; c < total_cells; c++){
-	    int below = clipped_part.mirror_size_output_(c, 0);
-	    int above = clipped_part.mirror_size_output_(c, 1);
-	    if(below > 0){
-	    	std::cout << "Cell " << c << " Output: " << std::endl;
-	    	for(int i = 0; i < below; i++){
-                	int const j = clipped_part.mirror_output_(c, 0, i);
-                	auto const p = clipped_part.mirror_allPoints_(c, j);
-	        	std::cout << "Below: (" << p.x << ", "<< p.y << ") "<< std::endl;
-            	}
-	    	for(int i = 0; i < above; i++){
-               	 	int const j = clipped_part.mirror_output_(c, 1, i);
-                	auto const p = clipped_part.mirror_allPoints_(c, j);
-                	std::cout << "Above: (" << p.x << ", "<< p.y << ") "<< std::endl;
-            	}	
-	    	std::cout << std::endl;
-	    }
-        }
-
-	// Print signs
-	std::cout << "------ Signs ------" << std::endl;
-        for(int i = 0; i < total_cells; i++){
-	    int below = clipped_part.mirror_size_output_(i, 0);
-            int t = mesh.mirror_num_verts_per_cell_(i) + 2;
-	    if(below > 0){
-            	for(int j = 0; j < t; j++){
-                	std::cout << "Sign at cell "<< i << ": " << mesh.mirror_signs_(i, j) << std::endl;
-            	}
-            	std::cout << std::endl;
-	    }
-        }
+        // Verify Results by Printing on the CPU ////////////////////////////////////////////////////////////////
+	print_results(end, end_including_copy, max_threads, total_cells, total_points, mesh.mirror_points_, 
+                      mesh.mirror_cells_, clipped_part.mirror_intersect_points_, clipped_part.mirror_line_, 
+                      mesh.mirror_num_verts_per_cell_, clipped_part.mirror_allPoints_, 
+                      clipped_part.mirror_size_output_, clipped_part.mirror_output_, mesh.mirror_signs_);
 	
     }
 
@@ -261,5 +157,4 @@ int main(int argc, char * argv[]) {
     Kokkos::finalize();
     return EXIT_SUCCESS;
 }
-
 
