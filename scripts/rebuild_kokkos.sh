@@ -1,4 +1,4 @@
-compute_mode=$(nvidia-smi --query-gpu=compute_cap --format=csv, noheader | head -n 1)
+compute_mode=$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader | head -n 1)
 compute_options=(12.0 10.0 9.0 8.9 8.6 8.0 7.5 7.2 7.0 6.1 6.0 5.3 5.2 5.0 3.7 3.5 3.2 3.0)
 architecture_options=("Kokkos_ARCH_BLACKWELL120" "Kokkos_ARCH_BLACKWELL100" "Kokkos_ARCH_HOPPER90"
 "Kokkos_ARCH_ADA89"
