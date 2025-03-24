@@ -12,7 +12,8 @@ module purge
 module load ${CMAKE_MODULE}
 module load ${CUDA_MODULE}
 module load ${OPENMPI_MODULE}
+module load nsight-systems
 
 #MYDIR=/vast/home/nray/Projects/students/MelanieWalsmith/
-export KOKKOS_TOOLS_LIBS=${HOME}/kokkos-tools/install/lib64/libkp_nvtx_connector.so
+export KOKKOS_TOOLS_LIBS=${HOME}/dev/kokkos-tools/install/lib64/libkp_nvtx_connector.so
 echo $KOKKOS_TOOLS_LIBS

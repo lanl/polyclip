@@ -34,7 +34,7 @@ for (( i=0; i < 18; i++ ))
 KOKKOS_ARCHITECTURE=${architecture_options[$located_index]}
 
 
-INSTALL_DIR=${HOME}/kokkos/install
+INSTALL_DIR=${HOME}/dev/kokkos/install
 
 cmake \
   -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \

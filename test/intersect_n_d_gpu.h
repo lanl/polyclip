@@ -19,7 +19,7 @@ namespace polyintersect {
 
  	int k = 0;
 
- 	Kokkos::Profiling::pushRegion("INTERSECT_CELL_WITH_LINE_FOR_LOOP");
+ 	// Kokkos::Profiling::pushRegion("INTERSECT_CELL_WITH_LINE_FOR_LOOP");
  	for (int i = 0; i < n; ++i) {
  		double x_min, y_min, x_max, y_max;
  		int const a = cells(c, i, 0);
@@ -79,7 +79,7 @@ namespace polyintersect {
  			k++;
  		}
  	}
- 	Kokkos::Profiling::popRegion();
+ 	// Kokkos::Profiling::popRegion();
 
 	// Check if line intersects
 	if(k == 0){
