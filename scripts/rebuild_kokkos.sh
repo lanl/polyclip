@@ -21,7 +21,9 @@ located_index=-1
 
 for (( i=0; i < 18; i++ ))
   do
-    if (( $(echo "${compute_options[i]} > $compute_mode}" | bc -l) ))
+    result=$(echo "${compute_options[i]} > $compute_mode" | bc -l)
+
+    if [[ $result -eq 1 ]]
     then
       located_index=$i
     fi
@@ -42,3 +44,5 @@ cmake \
   -D{$KOKKOS_ARCHITECTURE}=On \
 ..
 
+make -j 10
+make install
