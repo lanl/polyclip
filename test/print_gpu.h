@@ -12,6 +12,8 @@ namespace polyintersect {
 		       Kokkos::View<int*>::HostMirror mirror_num_verts_per_cell_, Kokkos::View<Point**>::HostMirror mirror_allPoints_, 
                        Kokkos::View<int**>::HostMirror mirror_size_output_, Kokkos::View<int***>::HostMirror mirror_output_, 
 		       Kokkos::View<int**>::HostMirror mirror_signs_){
+	
+	    std::cout << "HELLO" << std::endl;
 
         // Print elapsed time 
         std::cout << "Duration: " << end << " µs" << std::endl;
@@ -41,23 +43,26 @@ namespace polyintersect {
                 std::cout << "Point " << j << ": (" << mirror_points_(j).x << ", " << mirror_points_(j).y << ")" << std::endl;
         }
 
-	    // Print Line
+	     // Print Line
         std::cout << std::endl;
         std::cout << "------ Line ------" << std::endl;
         for (int j = 0; j < total_cells; ++j) {
-            auto const pa = mirror_line_(j).n;
-            auto const dist = mirror_line_(j).d;
-            std::cout << "Line at Cell  "<< j << ": normal = ("<< pa.x << ", "<< pa.y << ") and distance = " << dist << std::endl;
-        }
+           	 auto const pa = mirror_line_(j).n;
+           	 auto const dist = mirror_line_(j).d;
+        	 std::cout << "Line at Cell  "<< j << ": normal = ("<< pa.x << ", "<< pa.y << ") and distance = " << dist << std::endl;
+	}
        
 	    // Print Intersect Points
         std::cout << std::endl;
         std::cout << "------ Intersect Points ------" << std::endl;
         for (int j = 0; j < total_cells; ++j) {
-            auto const pa = mirror_intersect_points_(j).a;
-            auto const pb = mirror_intersect_points_(j).b;
-            std::cout << "Intersection Points at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
-        }
+	    int below = mirror_size_output_(j, 0);
+            if(below > 0){
+               auto const pa = mirror_intersect_points_(j).a;
+               auto const pb = mirror_intersect_points_(j).b;
+               std::cout << "Intersection Points at Cell  "<< j << ": ("<< pa.x << ", "<< pa.y << "), ("<< pb.x << ", "<< pb.y << ")" << std::endl;
+	    }
+	 }
 
 	    // Print all Points (Vertices + Intersect Points)
         std::cout << std::endl;
@@ -80,18 +85,20 @@ namespace polyintersect {
         for(int c = 0; c < total_cells; c++){
 	        int below = mirror_size_output_(c, 0);
 	        int above = mirror_size_output_(c, 1);
-	        std::cout << "Cell " << c << " Output: " << std::endl;
-	        for(int i = 0; i < below; i++){
-                int const j = mirror_output_(c, 0, i);
-                auto const p = mirror_allPoints_(c, j);
-	            std::cout << "Below: (" << p.x << ", "<< p.y << ") "<< std::endl;
-            }
-	        for(int i = 0; i < above; i++){
-                int const j = mirror_output_(c, 1, i);
-                auto const p = mirror_allPoints_(c, j);
-                std::cout << "Above: (" << p.x << ", "<< p.y << ") "<< std::endl;
-            }
-	        std::cout << std::endl;
+		if(below > 0){
+	        	std::cout << "Cell " << c << " Output: " << std::endl;
+	        	for(int i = 0; i < below; i++){
+                    	    int const j = mirror_output_(c, 0, i);
+                    	    auto const p = mirror_allPoints_(c, j);
+	            	    std::cout << "Below: (" << p.x << ", "<< p.y << ") "<< std::endl;
+            		}
+	        	for(int i = 0; i < above; i++){
+                    	    int const j = mirror_output_(c, 1, i);
+                    	    auto const p = mirror_allPoints_(c, j);
+                    	    std::cout << "Above: (" << p.x << ", "<< p.y << ") "<< std::endl;
+            		}
+			std::cout << std::endl;	
+		}
         }
 
 	    // Print signs

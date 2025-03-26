@@ -1,5 +1,7 @@
 #include "clippings_gpu.h"
 #include "mesh_gpu.h"
+#include "print_gpu.h"
+#include "clip_gpu.h"
 #include "clipped_part_gpu.h"
 //#include "intersect_gpu.h"
 #include "intersect_n_d_gpu.h"
@@ -25,7 +27,8 @@ int main(int argc, char * argv[]) {
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
 	Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
-        double arbitrary[1] = {/*0.0*/-0.08838834765}; 
+        double arbitrary[2] = {0.0, -0.08838834765}; 
+	int line_rep = 0;
 
         // All Nodes 
 	double lengthPerAxis = 1.0;
@@ -74,8 +77,8 @@ int main(int argc, char * argv[]) {
 
         // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
-	       clipped_part.line_(i).n = {-0.7071067812, 0.7071067812};        // Arbitrary Lines
-       	   clipped_part.line_(i).d = arbitrary[0];
+	       clipped_part.line_(i).n = {-0.70710678, 0.70710678};        // Arbitrary Lines
+       	   clipped_part.line_(i).d = arbitrary[line_rep];
         }); 
 
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////

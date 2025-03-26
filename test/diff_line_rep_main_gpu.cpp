@@ -1,5 +1,7 @@
 #include "clippings_gpu.h"
 #include "mesh_gpu.h"
+#include "print_gpu.h"
+#include "clip_gpu.h"
 #include "clipped_part_gpu.h"
 //#include "intersect_gpu.h"
 #include "intersect_n_d_gpu.h"
