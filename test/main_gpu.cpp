@@ -79,11 +79,12 @@ int main(int argc, char * argv[]) {
     	Kokkos::Profiling::popRegion();
 
         // Max Threads and Timer
-     //   int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
-    //    auto start = timer::now();
+     //
+     int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
+   	 auto start = timer::now();
 
 
-    	Kokkos::Profiling::pushRegion("POPULATING CLIPPED PARTS");
+    	Kokkos::Profiling::pushRegion("INIT LINE INTERFACE");
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
 	   if (line_rep == 1){				// Horizontal Lines
 	       clipped_part.line_(i).n = {0.0, 1.0};
@@ -112,7 +113,8 @@ int main(int argc, char * argv[]) {
         });
     	Kokkos::Profiling::popRegion();
 	// Verify Results by Printing on the CPU ////////////////////////////////////////////////////////////////
-        //auto const end = timer::elapsed(start); // time deep copy
+
+       auto const end = timer::elapsed(start); // time deep copy
 
        	// Send to CPU
 
@@ -124,8 +126,9 @@ int main(int argc, char * argv[]) {
 		clipped_part.send_to_cpu();
     	Kokkos::Profiling::popRegion();
 
-  //      auto const end_including_copy = timer::elapsed(start);
-/*
+
+  			auto const end_including_copy = timer::elapsed(start);
+#ifdef PRINT
         // Print elapsed time
         std::cout << "Duration: " << end << " µs" << std::endl;
         std::cout << "Deep copy: " << end_including_copy << " µs" << std::endl;
@@ -218,7 +221,9 @@ int main(int argc, char * argv[]) {
             std::cout << std::endl;
         }
 
- */
+
+#endif
+
 
     }
 
