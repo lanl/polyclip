@@ -16,17 +16,22 @@ namespace polyintersect {
                   Kokkos::View<Point**> allPoints,
 		  Line const &line) {
 
-    int const n = num_verts_per_cell(cell) + 2;
+
+      int const n = num_verts_per_cell(cell) + 2;
 
     // Store all Points (vertices + intersect points) in a single list
+
+
     list_of_points(cell, points, cells, intersect_points, allPoints, num_verts_per_cell);
 
-    // Sort Points based on degree's
+
     Point center_point = center(cell, n, allPoints);
+
     sorting(cell, n, allPoints, center_point);
 
     // Clip Below ///////////////////////////////////////////////////////////////////////////
     // Store the Orientation of every node
+
     orientation_clip(cell, allPoints, line.n, signs, n, intersect_points);
 
     int below = 0;
@@ -40,6 +45,7 @@ namespace polyintersect {
     // Clip Above ////////////////////////////////////////////////////////////////////////////
     Point flipped_normal = {-line.n.x, -line.n.y};
     orientation_clip(cell, allPoints, flipped_normal, signs, n, intersect_points);
+
     for (int p = 0; p < n; p++) {
         if (signs(cell, p) <= 0) {
             output(cell, 1, above++) = p;

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 
+
 int main(int argc, char* argv[]){
   using namespace polyintersect;
 
@@ -14,7 +15,6 @@ int main(int argc, char* argv[]){
   {
     std::string file_name = argv[1];
     Mesh_Kokkos mesh = io::read_mesh(file_name);
-
 
     std::cout << "POINTS (NODES)\n-------------------\n";
     for(int i = 0; i < 11; i++){
@@ -33,6 +33,11 @@ int main(int argc, char* argv[]){
       std::cout << "\n";
 
     }
+
+
+    std::cout << "Now let's write this to a new file called tester2.gmv\n";
+    //io::write_gmv(mesh, "tester2.gmv");
+
 
   }
 

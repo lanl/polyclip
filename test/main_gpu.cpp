@@ -18,19 +18,17 @@ int main(int argc, char * argv[]) {
         int total_points = 11;
         int total_cells = 4;
         int max_edges_per_cell = 6;
+		int line_rep = 2; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines
 
-	int line_rep = 2; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
-	
-	// Testing: distances for every cell
-	double horizontal[4] = {-0.125, -0.125, -0.5, -0.75}; 
-	double vertical[4] = {-1 /*-0.375*/, -0.625, -0.75, -0.625}; //Test dummy: replace -0.375 with -1
-	double arbitrary[4] = {-1 /*-0.26516504294495535*/, -0.4419417382415923, -0.618718433538229, -0.8838834764831844}; // Test dummy: replace with -1
-	
+		double horizontal[4] = {-0.125, -0.125, -0.5, -0.75};
+		double vertical[4] = {-1 /*-0.375*/, -0.625, -0.75, -0.625}; //Test dummy: replace -0.375 with -1
+		double arbitrary[4] = {-1 /*-0.26516504294495535*/, -0.4419417382415923, -0.618718433538229, -0.8838834764831844}; // Test dummy: replace with -1
+
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-	Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
+        Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
 
-        // All Nodes 
+        // All Nodes
         mesh.add_points(0, {0.0, 0.0});
         mesh.add_points(1, {0.5, 0.0});
         mesh.add_points(2, {0.5, 0.25});
@@ -56,19 +54,19 @@ int main(int argc, char * argv[]) {
         mesh.add_edge(1, 2, {2, 1});
 
         // Hexagon
-        mesh.add_edge(2, 0, {3, 2}); 
+        mesh.add_edge(2, 0, {3, 2});
         mesh.add_edge(2, 1, {2, 5});
         mesh.add_edge(2, 2, {5, 6});
         mesh.add_edge(2, 3, {6, 7});
         mesh.add_edge(2, 4, {7, 8});
-        mesh.add_edge(2, 5, {8, 3});    
+        mesh.add_edge(2, 5, {8, 3});
 
         // Square
         mesh.add_edge(3, 0, {8, 7});
         mesh.add_edge(3, 1, {7, 10});
         mesh.add_edge(3, 2, {10, 9});
         mesh.add_edge(3, 3, {9, 8});
- 
+
         // Declare the Number of Vertices
        	mesh.mirror_num_verts_per_cell_(0) = 5;
         mesh.mirror_num_verts_per_cell_(1) = 3;
@@ -76,14 +74,17 @@ int main(int argc, char * argv[]) {
         mesh.mirror_num_verts_per_cell_(3) = 4;
 
        	// CPU to GPU
-        mesh.send_to_gpu();
+    	Kokkos::Profiling::pushRegion("MESH: CPU-TO-GPU Transfer");
+    	mesh.send_to_gpu();
+    	Kokkos::Profiling::popRegion();
 
         // Max Threads and Timer
-        int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
-        auto start = timer::now();      
+     //
+     int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
+   	 auto start = timer::now();
 
 
-        // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
+    	Kokkos::Profiling::pushRegion("INIT LINE INTERFACE");
         Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
 	   if (line_rep == 1){				// Horizontal Lines
 	       clipped_part.line_(i).n = {0.0, 1.0};
@@ -95,35 +96,45 @@ int main(int argc, char * argv[]) {
                clipped_part.line_(i).n = {0.70710678, 0.70710678};
                clipped_part.line_(i).d = arbitrary[i];
 	     }
-        }); 
+        });
+    	Kokkos::Profiling::popRegion();
 
+    	Kokkos::Profiling::pushRegion("CLIPPING BELOW CELLS");
         // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {            
+        Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int c) {
 	    clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(mesh.device_points_, mesh.device_cells_, c, clipped_part.line_(c), mesh.num_verts_per_cell_);
-	    
+
 	    // Check if cell contains intersect points
 	    if(intersects(mesh.device_points_, mesh.device_cells_, c, clipped_part.intersect_points_(c), mesh.num_verts_per_cell_)){
             	clip_below_3(c, mesh.device_points_, mesh.device_cells_, clipped_part.intersect_points_(c),
-                             clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_, 
+                             clipped_part.output_, clipped_part.size_output_, mesh.num_verts_per_cell_, mesh.signs_,
 			     clipped_part.allPoints_, clipped_part.line_(c));
            }
         });
-	
-	// Verify Results by Printing on the CPU //////////////////////////////////////////////////////////////// 
-        auto const end = timer::elapsed(start); // time deep copy
+    	Kokkos::Profiling::popRegion();
+	// Verify Results by Printing on the CPU ////////////////////////////////////////////////////////////////
+
+       auto const end = timer::elapsed(start); // time deep copy
 
        	// Send to CPU
-	mesh.send_to_cpu();
-	clipped_part.send_to_cpu();
 
-        auto const end_including_copy = timer::elapsed(start);
+    	Kokkos::Profiling::pushRegion("MESH: GPU-TO-CPU TRANSFER");
+		mesh.send_to_cpu();
+    	Kokkos::Profiling::popRegion();
 
-        // Print elapsed time 
+    	Kokkos::Profiling::pushRegion("CLIPPED PART: GPU-TO-CPU TRANSFER");
+		clipped_part.send_to_cpu();
+    	Kokkos::Profiling::popRegion();
+
+
+  			auto const end_including_copy = timer::elapsed(start);
+#ifdef PRINT
+        // Print elapsed time
         std::cout << "Duration: " << end << " µs" << std::endl;
         std::cout << "Deep copy: " << end_including_copy << " µs" << std::endl;
-        std::cout << "Max Threads: " << max_threads << std::endl << std::endl; 
+        std::cout << "Max Threads: " << max_threads << std::endl << std::endl;
 
-        // Print Cells 
+        // Print Cells
         std::cout << std::endl;
         std::cout << "---------------- GPU Results ----------------" << std::endl;
 	std::cout << std::endl;
@@ -131,11 +142,11 @@ int main(int argc, char * argv[]) {
 	std::cout << "------ Cell + Edges ------" << std::endl;
         for(int j = 0; j < total_cells; j++){   // Cell
             std::cout << "Cell " << j << ":" << std::endl;
-            for (int i = 0; i < max_edges_per_cell; i++) {      // Edge       
+            for (int i = 0; i < max_edges_per_cell; i++) {      // Edge
                 std::cout << "Edge " << i << " (" << mesh.mirror_cells_(j , i, 0) << ", ";
                 std::cout << mesh.mirror_cells_(j, i, 1) << ") ";
 
-                if(j == 0 && i == 4 || j == 1 && i == 2 || j == 3 && i == 3){   
+                if(j == 0 && i == 4 || j == 1 && i == 2 || j == 3 && i == 3){
                     break;
                 }
             }
@@ -147,7 +158,7 @@ int main(int argc, char * argv[]) {
 	std::cout << "------ Cell Vertices ------" << std::endl;
         for (int j = 0; j < total_points; j++) {             // All Points
                 std::cout << "Point " << j << ": (" << mesh.mirror_points_(j).x << ", " << mesh.mirror_points_(j).y << ")" << std::endl;
-        
+
         }
 
 	// Print Line
@@ -158,7 +169,7 @@ int main(int argc, char * argv[]) {
             auto const dist = clipped_part.mirror_line_(j).d;
             std::cout << "Line at Cell  "<< j << ": normal = ("<< pa.x << ", "<< pa.y << ") and distance = " << dist << std::endl;
         }
-       
+
 	// Print Intersect Points
         std::cout << std::endl;
         std::cout << "------ Intersect Points ------" << std::endl;
@@ -209,7 +220,11 @@ int main(int argc, char * argv[]) {
             }
             std::cout << std::endl;
         }
-	
+
+
+#endif
+
+
     }
 
 

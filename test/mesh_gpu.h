@@ -4,11 +4,15 @@
 #include <Kokkos_Vector.hpp>
 #include "geometry_gpu.h"
 
+#define MAX_NUM_EDGES_PER_CELL 8
 namespace polyintersect {
 
   // Mesh containing the coordinates and the cell
   class Mesh_Kokkos {
   public:
+
+    //We need a regular constructor that doesn't initialize anything.
+    Mesh_Kokkos() = default;
     // constructor
     Mesh_Kokkos(int total_points, int total_cells, int max_edges_per_cell);
 
