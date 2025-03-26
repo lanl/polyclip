@@ -12,8 +12,6 @@ namespace polyintersect {
 		       Kokkos::View<int*>::HostMirror mirror_num_verts_per_cell_, Kokkos::View<Point**>::HostMirror mirror_allPoints_, 
                        Kokkos::View<int**>::HostMirror mirror_size_output_, Kokkos::View<int***>::HostMirror mirror_output_, 
 		       Kokkos::View<int**>::HostMirror mirror_signs_){
-	
-	    std::cout << "HELLO" << std::endl;
 
         // Print elapsed time 
         std::cout << "Duration: " << end << " µs" << std::endl;
