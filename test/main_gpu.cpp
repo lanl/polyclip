@@ -74,7 +74,7 @@ int main(int argc, char * argv[]) {
         mesh.mirror_num_verts_per_cell_(3) = 4;
 
        	// CPU to GPU
-    	Kokkos::Profiling::pushRegion("MESH: GPU-TO-CPU Transfer");
+    	Kokkos::Profiling::pushRegion("MESH: CPU-TO-GPU Transfer");
     	mesh.send_to_gpu();
     	Kokkos::Profiling::popRegion();
 
