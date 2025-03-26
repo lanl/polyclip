@@ -34,14 +34,14 @@ for (( i=0; i < 18; i++ ))
 KOKKOS_ARCHITECTURE=${architecture_options[$located_index]}
 
 
-INSTALL_DIR=${HOME}/dev/kokkos/install
+INSTALL_DIR=${HOME}/kokkos/install
 
 cmake \
   -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
   -DKokkos_ENABLE_TESTS=On \
   -DKokkos_ENABLE_CUDA=On \
   -DCMAKE_CXX_EXTENSIONS=On \
-  -D$KOKKOS_ARCHITECTURE=On \
+  -DKokkos_ARCH_VOLTA70=On \
 ..
 
 make -j 10

@@ -126,8 +126,8 @@ int main(int argc, char* argv[]){
     	std::cout << num_total_nodes << " " << num_total_polys << std::endl;
 
 
-    	io::write_clipped_gmv(mesh, clipped_part, num_total_nodes, num_total_polys, "test_clipped");
-    	io::write_gmv(mesh, "test_mesh");
+    	io::write_clipped(mesh, clipped_part, num_total_nodes, num_total_polys, "test_clipped");
+    	io::write_mesh(mesh, "test_mesh");
 
 	}
 

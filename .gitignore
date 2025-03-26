@@ -3,3 +3,4 @@ build*
 kokkos_config.txt
 .DS_Store
 cmake-build-debug
+output/*

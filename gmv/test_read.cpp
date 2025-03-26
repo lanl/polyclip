@@ -13,7 +13,7 @@ int main(int argc, char* argv[]){
   Kokkos::initialize(argc, argv);
   {
     std::string file_name = argv[1];
-    Mesh_Kokkos mesh = io::read_gmv(file_name);
+    Mesh_Kokkos mesh = io::read_mesh(file_name);
 
 
     std::cout << "POINTS (NODES)\n-------------------\n";

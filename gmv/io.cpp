@@ -6,7 +6,7 @@
 
 namespace polyintersect {
 
-  void io::write_clipped_gmv(Mesh_Kokkos mesh, Clipped_Part clipped_part, int num_total_nodes, int num_total_polys, const std::string& file_name) {
+  void io::write_clipped(Mesh_Kokkos mesh, Clipped_Part clipped_part, int num_total_nodes, int num_total_polys, const std::string& file_name) {
 
     std::fstream gmv_file(file_name, std::ios::app);
 
@@ -116,7 +116,7 @@ namespace polyintersect {
 
 
 
-  void io::write_gmv(Mesh_Kokkos mesh, const std::string& file_name) {
+  void io::write_mesh(Mesh_Kokkos mesh, const std::string& file_name) {
 
     std::fstream gmv_file(file_name, std::ios::app);
 
@@ -155,13 +155,10 @@ namespace polyintersect {
   }
 
 
-  Mesh_Kokkos io::read_gmv(std::string& file_name){
+  Mesh_Kokkos io::read_mesh(std::string& file_name){
 
 
-      // std::cout << "File name: " << file_name << "\n";
       Mesh_Kokkos mesh = Mesh_Kokkos();
-    //  Mesh_Kokkos mesh(11, 4, 6);
-     // std::string file_name = basename + ".gmv";
       std::ifstream gmv_file(file_name);
       std::string buffer;
 
@@ -170,10 +167,8 @@ namespace polyintersect {
         std::stringstream tokenizer(buffer);
         std::string token;
 
-        // std::cout << "Testing if whipe loop is parsing. . .\n";
         tokenizer >> token;
 
-        // std::cout << "Token = " << token << "\n";
         if(token == "gmvinput") {
           continue;
         }
@@ -182,7 +177,6 @@ namespace polyintersect {
           std::string node_value;
           tokenizer >> node_value;
           int num_of_nodes = std::stoi(node_value);
-          // std::cout << "Node value is. . . " << num_of_nodes << "\n";
 
 
           Kokkos::resize(mesh.device_points_, num_of_nodes);  // malloc
@@ -199,12 +193,6 @@ namespace polyintersect {
 
 
             point_parser >> point_data;
-            // out << std::fixed << std::setprecision(17) << std::stof(point_data);
-
-            // std::cout << "Point data  = " << point_data << "\n";
-            //
-            // auto test_float = std::stof(out.str());
-            // std::cout << "Out = " << test_float << "\n";
             x = std::stof(point_data);
 
             point_parser >> point_data;
