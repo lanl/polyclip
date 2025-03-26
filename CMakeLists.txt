@@ -21,13 +21,13 @@ if (USE_KOKKOS_GPU)
 else()
   if (USE_KOKKOS_OMP)
     add_executable(clip_kokkos)
-    target_include_directories(clip_kokkos PUBLIC kokkos)
+    target_include_directories(clip_kokkos PUBLIC internship)
     target_sources(clip_kokkos PUBLIC
-      kokkos/main_kokkos.cpp
-      kokkos/geometry.cpp
-      kokkos/clippings_kokkos.cpp
-      kokkos/mesh_kokkos.cpp
-      kokkos/intersect_kokkos.cpp)
+      internship/kokkos/main_kokkos.cpp
+      internship/kokkos/geometry.cpp
+      internship/kokkos/clippings_kokkos.cpp
+      internship/kokkos/mesh_kokkos.cpp
+      internship/kokkos/intersect_kokkos.cpp)
 
     # link with Kokkos
     find_package(Kokkos REQUIRED)
@@ -35,13 +35,13 @@ else()
   endif()
   if (USE_NATIVE_OMP)
     add_executable(allclips)
-    target_include_directories(allclips PUBLIC omp)
+    target_include_directories(allclips PUBLIC internship)
     target_sources(allclips PUBLIC
-      omp/main.cpp
-      omp/clippings.cpp
-      omp/mesh.cpp
-      omp/geometry.cpp
-      omp/intersect.cpp)
+      internship/omp/main.cpp
+      internship/omp/clippings.cpp
+      internship/omp/mesh.cpp
+      internship/omp/geometry.cpp
+      internship/omp/intersect.cpp)
 
     # link with OpenMP
     find_package(OpenMP REQUIRED)
