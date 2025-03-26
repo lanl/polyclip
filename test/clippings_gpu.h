@@ -22,25 +22,17 @@ namespace polyintersect {
     // Store all Points (vertices + intersect points) in a single list
 
 
-    // Kokkos::Profiling::pushRegion("CLIPPING BELOW - LIST OF POINT GENERATION");
     list_of_points(cell, points, cells, intersect_points, allPoints, num_verts_per_cell);
-    // Kokkos::Profiling::popRegion();
 
 
-    // Kokkos::Profiling::pushRegion("CLIPPING BELOW - CENTER POINT");
     Point center_point = center(cell, n, allPoints);
-    // Kokkos::Profiling::popRegion();
 
-    // Kokkos::Profiling::pushRegion("CLIPPING BELOW - SORTING POINTS");
     sorting(cell, n, allPoints, center_point);
-    // Kokkos::Profiling::popRegion();
 
     // Clip Below ///////////////////////////////////////////////////////////////////////////
     // Store the Orientation of every node
 
-    // Kokkos::Profiling::pushRegion("CLIPPING BELOW - ORIENTATION CLIP #1");
     orientation_clip(cell, allPoints, line.n, signs, n, intersect_points);
-    // Kokkos::Profiling::popRegion();
 
     int below = 0;
     int above = 0;
@@ -52,17 +44,13 @@ namespace polyintersect {
 
     // Clip Above ////////////////////////////////////////////////////////////////////////////
     Point flipped_normal = {-line.n.x, -line.n.y};
-    // Kokkos::Profiling::pushRegion("CLIPPING BELOW - ORIENTATION CLIP #2");
     orientation_clip(cell, allPoints, flipped_normal, signs, n, intersect_points);
-    // Kokkos::Profiling::popRegion();
 
-    // Kokkos::Profiling::pushRegion("CLIPPING BELOW - OUTPUT");
     for (int p = 0; p < n; p++) {
         if (signs(cell, p) <= 0) {
             output(cell, 1, above++) = p;
         }
     }
-    // Kokkos::Profiling::popRegion();
 
     // keep track of number of vertices for the section of the cell
     // that is below the cutting plane
