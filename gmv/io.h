@@ -3,8 +3,8 @@
 //
 #pragma once
 #include <string>
-#include "../tools/mesh_gpu.h"
-#include "../tools/clipped_part_gpu.h"
+#include "../core/mesh_gpu.h"
+#include "../core/clipped_part_gpu.h"
 //#include "../test/mesh_gpu.h"
 //#include "../test/clipped_part_gpu.h"
 

@@ -12,8 +12,9 @@ option(USE_NATIVE_OMP "Run with multiple threads using OpenMP" OFF)
 
 if (USE_KOKKOS_GPU)
   add_executable(clip_gpu)
-  target_include_directories(clip_gpu PUBLIC test)
-  target_sources(clip_gpu PUBLIC  test/struct_arbitrary_main_gpu.cpp  test/mesh_gpu.cpp test/clipped_part_gpu.cpp)
+  target_include_directories(clip_gpu PUBLIC test core)
+  #target_include_directories(clip_gpu PUBLIC core)
+  target_sources(clip_gpu PUBLIC  test/test_poly_legacy.cpp  core/mesh_gpu.cpp core/clipped_part_gpu.cpp)
 
   # link with Kokkos
   find_package(Kokkos REQUIRED)
@@ -52,7 +53,7 @@ else()
 
 add_executable(gmv_writer)
 target_include_directories(gmv_writer PUBLIC gmv)
-target_sources(gmv_writer PUBLIC gmv/test_write.cpp gmv/io.cpp test/mesh_gpu.cpp test/clipped_part_gpu.cpp)
+target_sources(gmv_writer PUBLIC gmv/test_write.cpp gmv/io.cpp core/mesh_gpu.cpp core/clipped_part_gpu.cpp)
 find_package(Kokkos REQUIRED)
 target_link_libraries(gmv_writer PUBLIC Kokkos::kokkos)
 
