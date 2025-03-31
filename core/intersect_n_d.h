@@ -1,7 +1,7 @@
 #pragma once
 
-#include "mesh_gpu.h"
-#include "geometry_gpu.h"
+#include "mesh.h"
+#include "geometry.h"
 #include <map>
 
 namespace polyintersect {

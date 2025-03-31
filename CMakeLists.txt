@@ -11,7 +11,7 @@ option(USE_KOKKOS_GPU "Run on Ndvidia's GPU using Kokkos" OFF)
 if (USE_KOKKOS_GPU)
   add_executable(clip_gpu)
   target_include_directories(clip_gpu PUBLIC test core)
-  target_sources(clip_gpu PUBLIC  test/test_poly_legacy.cpp  core/mesh_gpu.cpp core/clipped_part_gpu.cpp)
+  target_sources(clip_gpu PUBLIC  test/test_grid_horizontal.cpp  core/mesh.cpp core/clipped_part.cpp)
 
   # link with Kokkos
   find_package(Kokkos REQUIRED)
@@ -21,7 +21,7 @@ endif ()
 
 add_executable(gmv_writer)
 target_include_directories(gmv_writer PUBLIC gmv)
-target_sources(gmv_writer PUBLIC gmv/test_write.cpp gmv/io.cpp core/mesh_gpu.cpp core/clipped_part_gpu.cpp)
+target_sources(gmv_writer PUBLIC gmv/test_write.cpp gmv/io.cpp core/mesh.cpp core/clipped_part.cpp)
 find_package(Kokkos REQUIRED)
 target_link_libraries(gmv_writer PUBLIC Kokkos::kokkos)
 

@@ -1,4 +1,4 @@
-#include "clipped_part_gpu.h"
+#include "clipped_part.h"
 
 namespace polyintersect {
 

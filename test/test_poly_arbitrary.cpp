@@ -1,10 +1,10 @@
-#include "../core/clippings_gpu.h"
-#include "../core/mesh_gpu.h"
-#include "../core/print_gpu.h"
-#include "../core/clip_gpu.h"
-#include "../core/clipped_part_gpu.h"
-//#include "../core/intersect_gpu.h"
-#include "../core/intersect_n_d_gpu.h"
+#include "../core/clippings.h"
+#include "../core/mesh.h"
+#include "../core/print.h"
+#include "../core/clip.h"
+#include "../core/clipped_part.h"
+//#include "../core/intersect.h"
+#include "../core/intersect_n_d.h"
 #include <Kokkos_Core.hpp>
 #include <omp.h>
 #include <cstdlib>

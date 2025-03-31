@@ -1,5 +1,5 @@
 #pragma once
-#include "mesh_gpu.h"
+#include "mesh.h"
 
 namespace polyintersect {
 

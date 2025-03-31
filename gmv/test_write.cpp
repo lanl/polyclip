@@ -1,7 +1,5 @@
-#include "../core/clippings_gpu.h"
-#include "../core/intersect_n_d_gpu.h"
-//#include "../test/clippings_gpu.h"
-//#include "../test/intersect_n_d_gpu.h"
+#include "../core/clippings.h"
+#include "../core/intersect_n_d.h"
 #include "io.h"
 #include <iostream>
 #include <fstream>

@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <cstdio>
-#include "geometry_gpu.h"
+#include "geometry.h"
 
 namespace polyintersect {
 

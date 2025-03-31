@@ -3,10 +3,10 @@
 //
 #pragma once
 #include <string>
-#include "../core/mesh_gpu.h"
-#include "../core/clipped_part_gpu.h"
-//#include "../test/mesh_gpu.h"
-//#include "../test/clipped_part_gpu.h"
+#include "../core/mesh.h"
+#include "../core/clipped_part.h"
+//#include "../test/mesh.h"
+//#include "../test/clipped_part.h"
 
 namespace polyintersect::io {
 

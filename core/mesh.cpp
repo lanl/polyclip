@@ -1,4 +1,4 @@
-#include "mesh_gpu.h"
+#include "mesh.h"
 
 /*
     Code Description:

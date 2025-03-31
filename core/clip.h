@@ -1,7 +1,7 @@
 #pragma once      //prevent headers being used twice
 
-#include "mesh_gpu.h"
-#include "intersect_n_d_gpu.h"
+#include "mesh.h"
+#include "intersect_n_d.h"
 
 namespace polyintersect {
 
