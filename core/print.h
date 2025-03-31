@@ -2,10 +2,19 @@
 
 #include <iostream>
 #include <cstdio>
+#include <string>
 #include "geometry.h"
 
 namespace polyintersect {
-
+    
+    void compare(double a, double b, std::string label){
+    	double const tol = 1.e-14;
+	if(std::abs(a - b) > tol){
+	   std::cerr << label << " " << a << " != " << b << std::endl;
+	   std::exit(EXIT_FAILURE);  
+	}
+    }
+	
     void print_results(int end, int end_including_copy, int max_threads, int total_cells, int total_points, 
                        Kokkos::View<Point*>::HostMirror mirror_points_, Kokkos::View<int***>::HostMirror mirror_cells_, 
 		       Kokkos::View<Segment*>::HostMirror mirror_intersect_points_, Kokkos::View<Line*>::HostMirror mirror_line_, 
@@ -88,12 +97,12 @@ namespace polyintersect {
 	        	for(int i = 0; i < below; i++){
                     	    int const j = mirror_output_(c, 0, i);
                     	    auto const p = mirror_allPoints_(c, j);
-	            	    std::cout << "Below: (" << p.x << ", "<< p.y << ") "<< std::endl;
+	            	    std::cout << "Below " << j << ": (" << p.x << ", "<< p.y << ") "<< std::endl;
             		}
 	        	for(int i = 0; i < above; i++){
                     	    int const j = mirror_output_(c, 1, i);
                     	    auto const p = mirror_allPoints_(c, j);
-                    	    std::cout << "Above: (" << p.x << ", "<< p.y << ") "<< std::endl;
+                    	    std::cout << "Above " << j << ": (" << p.x << ", "<< p.y << ") "<< std::endl;
             		}
 			std::cout << std::endl;	
 		}

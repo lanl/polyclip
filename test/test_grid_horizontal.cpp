@@ -98,8 +98,43 @@ int main(int argc, char * argv[]) {
                       mesh.mirror_num_verts_per_cell_, clipped_part.mirror_allPoints_,
                       clipped_part.mirror_size_output_, clipped_part.mirror_output_, mesh.mirror_signs_);
 	
-    }
+	// Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
+        // Intersect Points
+        double x_value[8] = {0.25, 0, 0.5, 0.25, 0.75, 0.5, 1.0, 0.75};
+        double y_value = 0.625;
+	int counter = 0;
 
+        for(int i = 0; i < total_cells; i++){
+            if(clipped_part.mirror_intersect_points_(i).a.x != DBL_MAX){
+               compare(clipped_part.mirror_intersect_points_(i).a.x, x_value[counter], "Intersect A x_value at Cell " + std::to_string(i) + ": ");
+               compare(clipped_part.mirror_intersect_points_(i).a.y, y_value, "Intersect A y_value at Cell " + std::to_string(i) + ": ");
+
+               compare(clipped_part.mirror_intersect_points_(i).b.x, x_value[counter + 1], "Intersect B x_value at Cell " + std::to_string(i) + ": ");
+               compare(clipped_part.mirror_intersect_points_(i).b.y, y_value, "Intersect B y_value at Cell " + std::to_string(i) + ": ");
+               
+	       counter += 2;
+	    }
+        }
+	
+	// Output Points
+	int below_index[4] = {0, 1, 2, 5};
+        int above_index[4] = {2, 3, 4, 5};
+
+        for(int c = 0; c < total_cells; c++){
+	    int below = clipped_part.mirror_size_output_(c, 0);
+            int above = clipped_part.mirror_size_output_(c, 1);
+            for(int i = 0; i < below; i++){
+                int const j = clipped_part.mirror_output_(c, 0, i);
+                compare(j, below_index[i], "Ouput Index at Cell " + std::to_string(c) + ": ");
+            }
+            for(int i = 0; i < above; i++){
+                int const j = clipped_part.mirror_output_(c, 1, i);
+                compare(j, above_index[i], "Ouput Index at Cell " + std::to_string(c) + ": ");
+            }
+        }	
+
+
+	}
 
     Kokkos::finalize();
     return EXIT_SUCCESS;
