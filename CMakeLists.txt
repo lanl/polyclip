@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
 option(USE_KOKKOS_GPU "Run on Ndvidia's GPU using Kokkos" OFF)
+option(USE_CLANG_FORMAT "Use clang-format for formatting" OFF)
 
 if (USE_KOKKOS_GPU)
   add_executable(clip_grid_diagonal test/test_grid_diagonal.cpp  core/mesh.cpp core/clipped_part.cpp)
@@ -41,3 +42,10 @@ if (USE_KOKKOS_GPU)
   target_link_libraries(gmv_read_and_write PUBLIC Kokkos::kokkos)
 endif ()
 
+if (USE_CLANG_FORMAT)
+  set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+  include(ClangFormat)
+  file(GLOB_RECURSE ALL_SOURCE_FILES
+    CONFIGURE_DEPENDS "core/*.h" "core/*.cpp" "test/*.h" "test/*.cpp" "gmv/*.h" "gmv/*.cpp")
+  clangformat_setup(${ALL_SOURCE_FILES})
+endif()
