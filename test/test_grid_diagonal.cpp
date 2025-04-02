@@ -28,7 +28,7 @@ int main(int argc, char * argv[]) {
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
 	Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
         double arbitrary[2] = {0.0, -0.08838834765}; 
-	int line_rep = 1;	// (0) Line goes through nodes (1) Line doesnt go through nodes 
+	int line_rep = 0;	// (0) Line goes through nodes (1) Line doesnt go through nodes 
 
         // All Nodes 
 	double lengthPerAxis = 1.0;

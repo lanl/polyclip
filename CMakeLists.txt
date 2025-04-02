@@ -9,9 +9,9 @@ set(CMAKE_CXX_EXTENSIONS ON)
 option(USE_KOKKOS_GPU "Run on Ndvidia's GPU using Kokkos" OFF)
 
 if (USE_KOKKOS_GPU)
-  add_executable(clip_grid_diagnal)
-  target_include_directories(clip_grid_diagnal PUBLIC test core)
-  target_sources(clip_grid_diagnal PUBLIC  test/test_grid_diagnal.cpp  core/mesh.cpp core/clipped_part.cpp)
+  add_executable(clip_grid_diagonal)
+  target_include_directories(clip_grid_diagonal PUBLIC test core)
+  target_sources(clip_grid_diagonal PUBLIC  test/test_grid_diagonal.cpp  core/mesh.cpp core/clipped_part.cpp)
 
   add_executable(clip_grid_horizontal)
   target_include_directories(clip_grid_horizontal PUBLIC test core) 
@@ -27,7 +27,7 @@ if (USE_KOKKOS_GPU)
 
   # link with Kokkos
   find_package(Kokkos REQUIRED)
-  target_link_libraries(clip_grid_diagnal PUBLIC Kokkos::kokkos)
+  target_link_libraries(clip_grid_diagonal PUBLIC Kokkos::kokkos)
   target_link_libraries(clip_grid_horizontal PUBLIC Kokkos::kokkos)
   target_link_libraries(clip_poly_arbitrary PUBLIC Kokkos::kokkos)
   target_link_libraries(clip_poly_legacy PUBLIC Kokkos::kokkos)

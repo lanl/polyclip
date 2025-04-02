@@ -115,7 +115,8 @@ int main(int argc, char * argv[]) {
 	       counter += 2;
 	    }
         }
-	
+	std::cout << "100% Intersecting Points Match" << std::endl;
+
 	// Output Points
 	int below_index[4] = {0, 1, 2, 5};
         int above_index[4] = {2, 3, 4, 5};
@@ -131,7 +132,8 @@ int main(int argc, char * argv[]) {
                 int const j = clipped_part.mirror_output_(c, 1, i);
                 assert_equal(j, above_index[i], "Ouput Index at Cell " + std::to_string(c) + ": ");
             }
-        }	
+        }
+	std::cout << "100% Output Match" << std::endl;	
 
 
 	}
