@@ -33,22 +33,35 @@ for (( i=0; i < 18; i++ ))
 
 
 KOKKOS_ARCHITECTURE=${architecture_options[$located_index]}
+base_directory=$(basename "$PWD")
+
+if [[ "$base_directory" != "build" && "$base_directory" != "cmake-build-debug" ]]; then
+    echo "This script can only be called from the build folder!"
+    exit 1
+fi
+
+if [ ! -f "../scripts/kokkos_config.txt" ]; then
+  echo "kokkos_config.txt file not found! Run set_kokkos_root.sh [PARENT_DIRECTORY FOR KOKKOS] first."
+  exit 1
+fi
 
 START_DIR=$(cat "../scripts/kokkos_config.txt")
 KOKKOS_DIR=${START_DIR}/kokkos/install/lib64/cmake/Kokkos
-
 INSTALL_DIR=${START_DIR}/kokkos/install
+(
+  cd ${START_DIR}/kokkos/build || { echo "Kokkos build directory was not found!"; exit 1; }
+  cmake \
+    -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+    -DKokkos_ENABLE_TESTS=On \
+    -DKokkos_ENABLE_CUDA=On \
+    -DCMAKE_CXX_EXTENSIONS=On \
+    -D${KOKKOS_ARCHITECTURE}=On \
+  ..
 
-cmake \
-  -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-  -DKokkos_ENABLE_TESTS=On \
-  -DKokkos_ENABLE_CUDA=On \
-  -DCMAKE_CXX_EXTENSIONS=On \
-  -D${KOKKOS_ARCHITECTURE}=On \
-..
+  make -j 10
+  make install
 
-make -j 10
-make install
+)
 
 
 (
@@ -67,5 +80,5 @@ make install
 )
 
 
-# export KOKKOS_TOOLS_LIBS=${MYDIR}/kokkos-tools/install/lib64/libkp_nvtx_connector.so
+export KOKKOS_TOOLS_LIBS=${MYDIR}/kokkos-tools/install/lib64/libkp_nvtx_connector.so
 # Make sure that your set environment works as intended.
