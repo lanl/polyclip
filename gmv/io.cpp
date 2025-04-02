@@ -273,8 +273,8 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name)
         std::string distance;
         tokenizer >> distance;
         double dist = std::stod(distance);
-        clips.line_(index).n = {x, y};
-        clips.line_(index).d = dist;
+        clips.mirror_line_(index).n = {x, y};
+        clips.mirror_line_(index).d = dist;
         index++;
       }
   }

@@ -84,11 +84,12 @@ int main(int argc, char * argv[]) {
    	 auto start = timer::now();
 
     Kokkos::Profiling::pushRegion("INIT LINE INTERFACE");
-    Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
-    #ifdef TEST_LINE
+#ifdef TEST_LINE
     	read_lines(clipped_part, line_test)
 
-    #else
+		#else
+    Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
+
     		if (line_rep == 1){				// Horizontal Lines
 						 clipped_part.line_(i).n = {0.0, 1.0};
 										clipped_part.line_(i).d = horizontal[i];
