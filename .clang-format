@@ -1,0 +1,40 @@
+---
+Language: Cpp
+BasedOnStyle: Mozilla
+AccessModifierOffset: -1
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+BraceWrapping:
+  AfterClass:      false
+  AfterEnum:       false
+  AfterStruct:     false
+  AfterExternBlock: true
+  SplitEmptyFunction: false
+BreakAfterJavaFieldAnnotations: false
+BreakBeforeBraces: Custom
+BreakBeforeInheritanceComma: false
+BreakBeforeTernaryOperators: false
+BreakConstructorInitializersBeforeComma: false
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: BeforeColon
+BinPackArguments: true
+ColumnLimit:     80
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+FixNamespaceComments: true
+IndentCaseLabels: true
+IndentCaseBlocks: false
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+ReflowComments:  false
+SortIncludes: Never
+SortUsingDeclarations: false
+SpaceAfterTemplateKeyword: true
+Standard:        Cpp11
+TabWidth: 2
+UseTab: Never
+StatementAttributeLikeMacros:
+  - Q_EMIT
+...
+
