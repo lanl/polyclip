@@ -85,7 +85,7 @@ int main(int argc, char * argv[]) {
 
     Kokkos::Profiling::pushRegion("INIT LINE INTERFACE");
 #ifdef TEST_LINE
-    	read_lines(clipped_part, line_test)
+    	read_lines(clipped_part, "line_test")
 
 		#else
     Kokkos::parallel_for(total_cells, KOKKOS_LAMBDA(int i) {
