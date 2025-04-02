@@ -10,8 +10,8 @@ namespace polyintersect {
     void assert_equal(double a, double b, std::string label){
     	double const tol = 1.e-5;
 	if(std::abs(a - b) > tol){
-		/*std::cerr*/ std::cout << label << " " << a << " != " << b << std::endl;
-	   //std::exit(EXIT_FAILURE);  
+	   std::cerr << label << " " << a << " != " << b << std::endl;
+	   std::exit(EXIT_FAILURE);  
 	}
     }
 	
