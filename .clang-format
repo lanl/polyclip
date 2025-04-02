@@ -19,13 +19,14 @@ BreakBeforeTernaryOperators: false
 BreakConstructorInitializersBeforeComma: false
 BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: BeforeColon
-ColumnLimit:     100
+BinPackArguments: true
+ColumnLimit:     80
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 FixNamespaceComments: true
 IndentCaseLabels: true
 IndentCaseBlocks: false
 KeepEmptyLinesAtTheStartOfBlocks: false
-MaxEmptyLinesToKeep: 2
+MaxEmptyLinesToKeep: 1
 ReflowComments:  false
 SortIncludes: Never
 SortUsingDeclarations: false

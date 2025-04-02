@@ -10,8 +10,12 @@
 
 namespace polyintersect::io {
 
-  void write_clipped(Mesh_Kokkos mesh, Clipped_Part clipped_part, int num_total_nodes, int num_total_polys, const std::string& file_name);
-  void write_mesh(Mesh_Kokkos mesh, const std::string& file_name);
-  Mesh_Kokkos read_mesh(std::string& file_name);
+void write_clipped(Mesh_Kokkos mesh,
+                   Clipped_Part clipped_part,
+                   int num_total_nodes,
+                   int num_total_polys,
+                   const std::string& file_name);
+void write_mesh(Mesh_Kokkos mesh, const std::string& file_name);
+Mesh_Kokkos read_mesh(std::string& file_name);
 
-}
+} // namespace polyintersect::io
