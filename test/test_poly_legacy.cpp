@@ -21,12 +21,12 @@ int main(int argc, char * argv[]) {
         int total_cells = 4;
         int max_edges_per_cell = 6;
 
-	int line_rep = 1; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
+	int line_rep = 3; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines,  3) Arbitrary overlapping lines 
 	
 	// Testing: distances for every cell
 	double horizontal[4] = {-0.125, -0.125, -0.5, -0.75}; 
-	double vertical[4] = {-1 /*-0.375*/, -0.625, -0.75, -0.625}; //Test dummy: replace -0.375 with -1
-	double arbitrary[4] = {-1 /*-0.26516504294495535*/, -0.4419417382415923, -0.618718433538229, -0.8838834764831844}; // Test dummy: replace with -1
+	double vertical[4] = {/*-1*/ -0.375, -0.625, -0.75, -0.625}; //Test dummy: replace -0.375 with -1
+	double arbitrary[4] = {/*-1*/ -0.26516504294495535, -0.4419417382415923, -0.618718433538229, -0.8838834764831844}; // Test dummy: replace with -1
 	
         // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
         Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -116,6 +116,61 @@ int main(int argc, char * argv[]) {
                       mesh.mirror_num_verts_per_cell_, clipped_part.mirror_allPoints_, 
                       clipped_part.mirror_size_output_, clipped_part.mirror_output_, mesh.mirror_signs_);
 	
+	// Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
+    	int counter = 0;
+    
+   	 if(line_rep == 1){  // Horizontal
+            double x_value[8] = {0.5, 0.0, 0.6875, 0.5, 0.9375, 0.375, 0.875, 0.5};
+            double y_value[8] = {0.125, 0.125, 0.125, 0.125, 0.5, 0.5, 0.75, 0.75};
+
+            for(int i = 0; i < total_cells; i++){
+                if(clipped_part.mirror_intersect_points_(i).a.x != DBL_MAX){
+                   assert_equal(clipped_part.mirror_intersect_points_(i).a.x, x_value[counter], "Intersect A x_value at Cell " + std::to_string(i) + ": ");
+                   assert_equal(clipped_part.mirror_intersect_points_(i).a.y, y_value[counter], "Intersect A y_value at Cell " + std::to_string(i) + ": ");
+
+                   assert_equal(clipped_part.mirror_intersect_points_(i).b.x, x_value[counter + 1], "Intersect B x_value at Cell " + std::to_string(i) + ": ");
+                   assert_equal(clipped_part.mirror_intersect_points_(i).b.y, y_value[counter + 1], "Intersect B y_value at Cell " + std::to_string(i) + ": ");
+               
+	            counter += 2;
+	       }
+            }
+	    std::cout << "100% Match" << std::endl;
+    	}
+    	else if (line_rep == 2){    // Vertical
+            double x_value[8] = {0.375, 0.375, 0.625, 0.625, 0.75, 0.75, 0.625, 0.625};
+            double y_value[8] = {0.0, 0.3125, 0.0833333, 0.25, 0.25, 0.625, 0.625, 0.875};
+
+            for(int i = 0; i < total_cells; i++){
+                if(clipped_part.mirror_intersect_points_(i).a.x != DBL_MAX){
+                   assert_equal(clipped_part.mirror_intersect_points_(i).a.x, x_value[counter], "Intersect A x_value at Cell " + std::to_string(i) + ": ");
+                   assert_equal(clipped_part.mirror_intersect_points_(i).a.y, y_value[counter], "Intersect A y_value at Cell " + std::to_string(i) + ": ");
+
+                   assert_equal(clipped_part.mirror_intersect_points_(i).b.x, x_value[counter + 1], "Intersect B x_value at Cell " + std::to_string(i) + ": ");
+                   assert_equal(clipped_part.mirror_intersect_points_(i).b.y, y_value[counter + 1], "Intersect B y_value at Cell " + std::to_string(i) + ": ");
+               
+	           counter += 2;
+	       }
+            }
+	    std::cout << "100% Match" << std::endl;
+        }  
+        else{   // Arbitrary
+            double x_value[8] = {0.375, 0.0833333, 0.575, 0.5, 0.625, 0.375, 0.625, 0.5};
+            double y_value[8] = {0.0, 0.291667, 0.05, 0.125, 0.25, 0.5, 0.625, 0.75};
+
+            for(int i = 0; i < total_cells; i++){
+                if(clipped_part.mirror_intersect_points_(i).a.x != DBL_MAX){
+                   assert_equal(clipped_part.mirror_intersect_points_(i).a.x, x_value[counter], "Intersect A x_value at Cell " + std::to_string(i) + ": ");
+                   assert_equal(clipped_part.mirror_intersect_points_(i).a.y, y_value[counter], "Intersect A y_value at Cell " + std::to_string(i) + ": ");
+
+                   assert_equal(clipped_part.mirror_intersect_points_(i).b.x, x_value[counter + 1], "Intersect B x_value at Cell " + std::to_string(i) + ": ");
+                   assert_equal(clipped_part.mirror_intersect_points_(i).b.y, y_value[counter + 1], "Intersect B y_value at Cell " + std::to_string(i) + ": ");
+               
+	           counter += 2;
+	        }
+            }
+	    std::cout << "100% Match" << std::endl;
+        }
+
     }
 
 

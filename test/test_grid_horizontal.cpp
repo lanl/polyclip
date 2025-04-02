@@ -106,11 +106,11 @@ int main(int argc, char * argv[]) {
 
         for(int i = 0; i < total_cells; i++){
             if(clipped_part.mirror_intersect_points_(i).a.x != DBL_MAX){
-               compare(clipped_part.mirror_intersect_points_(i).a.x, x_value[counter], "Intersect A x_value at Cell " + std::to_string(i) + ": ");
-               compare(clipped_part.mirror_intersect_points_(i).a.y, y_value, "Intersect A y_value at Cell " + std::to_string(i) + ": ");
+               assert_equal(clipped_part.mirror_intersect_points_(i).a.x, x_value[counter], "Intersect A x_value at Cell " + std::to_string(i) + ": ");
+               assert_equal(clipped_part.mirror_intersect_points_(i).a.y, y_value, "Intersect A y_value at Cell " + std::to_string(i) + ": ");
 
-               compare(clipped_part.mirror_intersect_points_(i).b.x, x_value[counter + 1], "Intersect B x_value at Cell " + std::to_string(i) + ": ");
-               compare(clipped_part.mirror_intersect_points_(i).b.y, y_value, "Intersect B y_value at Cell " + std::to_string(i) + ": ");
+               assert_equal(clipped_part.mirror_intersect_points_(i).b.x, x_value[counter + 1], "Intersect B x_value at Cell " + std::to_string(i) + ": ");
+               assert_equal(clipped_part.mirror_intersect_points_(i).b.y, y_value, "Intersect B y_value at Cell " + std::to_string(i) + ": ");
                
 	       counter += 2;
 	    }
@@ -125,11 +125,11 @@ int main(int argc, char * argv[]) {
             int above = clipped_part.mirror_size_output_(c, 1);
             for(int i = 0; i < below; i++){
                 int const j = clipped_part.mirror_output_(c, 0, i);
-                compare(j, below_index[i], "Ouput Index at Cell " + std::to_string(c) + ": ");
+                assert_equal(j, below_index[i], "Ouput Index at Cell " + std::to_string(c) + ": ");
             }
             for(int i = 0; i < above; i++){
                 int const j = clipped_part.mirror_output_(c, 1, i);
-                compare(j, above_index[i], "Ouput Index at Cell " + std::to_string(c) + ": ");
+                assert_equal(j, above_index[i], "Ouput Index at Cell " + std::to_string(c) + ": ");
             }
         }	
 

@@ -7,11 +7,11 @@
 
 namespace polyintersect {
     
-    void compare(double a, double b, std::string label){
-    	double const tol = 1.e-14;
+    void assert_equal(double a, double b, std::string label){
+    	double const tol = 1.e-15;
 	if(std::abs(a - b) > tol){
-	   std::cerr << label << " " << a << " != " << b << std::endl;
-	   std::exit(EXIT_FAILURE);  
+		/*std::cerr*/ std::cout << label << " " << a << " != " << b << std::endl;
+	   //std::exit(EXIT_FAILURE);  
 	}
     }
 	

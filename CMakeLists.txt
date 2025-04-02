@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(internship CXX)
+project(thesis CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,13 +9,28 @@ set(CMAKE_CXX_EXTENSIONS ON)
 option(USE_KOKKOS_GPU "Run on Ndvidia's GPU using Kokkos" OFF)
 
 if (USE_KOKKOS_GPU)
-  add_executable(clip_gpu)
-  target_include_directories(clip_gpu PUBLIC test core)
-  target_sources(clip_gpu PUBLIC  test/test_grid_horizontal.cpp  core/mesh.cpp core/clipped_part.cpp)
+  add_executable(clip_grid_diagnal)
+  target_include_directories(clip_grid_diagnal PUBLIC test core)
+  target_sources(clip_grid_diagnal PUBLIC  test/test_grid_diagnal.cpp  core/mesh.cpp core/clipped_part.cpp)
+
+  add_executable(clip_grid_horizontal)
+  target_include_directories(clip_grid_horizontal PUBLIC test core) 
+  target_sources(clip_grid_horizontal PUBLIC  test/test_grid_horizontal.cpp  core/mesh.cpp core/clipped_part.cpp)
+
+  add_executable(clip_poly_arbitrary) 
+  target_include_directories(clip_poly_arbitrary PUBLIC test core)
+  target_sources(clip_poly_arbitrary PUBLIC  test/test_poly_arbitrary.cpp  core/mesh.cpp core/clipped_part.cpp)
+
+  add_executable(clip_poly_legacy)
+  target_include_directories(clip_poly_legacy PUBLIC test core)
+  target_sources(clip_poly_legacy PUBLIC  test/test_poly_legacy.cpp  core/mesh.cpp core/clipped_part.cpp)
 
   # link with Kokkos
   find_package(Kokkos REQUIRED)
-  target_link_libraries(clip_gpu PUBLIC Kokkos::kokkos)
+  target_link_libraries(clip_grid_diagnal PUBLIC Kokkos::kokkos)
+  target_link_libraries(clip_grid_horizontal PUBLIC Kokkos::kokkos)
+  target_link_libraries(clip_poly_arbitrary PUBLIC Kokkos::kokkos)
+  target_link_libraries(clip_poly_legacy PUBLIC Kokkos::kokkos)
 endif ()
 
 
