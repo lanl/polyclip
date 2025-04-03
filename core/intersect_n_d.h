@@ -17,7 +17,7 @@ Segment intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
 
   int k = 0;
 
-  for (int i = 0; i < n; ++i) {
+  for (int i = 0; i < n and k < 2; ++i) {
     double x_min, y_min, x_max, y_max;
     int const a = cells(c, i, 0);
     int const b = cells(c, i, 1);
