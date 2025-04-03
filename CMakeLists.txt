@@ -25,10 +25,10 @@ if (USE_KOKKOS_GPU)
   add_executable(gmv_writer gmv/test_write.cpp gmv/io.cpp core/mesh.cpp core/clipped_part.cpp)
   target_include_directories(gmv_writer PUBLIC gmv)
 
-  add_executable(gmv_reader gmv/test_read.cpp gmv/io.cpp test/mesh_gpu.cpp test/clipped_part_gpu.cpp)
+  add_executable(gmv_reader gmv/test_read.cpp gmv/io.cpp core/mesh.cpp core/clipped_part.cpp)
   target_include_directories(gmv_reader PUBLIC gmv)
 
-  add_executable(gmv_read_and_write gmv/test_read_and_write.cpp gmv/io.cpp test/mesh_gpu.cpp test/clipped_part_gpu.cpp)
+  add_executable(gmv_read_and_write gmv/test_read_and_write.cpp gmv/io.cpp core/mesh.cpp core/clipped_part.cpp)
   target_include_directories(gmv_reader PUBLIC gmv)
 
   # link with Kokkos
