@@ -8,6 +8,7 @@ int main(int argc, char* argv[]) {
 
   if (argc < 2) {
     std::cout << "You need to pass the file name bro." << std::endl;
+    return EXIT_FAILURE;
   }
 
   Kokkos::initialize(argc, argv);
