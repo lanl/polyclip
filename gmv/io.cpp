@@ -11,7 +11,7 @@ void io::write_clipped(Mesh_Kokkos mesh,
                        int num_total_nodes,
                        int num_total_polys,
                        const std::string& file_name) {
-  std::fstream gmv_file(file_name, std::ios::app);
+  std::ofstream gmv_file(file_name);
 
   // Original cells and pointsf
   int total_cells = mesh.mirror_cells_.extent(0);
@@ -116,7 +116,7 @@ void io::write_clipped(Mesh_Kokkos mesh,
 }
 
 void io::write_mesh(Mesh_Kokkos mesh, const std::string& file_name) {
-  std::fstream gmv_file(file_name, std::ios::app);
+  std::ofstream gmv_file(file_name);
 
   // Original cells and pointsf
   int total_cells = mesh.mirror_cells_.extent(0);
