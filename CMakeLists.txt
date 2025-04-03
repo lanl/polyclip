@@ -4,7 +4,7 @@ project(thesis CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(USE_KOKKOS_GPU "Run on Ndvidia's GPU using Kokkos" OFF)
 option(USE_CLANG_FORMAT "Use clang-format for formatting" OFF)
