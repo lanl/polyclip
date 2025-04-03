@@ -19,11 +19,11 @@ class Clipped_Part {
   void send_to_cpu();
 
   // mesh data members for host and device
-  Kokkos::View<Line*, Kokkos::CudaSpace> line_;
-  Kokkos::View<Segment*, Kokkos::CudaSpace> intersect_points_;
-  Kokkos::View<int***, Kokkos::CudaSpace> output_; // cell, above/below, edge
-  Kokkos::View<int**, Kokkos::CudaSpace> size_output_; // cell, above/below
-  Kokkos::View<Point**, Kokkos::CudaSpace> allPoints_; // cell, allPoints
+  Kokkos::View<Line*> line_;
+  Kokkos::View<Segment*> intersect_points_;
+  Kokkos::View<int***> output_;     // cell, above/below, edge
+  Kokkos::View<int**> size_output_; // cell, above/below
+  Kokkos::View<Point**> allPoints_; // cell, allPoints
 
   Kokkos::View<Line*>::HostMirror mirror_line_;
   Kokkos::View<Segment*>::HostMirror mirror_intersect_points_;

@@ -25,13 +25,13 @@ class Mesh_Kokkos {
   void send_to_cpu();
 
   // mesh data members for host and device
-  Kokkos::View<Point*, Kokkos::CudaSpace> device_points_;
-  Kokkos::View<int***, Kokkos::CudaSpace> device_cells_; // cell, edge, vertex
+  Kokkos::View<Point*> device_points_;
+  Kokkos::View<int***> device_cells_; // cell, edge, vertex
   Kokkos::View<Point*>::HostMirror mirror_points_;
   Kokkos::View<int***>::HostMirror mirror_cells_;
 
-  Kokkos::View<int*, Kokkos::CudaSpace> num_verts_per_cell_;
-  Kokkos::View<int**, Kokkos::CudaSpace> signs_; // cell, allPoints
+  Kokkos::View<int*> num_verts_per_cell_;
+  Kokkos::View<int**> signs_; // cell, allPoints
   Kokkos::View<int*>::HostMirror mirror_num_verts_per_cell_;
   Kokkos::View<int**>::HostMirror mirror_signs_;
 };
