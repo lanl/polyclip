@@ -1,38 +1,32 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(thesis CXX)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(USE_KOKKOS_GPU "Run on Ndvidia's GPU using Kokkos" OFF)
+option(USE_KOKKOS_GPU "Run on Nvidia's GPU using Kokkos" OFF)
 option(USE_CLANG_FORMAT "Use clang-format for formatting" OFF)
 
 if (USE_KOKKOS_GPU)
-  add_executable(test_clip_grid_diagonal test/test_grid_diagonal.cpp  core/mesh.cpp core/clipped_part.cpp)
-  target_include_directories(test_clip_grid_diagonal PUBLIC test core)
+  find_package(Kokkos REQUIRED)
 
-  add_executable(test_clip_grid_horizontal test/test_grid_horizontal.cpp  core/mesh.cpp core/clipped_part.cpp)
-  target_include_directories(test_clip_grid_horizontal PUBLIC test core)
-
-  add_executable(test_clip_poly_arbitrary test/test_poly_arbitrary.cpp  core/mesh.cpp core/clipped_part.cpp)
-  target_include_directories(test_clip_poly_arbitrary PUBLIC test core)
-
+  add_executable(test_clip_grid_diagonal test/test_grid_diagonal.cpp core/mesh.cpp core/clipped_part.cpp)
+  add_executable(test_clip_grid_horizontal test/test_grid_horizontal.cpp core/mesh.cpp core/clipped_part.cpp)
+  add_executable(test_clip_poly_arbitrary test/test_poly_arbitrary.cpp core/mesh.cpp core/clipped_part.cpp)
   add_executable(test_clip_poly_legacy test/test_poly_legacy.cpp core/mesh.cpp core/clipped_part.cpp)
-  target_include_directories(test_clip_poly_legacy PUBLIC test core)
-
   add_executable(test_gmv_writer gmv/test_write.cpp gmv/io.cpp core/mesh.cpp core/clipped_part.cpp)
-  target_include_directories(test_gmv_writer PUBLIC gmv)
-
   add_executable(test_gmv_reader gmv/test_read.cpp gmv/io.cpp core/mesh.cpp core/clipped_part.cpp)
-  target_include_directories(test_gmv_reader PUBLIC gmv)
-
   add_executable(test_gmv_read_and_write gmv/test_read_and_write.cpp gmv/io.cpp core/mesh.cpp core/clipped_part.cpp)
+
+  target_include_directories(test_clip_grid_diagonal PUBLIC test core)
+  target_include_directories(test_clip_grid_horizontal PUBLIC test core)
+  target_include_directories(test_clip_poly_arbitrary PUBLIC test core)
+  target_include_directories(test_clip_poly_legacy PUBLIC test core)
+  target_include_directories(test_gmv_writer PUBLIC gmv)
+  target_include_directories(test_gmv_reader PUBLIC gmv)
   target_include_directories(test_gmv_read_and_write PUBLIC gmv)
 
-  # link with Kokkos
-  find_package(Kokkos REQUIRED)
   target_link_libraries(test_clip_grid_diagonal PUBLIC Kokkos::kokkos)
   target_link_libraries(test_clip_grid_horizontal PUBLIC Kokkos::kokkos)
   target_link_libraries(test_clip_poly_arbitrary PUBLIC Kokkos::kokkos)

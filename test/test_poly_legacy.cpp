@@ -8,7 +8,7 @@
 #include <Kokkos_Core.hpp>
 #include <omp.h>
 #include <cstdlib>
-#include "../timer.h"
+#include "../core/timer.h"
 
 int main(int argc, char* argv[]) {
   using namespace polyintersect;
