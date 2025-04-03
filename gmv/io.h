@@ -8,7 +8,7 @@
 //#include "../test/mesh.h"
 //#include "../test/clipped_part.h"
 
-namespace polyintersect::io {
+namespace polyclip::io {
 
 void write_clipped(Mesh_Kokkos mesh,
                    Clipped_Part clipped_part,

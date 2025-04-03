@@ -5,7 +5,7 @@
 #include <string>
 #include "geometry.h"
 
-namespace polyintersect {
+namespace polyclip {
 
 void assert_equal(double a, double b, std::string label) {
   double const tol = 1.e-5;

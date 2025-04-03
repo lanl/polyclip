@@ -11,7 +11,7 @@
 #include "../core/timer.h"
 
 int main(int argc, char* argv[]) {
-  using namespace polyintersect;
+  using namespace polyclip;
 
   Kokkos::initialize(argc, argv);
   {

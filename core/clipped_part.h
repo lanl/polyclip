@@ -4,7 +4,7 @@
 #include <Kokkos_Vector.hpp>
 #include "geometry.h"
 
-namespace polyintersect {
+namespace polyclip {
 
 // Materials needed for the mesh
 class Clipped_Part {

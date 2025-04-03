@@ -1,7 +1,7 @@
 #pragma once
 #include "mesh.h"
 
-namespace polyintersect {
+namespace polyclip {
 
 // Below the line using Degrees /////////////////////////////////////////////////////////
 KOKKOS_INLINE_FUNCTION

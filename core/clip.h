@@ -3,7 +3,7 @@
 #include "mesh.h"
 #include "intersect_n_d.h"
 
-namespace polyintersect {
+namespace polyclip {
 
 void clip(int total_cells,
           Kokkos::View<Point*> device_points_,

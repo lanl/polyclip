@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace polyintersect {
+namespace polyclip {
 
 void io::write_clipped(Mesh_Kokkos mesh,
                        Clipped_Part clipped_part,

@@ -22,7 +22,7 @@
 	- Creates a list of all the cells vertices and the intersecting points 
 */
 
-namespace polyintersect {
+namespace polyclip {
 
 // x and y values ///////////////////////////////////////////////////////////////////////
 struct Point {

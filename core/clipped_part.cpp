@@ -1,6 +1,6 @@
 #include "clipped_part.h"
 
-namespace polyintersect {
+namespace polyclip {
 
 // Create the Mesh //////////////////////////////////////////////////////////////////////
 Clipped_Part::Clipped_Part(int total_points,

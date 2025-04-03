@@ -5,7 +5,7 @@
 #include "geometry.h"
 
 #define MAX_NUM_EDGES_PER_CELL 8
-namespace polyintersect {
+namespace polyclip {
 
 // Mesh containing the coordinates and the cell
 class Mesh_Kokkos {

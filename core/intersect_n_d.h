@@ -4,7 +4,7 @@
 #include "geometry.h"
 #include <map>
 
-namespace polyintersect {
+namespace polyclip {
 KOKKOS_INLINE_FUNCTION
 Segment intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
                                      Kokkos::View<int***> cells,

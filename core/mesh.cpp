@@ -6,7 +6,7 @@
         - Identifies the Cells of the Mesh
 */
 
-namespace polyintersect {
+namespace polyclip {
 
 // Create the Mesh //////////////////////////////////////////////////////////////////////
 Mesh_Kokkos::Mesh_Kokkos(int total_points,
