@@ -85,7 +85,13 @@ int main(int argc, char* argv[]) {
     mesh.send_to_gpu();
 
     // Max Threads and Timer
+#if defined(KOKKOS_ENABLE_CUDA)
     int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
+#elif defined(KOKKOS_ENABLE_OPENMP)
+    int max_threads = omp_get_max_threads();
+#else
+    int max_threads = 1;
+#endif
     auto start = timer::now();
 
     // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
