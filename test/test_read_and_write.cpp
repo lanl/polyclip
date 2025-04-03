@@ -1,5 +1,5 @@
 
-#include "io.h"
+#include "../gmv/io.h"
 #include <iostream>
 #include <fstream>
 
@@ -31,6 +31,9 @@ int main(int argc, char* argv[]) {
 
       std::cout << "\n";
     }
+
+    std::cout << "Now let's write this to a new file called tester2.gmv\n";
+    //io::write_gmv(mesh, "tester2.gmv");
   }
 
   Kokkos::finalize();

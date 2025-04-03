@@ -1,6 +1,6 @@
 #include "../core/clippings.h"
 #include "../core/intersect_n_d.h"
-#include "io.h"
+#include "../gmv/io.h"
 #include <iostream>
 #include <fstream>
 int main(int argc, char* argv[]) {
