@@ -22,7 +22,10 @@ cmake -B build \
 cmake --build build -j $(nproc)
 cmake --install build --prefix "/path/to/kokkos/install"
 ```
-Finally build the code:
+> Set `Kokkos_ENABLE_CUDA=OFF` for local builds on your laptop.<br>
+> If so, the code will still compile using the `Serial` backend.
+
+Finally build and test the code:
 
 ```sh
 git clone git@gitlab.lanl.gov:summerprojects2024/polyintersection.git
@@ -30,6 +33,7 @@ cd polyintersection
 cmake -B build \
   -DUSE_KOKKOS_GPU=ON \
   -DKokkos_ROOT="/path/to/kokkos/install"
-cmake --build build -j $(nproc)  
+cmake --build build -j $(nproc) 
+ctest --test-dir build --output-on-failure 
 ```
 
