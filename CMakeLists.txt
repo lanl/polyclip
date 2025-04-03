@@ -16,7 +16,6 @@ target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
 
 # tests
 if (BUILD_TESTS)
-  include(CTest)
   enable_testing()
 
   add_executable(test_clip_grid_diagonal test/test_grid_diagonal.cpp)
