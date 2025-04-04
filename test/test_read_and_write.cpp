@@ -16,28 +16,26 @@ int main(int argc, char* argv[]) {
     std::string file_name = argv[1];
     Mesh_Kokkos mesh = io::read_mesh(file_name);
 
-    std::cout << "POINTS (NODES)\n-------------------\n";
-    for (int i = 0; i < 11; i++) {
-      std::cout << "Point " << i << ": (" << mesh.mirror_points_(i).x << ", "
-                << mesh.mirror_points_(i).y << ")\n";
+    std::cout << "points \n-------------------\n";
+    for (int i = 0; i < mesh.mirror_points_.extent(0); i++) {
+      auto const& p = mesh.mirror_points_(i);
+      std::cout << "p[" << i << "]: (" << p.x << ", " << p.y << ")\n";
     }
 
-    std::cout << "CELLS\n-------------------\n";
+    std::cout << "cells\n-------------------\n";
 
-    for (int i = 0; i < 4; i++) {
-      std::cout << "Cell #" << i << ": ";
+    for (int i = 0; i < mesh.mirror_cells_.extent(0); i++) {
+      std::cout << "c[" << i << "]: [";
       for (int j = 0; j < mesh.mirror_num_verts_per_cell_(i); j++) {
         std::cout << mesh.mirror_cells_(i, j, 0) << ", ";
       }
-
-      std::cout << "\n";
+      std::cout << "]" << std::endl;
     }
 
-    std::cout << "Now let's write this to a new file called tester2.gmv\n";
-    //io::write_gmv(mesh, "tester2.gmv");
+    std::cout << "Now let's write this to 'test_read_write.gmv'" << std::endl;
+    io::write_mesh(mesh, "test_read_write.gmv");
   }
 
   Kokkos::finalize();
-
-  return 0;
+  return EXIT_SUCCESS;
 }

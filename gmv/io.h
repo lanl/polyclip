@@ -18,4 +18,4 @@ void write_clipped(Mesh_Kokkos mesh,
 void write_mesh(Mesh_Kokkos mesh, const std::string& file_name);
 Mesh_Kokkos read_mesh(std::string& file_name);
 
-} // namespace polyintersect::io
+} // namespace polyclip::io

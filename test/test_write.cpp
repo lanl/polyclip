@@ -17,8 +17,7 @@ int main(int argc, char* argv[]) {
     int num_total_nodes = 0;
     int num_total_polys = 0;
 
-    int line_rep =
-      2; // 1) Horizontal overlapping lines, 2) Vertical overlapping lines, 3) Arbitrary overlapping lines
+    int line_rep = 2; // 1) Horizontal, 2) Vertical, 3) Arbitrary
 
     // Distance for Every Cell
     double horizontal[4] = { -0.125, -0.125, -0.5, -0.75 };
@@ -121,11 +120,9 @@ int main(int argc, char* argv[]) {
 
     // GMV counter
     for (int c = 0; c < total_cells; c++) { //Increase at every cell
-
       int below = clipped_part.mirror_size_output_(c, 0);
       num_total_nodes += mesh.mirror_num_verts_per_cell_(c);
       num_total_polys++;
-
       if (below > 0) { //Increase at every clipped cell
         num_total_nodes += 2;
         num_total_polys++;
@@ -140,5 +137,5 @@ int main(int argc, char* argv[]) {
   }
 
   Kokkos::finalize();
-  return 0;
+  return EXIT_SUCCESS;
 }
