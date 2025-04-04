@@ -133,4 +133,4 @@ void print_results(int end,
   }
 }
 
-} // namespace polyintersect
+} // namespace polyclip

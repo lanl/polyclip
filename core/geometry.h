@@ -177,4 +177,4 @@ void sorting(int c,
   }
 }
 
-} // namespace polyintersect
+} // namespace polyclip

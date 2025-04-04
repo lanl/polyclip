@@ -53,4 +53,4 @@ void clip_below_3(int cell,
   size_output(cell, 0) = below; // The size of elements below the cutting plane
   size_output(cell, 1) = above; // The size of elements above the cutting plane
 }
-} // namespace polyintersect
+} // namespace polyclip

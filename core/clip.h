@@ -30,4 +30,4 @@ void clip(int total_cells,
     });
 }
 
-} // namespace polyintersect
+} // namespace polyclip

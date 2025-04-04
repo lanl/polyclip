@@ -31,4 +31,4 @@ class Clipped_Part {
   Kokkos::View<int**>::HostMirror mirror_size_output_;
   Kokkos::View<Point**>::HostMirror mirror_allPoints_;
 };
-} // namespace polyintersect
+} // namespace polyclip

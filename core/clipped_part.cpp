@@ -29,4 +29,4 @@ void Clipped_Part::send_to_cpu() {
   Kokkos::deep_copy(mirror_intersect_points_, intersect_points_);
   Kokkos::deep_copy(mirror_line_, line_);
 }
-} // namespace polyintersect
+} // namespace polyclip

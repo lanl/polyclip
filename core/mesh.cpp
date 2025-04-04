@@ -49,4 +49,4 @@ void Mesh_Kokkos::send_to_cpu() {
   Kokkos::deep_copy(mirror_num_verts_per_cell_, num_verts_per_cell_);
   Kokkos::deep_copy(mirror_signs_, signs_);
 }
-} // namespace polyintersect
+} // namespace polyclip

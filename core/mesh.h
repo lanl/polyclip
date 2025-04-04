@@ -35,4 +35,4 @@ class Mesh_Kokkos {
   Kokkos::View<int*>::HostMirror mirror_num_verts_per_cell_;
   Kokkos::View<int**>::HostMirror mirror_signs_;
 };
-} // namespace polyintersect
+} // namespace polyclip

@@ -115,4 +115,4 @@ bool intersects(Kokkos::View<Point*> points,
   return !(p.x < p_min.x || p.y < p_min.y || p.x > p_max.x || p.y > p_max.y ||
            q.x < p_min.x || q.y < p_min.y || q.x > p_max.x || q.y > p_max.y);
 }
-} // namespace polyintersect
+} // namespace polyclip
