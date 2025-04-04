@@ -6,6 +6,7 @@
 
 namespace polyclip {
 
+/* ------------------------------------------------------------------------- */
 void io::write_clipped(Mesh_Kokkos mesh,
                        Clipped_Part clipped_part,
                        int num_total_nodes,
@@ -21,7 +22,7 @@ void io::write_clipped(Mesh_Kokkos mesh,
   gmv_file << "gmvinput ascii\n";
   gmv_file << "nodev " << num_total_nodes << "\n";
 
-  // Print all points ////////////////////////////////////////////////////////////////////////////////////
+  // Print all points /////////////////////////////////////////////////////////
   for (int c = 0; c < total_cells; c++) {
     int below = clipped_part.mirror_size_output_(c, 0);
     int v;
@@ -48,7 +49,7 @@ void io::write_clipped(Mesh_Kokkos mesh,
   // Print Cells + All Clipped Cells
   gmv_file << "cells " << num_total_polys << "\n";
 
-  // Print Cell Nodes ////////////////////////////////////////////////////////////////////////////////////
+  // Print Cell Nodes /////////////////////////////////////////////////////////
   int node_increment =
     0; // keep track of what node we are on with respect to the gmv file
   for (int c = 0; c < total_cells; c++) {
@@ -110,140 +111,141 @@ void io::write_clipped(Mesh_Kokkos mesh,
   }
 
   gmv_file << "\n";
-
   gmv_file << "endgmv\n";
   gmv_file.close();
 }
 
+/* ------------------------------------------------------------------------- */
 void io::write_mesh(Mesh_Kokkos mesh, const std::string& file_name) {
   std::ofstream gmv_file(file_name);
-
-  // Original cells and pointsf
   int total_cells = mesh.mirror_cells_.extent(0);
   int points = mesh.mirror_points_.extent(0);
 
-  // Print all points
   gmv_file << "gmvinput ascii\n";
   gmv_file << "nodev " << points << "\n";
 
-  // Print all points ////////////////////////////////////////////////////////////////////////////////////
+  // Print all points /////////////////////////////////////////////////////////
   for (int c = 0; c < mesh.mirror_points_.extent(0); c++) {
     gmv_file << std::scientific << std::setprecision(17);
     auto const p = mesh.mirror_points_(c);
     gmv_file << p.x << " " << p.y << " " << 0.0 << "\n";
   }
 
-  // Print Cell Nodes ////////////////////////////////////////////////////////////////////////////////////
-  int node_increment =
-    0; // keep track of what node we are on with respect to the gmv file
+  // Print Cell Nodes /////////////////////////////////////////////////////////
+  gmv_file << "cells " << total_cells << "\n";
+
   for (int c = 0; c < total_cells; c++) {
     gmv_file << "general 1 ";
-    std::string store_points = "";
-    int num_verts = mesh.mirror_num_verts_per_cell_(c);
-
+    int const num_verts = mesh.mirror_num_verts_per_cell_(c);
+    gmv_file << num_verts << " ";
     for (int j = 0; j < num_verts; j++) {
-      int const node_id = j + node_increment;
-      store_points += std::to_string(node_id + 1) + " ";
+      gmv_file << mesh.mirror_cells_(c, j, 0) + 1 << " ";
     }
-    gmv_file << std::to_string(num_verts) << " " << store_points << "\n";
+    gmv_file << std::endl;
   }
   gmv_file << "endgmv\n";
   gmv_file.close();
 }
 
+/* ------------------------------------------------------------------------- */
 Mesh_Kokkos io::read_mesh(std::string& file_name) {
   Mesh_Kokkos mesh = Mesh_Kokkos();
   std::ifstream gmv_file(file_name);
-  std::string buffer;
+  std::string line;
 
-  while (std::getline(gmv_file, buffer)) {
-    std::stringstream tokenizer(buffer);
+  while (std::getline(gmv_file, line)) {
+    std::stringstream parser(line);
     std::string token;
-
-    tokenizer >> token;
+    parser >> token;
 
     if (token == "gmvinput") {
       continue;
     }
 
     if (token == "nodev") {
-      std::string node_value;
-      tokenizer >> node_value;
-      int num_of_nodes = std::stoi(node_value);
+      int num_of_nodes;
+      parser >> num_of_nodes;
 
       Kokkos::resize(mesh.device_points_, num_of_nodes); // malloc
       mesh.mirror_points_ = Kokkos::create_mirror_view(mesh.device_points_);
 
       for (int i = 0; i < num_of_nodes; i++) {
-        std::stringstream out;
-        std::getline(gmv_file, buffer);
-        std::stringstream point_parser(buffer);
-        std::string point_data;
+        std::getline(gmv_file, line);
+        parser.clear();
+        parser.str(line);
 
-        float x, y;
-
-        point_parser >> point_data;
-        x = std::stof(point_data);
-
-        point_parser >> point_data;
-
-        y = std::stof(point_data);
-
-        std::cout << "{x, y} = " << x << " " << y << " " << "\n";
-
+        double x, y, z;
+        parser >> x >> y >> z;
         mesh.add_points(i, { x, y });
       }
-    }
+    } else if (token == "cells") {
+      int num_of_cells;
+      parser >> num_of_cells;
+      std::cout << "num_of_cells: " << num_of_cells << "\n";
 
-    else if (token == "cells") {
-      std::string cell_value;
-      tokenizer >> cell_value;
-      int num_of_cells = std::stoi(cell_value);
-      std::cout << "Num Of Cells. . . " << num_of_cells << "\n";
-
-      Kokkos::resize(mesh.device_cells_, num_of_cells, MAX_NUM_EDGES_PER_CELL,
-                     2);
-      mesh.mirror_cells_ = Kokkos::create_mirror_view(mesh.device_cells_);
+      constexpr int max_edges = 8;
+      Kokkos::resize(mesh.device_cells_, num_of_cells, max_edges, 2);
       Kokkos::resize(mesh.num_verts_per_cell_, num_of_cells);
+      Kokkos::resize(mesh.signs_, num_of_cells, max_edges + 2);
+
+      mesh.mirror_cells_ = Kokkos::create_mirror_view(mesh.device_cells_);
       mesh.mirror_num_verts_per_cell_ =
         Kokkos::create_mirror_view(mesh.num_verts_per_cell_);
-      Kokkos::resize(mesh.signs_, num_of_cells, MAX_NUM_EDGES_PER_CELL + 2);
       mesh.mirror_signs_ = Kokkos::create_mirror_view(mesh.signs_);
 
-      for (int i = 0; i < num_of_cells; i++) {
-        std::getline(gmv_file, buffer);
-        std::stringstream cell_parser(buffer);
-        std::string cell_data;
-
-        //Let's discard the general token and the cell id token.
-        cell_parser >> cell_data;
-        cell_parser >> cell_data;
-
-        //The next token will signify the # of edges for the cell.
-
-        cell_parser >> cell_data;
-        int num_of_edges = std::stoi(cell_data);
-        std::cout << "num_of_edges. . . " << num_of_edges << "\n";
-
-        mesh.mirror_num_verts_per_cell_(i) = num_of_edges;
-        std::vector<int> list_of_nodes(num_of_edges);
-        for (int j = 0; j < num_of_edges; j++) {
-          cell_parser >> cell_data;
-          list_of_nodes[j] = std::stoi(cell_data) - 1;
-          std::cout << "Value added is: " << std::stoi(cell_data) - 1 << "\n";
+      // (!) the vertices of a cell may be listed in several lines,
+      // so put all remaining lines into buffer and parse it later.
+      std::stringstream buffer;
+      while (std::getline(gmv_file, line)) {
+        parser.clear();
+        parser.str(line);
+        while (parser >> token) {
+          if (token == "general" or token == "endgmv") {
+            if (!buffer.str().empty()) { // first line
+              buffer << '\n';
+            }
+          } else {
+            buffer << token << ' ';
+          }
         }
+      }
+
+      // now parse it
+      int c = 0;
+      while (std::getline(buffer, line)) {
+        parser.clear();
+        parser.str(line);
+        parser >> token;
+
+        int num_of_edges;
+        parser >> num_of_edges;
+        mesh.mirror_num_verts_per_cell_(c) = num_of_edges;
+        std::vector<int> list_of_nodes(num_of_edges);
+
+        int j = 0;
+        while (parser >> token) {
+          list_of_nodes[j++] = std::stoi(token) - 1;
+        }
+
+#ifdef DEBUG
+        std::cout << "cell: " << c << ", num_of_edges: " << num_of_edges
+                  << ", vertices: [";
+        for (int i = 0; i < num_of_edges; ++i) {
+          std::cout << list_of_nodes[i] << ", ";
+        }
+        std::cout << "]\n";
+#endif
 
         for (int k = 0; k < num_of_edges; k++) {
-          auto edge_x = list_of_nodes[k];
-          auto edge_y = list_of_nodes[(k + 1) % (num_of_edges)];
-          std::cout << "edge_x/edge_y = " << "( " << edge_x << ", " << edge_y
-                    << " )\n";
-          mesh.add_edge(i, k, { edge_x, edge_y });
+          int const a = list_of_nodes[k];
+          int const b = list_of_nodes[(k + 1) % (num_of_edges)];
+          mesh.add_edge(c, k, { a, b });
         }
+        c++;
       }
     }
   }
 
   return mesh;
 }
-} // namespace polyintersect
+} // namespace polyclip
