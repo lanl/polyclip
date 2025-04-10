@@ -17,7 +17,6 @@ int main(int argc, char* argv[]) {
     int const total_points = 11;
     int const total_cells = 4;
     int const max_edges_per_cell = 6;
-    int const line_rep = 2;
 
     // Testing: distances for every cell
     double vertical[4] = { -0.375, -0.625, -0.75, -0.625 };
@@ -95,6 +94,9 @@ int main(int argc, char* argv[]) {
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_);
+
+    mesh.send_to_cpu();
+    clipped_part.send_to_cpu();
 
     // GMV counter
     for (int c = 0; c < total_cells; c++) { //Increase at every cell
