@@ -1,14 +1,14 @@
-#include "../core/clippings.h"
-#include "../core/mesh.h"
-#include "../core/print.h"
-#include "../core/clip.h"
-#include "../core/clipped_part.h"
-//#include "../core/intersect.h"
-#include "../core/intersect_n_d.h"
+#include "clippings.h"
+#include "mesh.h"
+#include "print.h"
+#include "clip.h"
+#include "clipped_part.h"
+#include "intersect_n_d.h"
 #include <Kokkos_Core.hpp>
 #include <omp.h>
 #include <cstdlib>
-#include "../core/timer.h"
+#include "timer.h"
+#include "test_predicates.h"
 
 int main(int argc, char* argv[]) {
   using namespace polyclip;
@@ -22,6 +22,7 @@ int main(int argc, char* argv[]) {
     int max_edges_per_cell = 4;
     int n_nodes = n_cells + 1;
     int total_points = n_nodes * n_nodes;
+    double const tolerance = std::stod(argv[1]);
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -100,59 +101,16 @@ int main(int argc, char* argv[]) {
 
     auto const end_including_copy = timer::elapsed(start);
 
-    // Verify Results by Printing on the CPU ////////////////////////////////////////////////////////////////
-    print_results(end, end_including_copy, max_threads, total_cells,
-                  total_points, mesh.mirror_points_, mesh.mirror_cells_,
-                  clipped_part.mirror_intersect_points_,
-                  clipped_part.mirror_line_, mesh.mirror_num_verts_per_cell_,
-                  clipped_part.mirror_allPoints_,
-                  clipped_part.mirror_size_output_, clipped_part.mirror_output_,
-                  mesh.mirror_signs_);
-
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
-    double x_value[8] = { 0.25, 0, 0.5, 0.25, 0.75, 0.5, 1.0, 0.75 };
-    double y_value = 0.625;
-    int counter = 0;
-
-    for (int i = 0; i < total_cells; i++) {
-      if (clipped_part.mirror_intersect_points_(i).a.x != DBL_MAX) {
-        assert_equal(clipped_part.mirror_intersect_points_(i).a.x,
-                     x_value[counter],
-                     "Intersect A x_value at Cell " + std::to_string(i) + ": ");
-        assert_equal(clipped_part.mirror_intersect_points_(i).a.y, y_value,
-                     "Intersect A y_value at Cell " + std::to_string(i) + ": ");
-
-        assert_equal(clipped_part.mirror_intersect_points_(i).b.x,
-                     x_value[counter + 1],
-                     "Intersect B x_value at Cell " + std::to_string(i) + ": ");
-        assert_equal(clipped_part.mirror_intersect_points_(i).b.y, y_value,
-                     "Intersect B y_value at Cell " + std::to_string(i) + ": ");
-
-        counter += 2;
-      }
-    }
-    std::cout << "100% Intersecting Points Match" << std::endl;
+    double x[8] = { 0.25, 0, 0.5, 0.25, 0.75, 0.5, 1.0, 0.75 };
+    double y[8] = { 0.625, 0.625, 0.625, 0.625, 0.625, 0.625, 0.625, 0.625 };
+    verify_intersection_points(total_cells, clipped_part, x, y, tolerance);
 
     // Output Points
     int below_index[4] = { 0, 1, 2, 5 };
     int above_index[4] = { 2, 3, 4, 5 };
-
-    for (int c = 0; c < total_cells; c++) {
-      int below = clipped_part.mirror_size_output_(c, 0);
-      int above = clipped_part.mirror_size_output_(c, 1);
-      for (int i = 0; i < below; i++) {
-        int const j = clipped_part.mirror_output_(c, 0, i);
-        assert_equal(j, below_index[i],
-                     "Ouput Index at Cell " + std::to_string(c) + ": ");
-      }
-      for (int i = 0; i < above; i++) {
-        int const j = clipped_part.mirror_output_(c, 1, i);
-        assert_equal(j, above_index[i],
-                     "Ouput Index at Cell " + std::to_string(c) + ": ");
-      }
-    }
-    std::cout << "100% Output Match" << std::endl;
+    verify_clipped_polys(total_cells, clipped_part, above_index, below_index);
   }
 
   Kokkos::finalize();

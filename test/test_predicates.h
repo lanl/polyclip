@@ -1,0 +1,72 @@
+#pragma once
+#include "clipped_part.h"
+#include <iomanip>
+
+namespace polyclip {
+
+void assert_eq(int a, int b, std::string const& label) {
+  if (a != b) {
+    std::cerr << label << " " << a << " != " << b << std::endl;
+    Kokkos::finalize();
+    std::exit(EXIT_FAILURE);
+  }
+}
+
+void assert_near(double a, double b, double tol, std::string const& label) {
+  if (std::abs(a - b) > tol) {
+    std::cerr << label << " " << std::setprecision(15) << a << " != " << b
+              << ", delta: " << std::abs(a - b) << ", tol: " << tol
+              << std::endl;
+    Kokkos::finalize();
+    std::exit(EXIT_FAILURE);
+  }
+}
+
+void verify_intersection_points(int total_cells,
+                                Clipped_Part const& clipped_part,
+                                double* x_expected,
+                                double* y_expected,
+                                double tolerance) {
+  int counter = 0;
+  for (int i = 0; i < total_cells; i++) {
+    auto const& a = clipped_part.mirror_intersect_points_(i).a;
+    auto const& b = clipped_part.mirror_intersect_points_(i).b;
+    if (a.x < DBL_MAX and a.y < DBL_MAX) {
+      assert_near(a.x, x_expected[counter], tolerance,
+                  "intersect: a.x at cell " + std::to_string(i) + ": ");
+      assert_near(a.y, y_expected[counter], tolerance,
+                  "intersect: a.y at cell " + std::to_string(i) + ": ");
+
+      assert_near(b.x, x_expected[counter + 1], tolerance,
+                  "intersect: b.x at cell " + std::to_string(i) + ": ");
+      assert_near(b.y, y_expected[counter + 1], tolerance,
+                  "intersect: b.y at cell " + std::to_string(i) + ": ");
+      counter += 2;
+    }
+  }
+  std::cout << "100% intersection points match with tolerance: " << tolerance
+            << std::endl;
+}
+
+void verify_clipped_polys(int total_cells,
+                          Clipped_Part const& clipped_part,
+                          int* above_index,
+                          int* below_index) {
+  for (int c = 0; c < total_cells; c++) {
+    int below = clipped_part.mirror_size_output_(c, 0);
+    int above = clipped_part.mirror_size_output_(c, 1);
+    for (int i = 0; i < below; i++) {
+      int const j = clipped_part.mirror_output_(c, 0, i);
+      assert_eq(j, below_index[i],
+                "ouput index at cell " + std::to_string(c) + ": ");
+    }
+    for (int i = 0; i < above; i++) {
+      int const j = clipped_part.mirror_output_(c, 1, i);
+      assert_eq(j, above_index[i],
+                "ouput index at cell " + std::to_string(c) + ": ");
+    }
+  }
+  std::cout << "100% clipped polys match" << std::endl;
+}
+
+} // namespace polyclip

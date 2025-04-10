@@ -1,32 +1,25 @@
-#include "../core/clippings.h"
-#include "../core/intersect_n_d.h"
-#include "../gmv/io.h"
+#include "clippings.h"
+#include "io.h"
+#include "clip.h"
+#include "test_predicates.h"
 #include <iostream>
-#include <fstream>
+
 int main(int argc, char* argv[]) {
   using namespace polyclip;
 
   Kokkos::initialize(argc, argv);
   {
-    // initialize variables for the unstructured mesh
-    int total_points = 11;
-    int total_cells = 4;
-    int max_edges_per_cell = 6;
-
     // GMV variable counters
-    int num_total_nodes = 0;
-    int num_total_polys = 0;
+    int num_nodes = 0;
+    int num_polys = 0;
 
-    int line_rep = 2; // 1) Horizontal, 2) Vertical, 3) Arbitrary
+    // initialize variables for the unstructured mesh
+    int const total_points = 11;
+    int const total_cells = 4;
+    int const max_edges_per_cell = 6;
 
-    // Distance for Every Cell
-    double horizontal[4] = { -0.125, -0.125, -0.5, -0.75 };
-    double vertical[4] = { /*-1*/ -0.375, -0.625, -0.75,
-                           -0.625 }; //Test dummy: replace -0.375 with -1
-    double arbitrary[4] = {
-      /*-1*/ -0.26516504294495535, -0.4419417382415923, -0.618718433538229,
-      -0.8838834764831844
-    }; // Test dummy: replace with -1
+    // Testing: distances for every cell
+    double vertical[4] = { -0.375, -0.625, -0.75, -0.625 };
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -80,60 +73,47 @@ int main(int argc, char* argv[]) {
     // CPU to GPU
     mesh.send_to_gpu();
 
+    // Max Threads and Timer
+#if defined(KOKKOS_ENABLE_CUDA)
+    int max_threads = Kokkos::Cuda().cuda_device_prop().maxThreadsPerBlock;
+#elif defined(KOKKOS_ENABLE_OPENMP)
+    int max_threads = omp_get_max_threads();
+#else
+    int max_threads = 1;
+#endif
+
     // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
     Kokkos::parallel_for(
       total_cells, KOKKOS_LAMBDA(int i) {
-        if (line_rep == 1) { // Horizontal Lines
-          clipped_part.line_(i).n = { 0.0, 1.0 };
-          clipped_part.line_(i).d = horizontal[i];
-        } else if (line_rep == 2) { // Vertical Lines
-          clipped_part.line_(i).n = { 1.0, 0.0 };
-          clipped_part.line_(i).d = vertical[i];
-        } else { // Arbitrary Lines
-          clipped_part.line_(i).n = { 0.70710678, 0.70710678 };
-          clipped_part.line_(i).d = arbitrary[i];
-        }
+        clipped_part.line_(i).n = { 1.0, 0.0 };
+        clipped_part.line_(i).d = vertical[i];
       });
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-    Kokkos::parallel_for(
-      total_cells, KOKKOS_LAMBDA(int c) {
-        clipped_part.intersect_points_(c) = intersect_cell_with_line_n_d(
-          mesh.device_points_, mesh.device_cells_, c, clipped_part.line_(c),
-          mesh.num_verts_per_cell_);
+    clip(total_cells, mesh.device_points_, mesh.device_cells_,
+         clipped_part.intersect_points_, clipped_part.line_,
+         mesh.num_verts_per_cell_, clipped_part.allPoints_,
+         clipped_part.size_output_, clipped_part.output_, mesh.signs_);
 
-        // Check if cell contains intersect points
-        if (intersects(mesh.device_points_, mesh.device_cells_, c,
-                       clipped_part.intersect_points_(c),
-                       mesh.num_verts_per_cell_)) {
-          clip_below_3(c, mesh.device_points_, mesh.device_cells_,
-                       clipped_part.intersect_points_(c), clipped_part.output_,
-                       clipped_part.size_output_, mesh.num_verts_per_cell_,
-                       mesh.signs_, clipped_part.allPoints_,
-                       clipped_part.line_(c));
-        }
-      });
-
-    // Send to CPU
     mesh.send_to_cpu();
     clipped_part.send_to_cpu();
 
     // GMV counter
     for (int c = 0; c < total_cells; c++) { //Increase at every cell
       int below = clipped_part.mirror_size_output_(c, 0);
-      num_total_nodes += mesh.mirror_num_verts_per_cell_(c);
-      num_total_polys++;
+      num_nodes += mesh.mirror_num_verts_per_cell_(c);
+      num_polys++;
       if (below > 0) { //Increase at every clipped cell
-        num_total_nodes += 2;
-        num_total_polys++;
+        num_nodes += 2;
+        num_polys++;
       }
     }
 
-    std::cout << num_total_nodes << " " << num_total_polys << std::endl;
-
-    io::write_clipped(mesh, clipped_part, num_total_nodes, num_total_polys,
-                      "test_clipped");
-    io::write_mesh(mesh, "test_mesh");
+    assert_eq(num_nodes, 26, "write clipped: num_nodes");
+    assert_eq(num_polys, 8, "write clipped: num_polys");
+    io::write_clipped(mesh, clipped_part, num_nodes, num_polys,
+                      "test_clipped.gmv");
+    io::write_mesh(mesh, "test_mesh.gmv");
   }
 
   Kokkos::finalize();
