@@ -148,7 +148,7 @@ void io::write_mesh(Mesh_Kokkos mesh, const std::string& file_name) {
 }
 
 /* ------------------------------------------------------------------------- */
-Mesh_Kokkos io::read_mesh(std::string& file_name) {
+Mesh_Kokkos io::read_mesh(std::string const& file_name) {
   Mesh_Kokkos mesh = Mesh_Kokkos();
   std::ifstream gmv_file(file_name);
   std::string line;
@@ -181,7 +181,6 @@ Mesh_Kokkos io::read_mesh(std::string& file_name) {
     } else if (token == "cells") {
       int num_of_cells;
       parser >> num_of_cells;
-      std::cout << "num_of_cells: " << num_of_cells << "\n";
 
       constexpr int max_edges = 8;
       Kokkos::resize(mesh.device_cells_, num_of_cells, max_edges, 2);
