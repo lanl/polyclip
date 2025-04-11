@@ -1,6 +1,5 @@
 stages:
-  - kokkos
-  - test
+  - build_and_test
 
 default:
   id_tokens:
@@ -12,8 +11,8 @@ variables:
   GIT_DEPTH: 1
   GIT_STRATEGY: clone
 
-kokkos:
-  stage: kokkos
+build_and_test:
+  stage: build_and_test
   tags:
     - darwin
     - batch
@@ -21,35 +20,13 @@ kokkos:
   variables:
     SCHEDULER_PARAMETERS: -p shared-gpu -q debug -t 1:00:00
   before_script:
-    - module load cmake cuda/12.0.0
-  script:
     - module list
-    - cd ${CI_PROJECT_DIR}
     - git clone https://github.com/kokkos/kokkos.git
     - cd kokkos
     - cmake -B build -DKokkos_ENABLE_TESTS=OFF -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_EXTENSIONS=OFF
     - cmake --build build -j $(nproc)
-    - cmake --install build --prefix "${CI_PROJECT_DIR}/kokkos/install"
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-  artifacts:
-    paths:
-      - ${CI_PROJECT_DIR}/kokkos
-
-test:
-  stage: test
-  needs: [ kokkos ]
-  tags:
-    - darwin
-    - batch
-  timeout: 1h
-  variables:
-    SCHEDULER_PARAMETERS: -p shared-gpu -q debug -t 1:00:00
-  before_script:
-    - module load cmake cuda/12.0.0
+    - cmake --install build --prefix "${CI_PROJECT_DIR}/kokkos/install" > /dev/null
   script:
-    - module list
     - cd ${CI_PROJECT_DIR}
     - cmake -B build -DKokkos_ROOT="${CI_PROJECT_DIR}/kokkos/install"
     - cmake --build build -j $(nproc)
