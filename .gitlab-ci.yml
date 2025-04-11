@@ -12,6 +12,9 @@ variables:
 
 build_and_test:
   stage: build_and_test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   tags:
     - darwin
     - batch
@@ -23,7 +26,7 @@ build_and_test:
     - module list
     - git clone https://github.com/kokkos/kokkos.git
     - cd kokkos
-    - cmake -B build -DKokkos_ENABLE_TESTS=OFF -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_EXTENSIONS=OFF
+    - cmake -B build -DKokkos_ENABLE_TESTS=OFF -DKokkos_ENABLE_CUDA=ON
     - cmake --build build -j $(nproc)
     - cmake --install build --prefix "${CI_PROJECT_DIR}/kokkos/install" > /dev/null
   script:
@@ -31,6 +34,3 @@ build_and_test:
     - cmake -B build -DKokkos_ROOT="${CI_PROJECT_DIR}/kokkos/install"
     - cmake --build build -j $(nproc)
     - ctest --test-dir build --output-on-failure
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
