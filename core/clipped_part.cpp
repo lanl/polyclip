@@ -5,8 +5,9 @@ namespace polyclip {
 // Create the Mesh //////////////////////////////////////////////////////////////////////
 Clipped_Part::Clipped_Part(int total_points,
                            int total_cells,
-                           int max_edges_per_cell) {
-  Kokkos::resize(line_, total_cells); // malloc
+                           int max_edges_per_cell,
+			   int total_lines) {
+  Kokkos::resize(line_, total_lines); // malloc
   Kokkos::resize(intersect_points_, total_cells);
   Kokkos::resize(output_, total_cells, 2,
                  (max_edges_per_cell + 2));     // 0 = below and 1 = above

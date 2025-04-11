@@ -21,17 +21,18 @@ int main(int argc, char* argv[]) {
     int max_edges_per_cell = 6;
     int total_points = 17;
     double const tolerance = std::stod(argv[1]);
+    int const total_lines = 10;
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
+    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
 
-    int vertices[10] = { 5, 3, 6, 4, 3, 5, 3, 4, 4, 4 };
-    double mixed[10] = { -0.375, -0.4419417382415923,
-                         -0.5,   -0.8838834764831844,
-                         -2,     -2,
-                         -2,     -2,
-                         -2,     -2 };
+    int vertices[total_lines] = { 5, 3, 6, 4, 3, 5, 3, 4, 4, 4 };
+    double mixed[total_lines] = { -0.375, -0.4419417382415923,
+                         	  -0.5,   -0.8838834764831844,
+                	          -2,     -2,
+                        	  -2,     -2,
+                        	  -2,     -2 };
 
     // All Nodes
     mesh.add_points(0, { 0.0, 0.0 });
@@ -130,7 +131,7 @@ int main(int argc, char* argv[]) {
 
     // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
     Kokkos::parallel_for(
-      total_cells, KOKKOS_LAMBDA(int i) {
+      total_lines, KOKKOS_LAMBDA(int i) {
         if (i == 0) { // Vertical Lines
           clipped_part.line_(i).n = { 1.0, 0.0 };
           clipped_part.line_(i).d = mixed[i];
@@ -144,11 +145,11 @@ int main(int argc, char* argv[]) {
       });
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-    clip(total_cells, mesh.device_points_, mesh.device_cells_,
+ /*   clip(total_cells, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_);
-
+*/
     auto const end = timer::elapsed(start); // time deep copy
 
     // Send to CPU

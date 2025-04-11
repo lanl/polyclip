@@ -23,12 +23,12 @@ int main(int argc, char* argv[]) {
     int n_nodes = n_cells + 1;
     int total_points = n_nodes * n_nodes;
     double const tolerance = std::stod(argv[1]);
+    int const total_lines = 1;
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
-    double horizontal[16] = { -2,     -2,     -2,     -2,     -2, -2, -2, -2,
-                              -0.625, -0.625, -0.625, -0.625, -2, -2, -2, -2 };
+    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
+    double horizontal[total_lines] = { -0.625};
 
     // All Nodes
     double lengthPerAxis = 1.0;
@@ -82,17 +82,17 @@ int main(int argc, char* argv[]) {
 
     // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
     Kokkos::parallel_for(
-      total_cells, KOKKOS_LAMBDA(int i) {
+      total_lines, KOKKOS_LAMBDA(int i) {
         clipped_part.line_(i).n = { 0.0, 1.0 }; // Horizontal Lines
         clipped_part.line_(i).d = horizontal[i];
       });
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-    clip(total_cells, mesh.device_points_, mesh.device_cells_,
+  /*  clip(total_cells, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_);
-
+*/
     auto const end = timer::elapsed(start); // time deep copy
 
     // Send to CPU

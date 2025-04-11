@@ -19,21 +19,23 @@ int main(int argc, char* argv[]) {
     int const total_points = 11;
     int const total_cells = 4;
     int const max_edges_per_cell = 6;
+    int const total_lines = 4;
+
     int const line_rep =
       std::stoi(argv[1]); // 1: horizontal| 2: vertical| 3: arbitrary
     double const tolerance = std::stod(argv[2]);
 
     // Testing: distances for every cell
-    double horizontal[4] = { -0.125, -0.125, -0.5, -0.75 };
-    double vertical[4] = { -0.375, -0.625, -0.75, -0.625 };
-    double arbitrary[4] = {
+    double horizontal[total_lines] = { -0.125, -0.125, -0.5, -0.75 };
+    double vertical[total_lines] = { -0.375, -0.625, -0.75, -0.625 };
+    double arbitrary[total_lines] = {
       -0.26516504294495535, -0.4419417382415923, -0.618718433538229,
       -0.8838834764831844
     }; // Test dummy: replace with -1
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
+    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_cells);
 
     // All Nodes
     mesh.add_points(0, { 0.0, 0.0 });
@@ -95,7 +97,7 @@ int main(int argc, char* argv[]) {
 
     // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
     Kokkos::parallel_for(
-      total_cells, KOKKOS_LAMBDA(int i) {
+      total_lines, KOKKOS_LAMBDA(int i) {
         if (line_rep == 1) { // Horizontal Lines
           clipped_part.line_(i).n = { 0.0, 1.0 };
           clipped_part.line_(i).d = horizontal[i];
@@ -109,7 +111,7 @@ int main(int argc, char* argv[]) {
       });
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-    clip(total_cells, mesh.device_points_, mesh.device_cells_,
+    clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_);
@@ -120,6 +122,15 @@ int main(int argc, char* argv[]) {
     mesh.send_to_cpu();
     clipped_part.send_to_cpu();
     int const end_including_copy = timer::elapsed(start);
+    
+    // Verify Results by Printing on the CPU ////////////////////////////////////////////////////////////////
+    print_results(end, end_including_copy, max_threads, total_cells,
+                  total_points, mesh.mirror_points_, mesh.mirror_cells_,
+                  clipped_part.mirror_intersect_points_,
+                  clipped_part.mirror_line_, mesh.mirror_num_verts_per_cell_,
+                  clipped_part.mirror_allPoints_,
+                  clipped_part.mirror_size_output_, clipped_part.mirror_output_,
+                  mesh.mirror_signs_);
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     std::array<double, 8> x{}, y{};
