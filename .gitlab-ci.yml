@@ -20,6 +20,7 @@ build_and_test:
   variables:
     SCHEDULER_PARAMETERS: -p shared-gpu -q debug -t 1:00:00
   before_script:
+    - module load cmake cuda/12.0.0
     - module list
     - git clone https://github.com/kokkos/kokkos.git
     - cd kokkos
