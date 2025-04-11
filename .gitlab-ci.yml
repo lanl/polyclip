@@ -7,7 +7,6 @@ default:
       aud: https://gitlab.lanl.gov
 
 variables:
-  SPACK_DISABLE_LOCAL_CONFIG: "true"
   GIT_DEPTH: 1
   GIT_STRATEGY: clone
 
