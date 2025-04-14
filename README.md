@@ -1,4 +1,4 @@
-# PolyIntersection
+# Polyclip
 
 Multi-material cell clipping on the GPU
 

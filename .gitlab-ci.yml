@@ -1,5 +1,5 @@
 stages:
-  - build_and_test
+  - test
 
 default:
   id_tokens:
@@ -10,8 +10,8 @@ variables:
   GIT_DEPTH: 1
   GIT_STRATEGY: clone
 
-build_and_test:
-  stage: build_and_test
+.test:
+  stage: test
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -19,6 +19,27 @@ build_and_test:
     - darwin
     - batch
   timeout: 1h
+  script:
+    - cd ${CI_PROJECT_DIR}
+    - cmake -B build -DKokkos_ROOT="${CI_PROJECT_DIR}/kokkos/install"
+    - cmake --build build -j $(nproc)
+    - ctest --test-dir build --output-on-failure
+
+test-cpu:
+  extends: .test
+  variables:
+    SCHEDULER_PARAMETERS: -C cpu_family:broadwell -p scaling -q debug -t 1:00:00
+  before_script:
+    - module load cmake gcc/12.2.0
+    - module list
+    - git clone https://github.com/kokkos/kokkos.git
+    - cd kokkos
+    - cmake -B build -DKokkos_ENABLE_TESTS=OFF -DKokkos_ENABLE_SERIAL=ON -DKokkos_ENABLE_CUDA=OFF -DKokkos_ENABLE_OPENMP=ON
+    - cmake --build build -j $(nproc)
+    - cmake --install build --prefix "${CI_PROJECT_DIR}/kokkos/install" > /dev/null
+
+test-gpu:
+  extends: .test
   variables:
     SCHEDULER_PARAMETERS: -p shared-gpu -q debug -t 1:00:00
   before_script:
@@ -26,11 +47,7 @@ build_and_test:
     - module list
     - git clone https://github.com/kokkos/kokkos.git
     - cd kokkos
-    - cmake -B build -DKokkos_ENABLE_TESTS=OFF -DKokkos_ENABLE_CUDA=ON
+    - cmake -B build -DKokkos_ENABLE_TESTS=OFF DKokkos_ENABLE_SERIAL=OFF -DKokkos_ENABLE_CUDA=ON -DKokkos_ENABLE_OPENMP=ON
     - cmake --build build -j $(nproc)
     - cmake --install build --prefix "${CI_PROJECT_DIR}/kokkos/install" > /dev/null
-  script:
-    - cd ${CI_PROJECT_DIR}
-    - cmake -B build -DKokkos_ROOT="${CI_PROJECT_DIR}/kokkos/install"
-    - cmake --build build -j $(nproc)
-    - ctest --test-dir build --output-on-failure
+
