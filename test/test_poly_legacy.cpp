@@ -161,6 +161,11 @@ int main(int argc, char* argv[]) {
 
     verify_intersection_points(total_cells, clipped_part, x.data(), y.data(),
                                tolerance);
+
+    print_results(end, end_including_copy, max_threads, total_cells, total_points, mesh.mirror_points_, mesh.mirror_cells_
+      , clipped_part.mirror_intersect_points_, clipped_part.mirror_line_, mesh.mirror_num_verts_per_cell_, clipped_part.mirror_allPoints_
+      ,clipped_part.mirror_size_output_, clipped_part.mirror_output_, mesh.mirror_signs_);
+
   }
 
   Kokkos::finalize();
