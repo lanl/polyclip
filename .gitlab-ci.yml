@@ -25,7 +25,7 @@ variables:
     - cmake --build build -j $(nproc)
     - ctest --test-dir build --output-on-failure
 
-cuda:
+GPU:
   extends: .build_and_test
   variables:
     SCHEDULER_PARAMETERS: -p shared-gpu -q debug -t 1:00:00
@@ -38,7 +38,7 @@ cuda:
     - cmake --build build -j $(nproc)
     - cmake --install build --prefix "${CI_PROJECT_DIR}/kokkos/install" > /dev/null
 
-openmp:
+CPU:
   extends: .build_and_test
   variables:
     SCHEDULER_PARAMETERS: -C cpu_family:broadwell -p scaling -q debug -t 1:00:00
