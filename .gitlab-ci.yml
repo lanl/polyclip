@@ -47,6 +47,6 @@ openmp:
     - module list
     - git clone https://github.com/kokkos/kokkos.git
     - cd kokkos
-    - cmake -B build -DKokkos_ENABLE_TESTS=OFF -DKokkos_ENABLE_CUDA=ON -DKokkos_ENABLE_OPENMP=OFF
+    - cmake -B build -DKokkos_ENABLE_TESTS=OFF -DKokkos_ENABLE_CUDA=OFF -DKokkos_ENABLE_OPENMP=ON
     - cmake --build build -j $(nproc)
     - cmake --install build --prefix "${CI_PROJECT_DIR}/kokkos/install" > /dev/null
