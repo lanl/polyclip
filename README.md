@@ -27,8 +27,8 @@ cmake --install build --prefix "/path/to/kokkos/install"
 Finally build and test the code:
 
 ```sh
-git clone git@gitlab.lanl.gov:summerprojects2024/polyintersection.git
-cd polyintersection
+git clone git@gitlab.lanl.gov:summerprojects2024/polyclip.git
+cd polyclip
 cmake -B build -DKokkos_ROOT="/path/to/kokkos/install"
 cmake --build build -j $(nproc) 
 ctest --test-dir build --output-on-failure 
