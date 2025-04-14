@@ -24,6 +24,7 @@ class Clipped_Part {
   Kokkos::View<int***> output_;     // cell, above/below, edge
   Kokkos::View<int**> size_output_; // cell, above/below
   Kokkos::View<Point**> allPoints_; // cell, allPoints
+  Kokkos::View<bool*> clipped_cell_;
 
   Kokkos::View<Line*>::HostMirror mirror_line_;
   Kokkos::View<Segment*>::HostMirror mirror_intersect_points_;
