@@ -47,7 +47,7 @@ def main():
 
     with open("test_clip_grid_horizontal.txt", "a") as file:
         for i in horizontal:
-            file.write("0,1" + str(i) + "\n")
+            file.write("0,1 " + str(i) + "\n")
 
     with open("test_clip_grid_diagonal_coincide.txt", "w") as file:
         pass
