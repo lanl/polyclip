@@ -29,13 +29,13 @@ void print_results(int end,
   std::ofstream output_file;
   if(!output_name.empty()) {
     output_file.open(output_name);
-    // Print elapsed time
-  output_file << "Duration: " << end << " µs" << std::endl;
-  output_file << "Deep copy: " << end_including_copy << " µs" << std::endl;
-  output_file << "Max Threads: " << max_threads << std::endl << std::endl;
-
-  // Print Cells
-  output_file << std::endl;
+  //   // Print elapsed time
+  // output_file << "Duration: " << end << " µs" << std::endl;
+  // output_file << "Deep copy: " << end_including_copy << " µs" << std::endl;
+  // output_file << "Max Threads: " << max_threads << std::endl << std::endl;
+  //
+  // // Print Cells
+  // output_file << std::endl;
   output_file << "---------------- GPU Results ----------------" << std::endl;
   output_file << std::endl;
 
