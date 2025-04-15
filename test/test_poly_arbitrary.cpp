@@ -21,16 +21,16 @@ int main(int argc, char* argv[]) {
     int max_edges_per_cell = 6;
     int total_points = 17;
 
-    if(argc < 4) {
-      std::cout << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOLERANCE] [LINE_FILE_NAME]";
+    if(argc < 3) {
+      std::cout << "Usage: test_clip_poly_arbitrary [TOLERANCE] OPTIONAL: [LINE_FILE_NAME]";
       exit(1);
     }
 
     bool debug_flag = false;
-    if(argc >= 5)
+    if(argc >= 4)
       debug_flag = true;
 
-    std::string file_name = argv[3];
+    std::string file_name = argv[2];
     std::string output;
     double const tolerance = std::stod(argv[1]);
     int const total_lines = 3;
