@@ -33,7 +33,7 @@ void clip(int total_cells, int total_lines,
 	  clipped_cell_(c) = true;
         }
        }
-     });/
+     });
    }
 }
 
