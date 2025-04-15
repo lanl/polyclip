@@ -6,8 +6,8 @@ default:
     SITE_ID_TOKEN:
       aud: https://gitlab.lanl.gov
 
-variables:
-  GIT_STRATEGY: clone
+#variables:
+#  GIT_STRATEGY: clone
 
 test:
   stage: test
