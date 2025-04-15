@@ -7,7 +7,6 @@ default:
       aud: https://gitlab.lanl.gov
 
 variables:
-  GIT_DEPTH: 1
   GIT_STRATEGY: clone
 
 test:
@@ -21,16 +20,10 @@ test:
     - darwin
     - batch
   timeout: 1h
-  before_script:
+  script:
     - module load cmake cuda/12.0.0
     - module list
-    - git clone https://github.com/kokkos/kokkos.git
-    - cd kokkos
-    - cmake -B build -DKokkos_ENABLE_TESTS=OFF -DKokkos_ENABLE_CUDA=ON -DKokkos_ENABLE_OPENMP=ON
-    - cmake --build build -j $(nproc)
-    - cmake --install build --prefix "${CI_PROJECT_DIR}/kokkos/install" > /dev/null
-  script:
     - cd ${CI_PROJECT_DIR}
-    - cmake -B build -DKokkos_ROOT="${CI_PROJECT_DIR}/kokkos/install"
+    - cmake -B build -DKokkos_ENABLE_TESTS=OFF -DKokkos_ENABLE_CUDA=ON -DKokkos_ENABLE_OPENMP=ON
     - cmake --build build -j $(nproc)
     - ctest --test-dir build --output-on-failure
