@@ -28,7 +28,7 @@ def main():
 
     with open("test_clip_poly_legacy_diagonal.txt", "a") as file:
         for i in legacy_arbitrary:
-            file.write("1,0 " + str(i) + "\n")
+            file.write("0.70710678,0.70710678 " + str(i) + "\n")
 
     with open("test_clip_poly_arbitrary.txt", "w") as file:
         pass
