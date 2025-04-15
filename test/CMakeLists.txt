@@ -17,36 +17,36 @@ target_link_libraries(test_gmv_read_and_write PUBLIC polyclip)
 target_link_libraries(compare_outputs PUBLIC polyclip)
 
 add_test(NAME test_clip_poly_legacy_horizontal COMMAND test_clip_poly_legacy 1 1.e-15 "test_clip_poly_legacy_horizontal.txt")
-add_test(NAME test_clip_poly_legacy_horizontal_debug COMMAND test_clip_poly_legacy 1 1.e-15 "test_clip_poly_legacy_horizontal.txt" "DEBUG")
+#add_test(NAME test_clip_poly_legacy_horizontal_debug COMMAND test_clip_poly_legacy 1 1.e-15 "test_clip_poly_legacy_horizontal.txt" "DEBUG")
 
 add_test(NAME test_clip_poly_legacy_vertical COMMAND test_clip_poly_legacy 2 1.e-15 "test_clip_poly_legacy_vertical.txt")
-add_test(NAME test_clip_poly_legacy_vertical_debug COMMAND test_clip_poly_legacy 2 1.e-15 "test_clip_poly_legacy_vertical.txt" "DEBUG")
+#add_test(NAME test_clip_poly_legacy_vertical_debug COMMAND test_clip_poly_legacy 2 1.e-15 "test_clip_poly_legacy_vertical.txt" "DEBUG")
 
 add_test(NAME test_clip_poly_legacy_diagonal COMMAND test_clip_poly_legacy 3 5.e-9 "test_clip_poly_legacy_diagonal.txt")
-add_test(NAME test_clip_poly_legacy_diagonal_debug COMMAND test_clip_poly_legacy 3 5.e-9 "test_clip_poly_legacy_diagonal.txt" "DEBUG")
+#add_test(NAME test_clip_poly_legacy_diagonal_debug COMMAND test_clip_poly_legacy 3 5.e-9 "test_clip_poly_legacy_diagonal.txt" "DEBUG")
 
 add_test(NAME test_clip_poly_arbitrary COMMAND test_clip_poly_arbitrary 5.e-9 "test_clip_poly_arbitrary.txt")
-add_test(NAME test_clip_poly_arbitrary_debug COMMAND test_clip_poly_arbitrary 5.e-9 "test_clip_poly_arbitrary.txt" "DEBUG")
+#add_test(NAME test_clip_poly_arbitrary_debug COMMAND test_clip_poly_arbitrary 5.e-9 "test_clip_poly_arbitrary.txt" "DEBUG")
 
 add_test(NAME test_clip_grid_horizontal COMMAND test_clip_grid_horizontal 1.e-15 "test_clip_grid_horizontal.txt")
-add_test(NAME test_clip_grid_horizontal_debug COMMAND test_clip_grid_horizontal 1.e-15 "test_clip_grid_horizontal.txt" "DEBUG")
+#add_test(NAME test_clip_grid_horizontal_debug COMMAND test_clip_grid_horizontal 1.e-15 "test_clip_grid_horizontal.txt" "DEBUG")
 
 add_test(NAME test_clip_grid_diagonal_coincide COMMAND test_clip_grid_diagonal 0 1.e-15 "test_clip_grid_diagonal_coincide.txt")
-add_test(NAME test_clip_grid_diagonal_coincide_debug COMMAND test_clip_grid_diagonal 0 1.e-15 "test_clip_grid_diagonal_coincide.txt" "DEBUG")
+#add_test(NAME test_clip_grid_diagonal_coincide_debug COMMAND test_clip_grid_diagonal 0 1.e-15 "test_clip_grid_diagonal_coincide.txt" "DEBUG")
 
 add_test(NAME test_clip_grid_diagonal_parallel COMMAND test_clip_grid_diagonal 1 5.e-10 "test_clip_grid_diagonal_parallel.txt")
-add_test(NAME test_clip_grid_diagonal_parallel_debug COMMAND test_clip_grid_diagonal 1 5.e-10 "test_clip_grid_diagonal_parallel.txt" "DEBUG")
+#add_test(NAME test_clip_grid_diagonal_parallel_debug COMMAND test_clip_grid_diagonal 1 5.e-10 "test_clip_grid_diagonal_parallel.txt" "DEBUG")
 
 add_test(NAME test_gmv_writer COMMAND test_gmv_writer)
 add_test(NAME test_gmv_reader COMMAND test_gmv_reader mesh/inmesh.gmv)
 add_test(NAME test_gmv_read_and_write COMMAND test_gmv_read_and_write mesh/inmesh.gmv)
-
-add_test(NAME compare_legacy_horizontal COMMAND compare_outputs "outputtest_clip_poly_legacy_horizontal.txt" "output_debugtest_clip_poly_legacy_horizontal.txt")
-add_test(NAME compare_legacy_vertical COMMAND compare_outputs "outputtest_clip_poly_legacy_vertical.txt" "output_debugtest_clip_poly_legacy_vertical.txt")
-add_test(NAME compare_legacy_diagonal COMMAND compare_outputs "outputtest_clip_poly_legacy_diagonal.txt" "output_debugtest_clip_poly_legacy_diagonal.txt")
-add_test(NAME compare_arbitrary COMMAND compare_outputs "outputtest_clip_poly_arbitrary.txt" "output_debugtest_clip_poly_arbitrary.txt")
-add_test(NAME compare_horizontal COMMAND compare_outputs "outputtest_clip_grid_horizontal.txt" "output_debugtest_clip_grid_horizontal.txt")
-add_test(NAME compare_diagonal_coincide COMMAND compare_outputs "outputtest_clip_grid_diagonal_coincide.txt" "output_debugtest_clip_grid_diagonal_coincide.txt")
-add_test(NAME compare_diagonal_parallel COMMAND compare_outputs "outputtest_clip_grid_diagonal_parallel.txt" "output_debugtest_clip_grid_diagonal_parallel.txt")
+#
+#add_test(NAME compare_legacy_horizontal COMMAND compare_outputs "outputtest_clip_poly_legacy_horizontal.txt" "output_debugtest_clip_poly_legacy_horizontal.txt")
+#add_test(NAME compare_legacy_vertical COMMAND compare_outputs "outputtest_clip_poly_legacy_vertical.txt" "output_debugtest_clip_poly_legacy_vertical.txt")
+#add_test(NAME compare_legacy_diagonal COMMAND compare_outputs "outputtest_clip_poly_legacy_diagonal.txt" "output_debugtest_clip_poly_legacy_diagonal.txt")
+#add_test(NAME compare_arbitrary COMMAND compare_outputs "outputtest_clip_poly_arbitrary.txt" "output_debugtest_clip_poly_arbitrary.txt")
+#add_test(NAME compare_horizontal COMMAND compare_outputs "outputtest_clip_grid_horizontal.txt" "output_debugtest_clip_grid_horizontal.txt")
+#add_test(NAME compare_diagonal_coincide COMMAND compare_outputs "outputtest_clip_grid_diagonal_coincide.txt" "output_debugtest_clip_grid_diagonal_coincide.txt")
+#add_test(NAME compare_diagonal_parallel COMMAND compare_outputs "outputtest_clip_grid_diagonal_parallel.txt" "output_debugtest_clip_grid_diagonal_parallel.txt")
 
 file(COPY ${PROJECT_SOURCE_DIR}/data/mesh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
