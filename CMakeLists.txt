@@ -8,14 +8,18 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(FORMAT_CODE "Use clang-format for formatting" OFF)
 option(BUILD_TESTS "Build tests" ON)
 
+# kokkos
+add_compile_options(-Wno-deprecated-declarations)
+add_subdirectory(external/kokkos)
+
 # core
-find_package(Kokkos REQUIRED)
 add_library(polyclip core/mesh.cpp core/clipped_part.cpp gmv/io.cpp)
 target_include_directories(polyclip PUBLIC core gmv)
 target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
 
 # tests
 if (BUILD_TESTS)
+  set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
   enable_testing()
   add_subdirectory(test)
 endif ()
