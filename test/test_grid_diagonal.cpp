@@ -92,18 +92,27 @@ int main(int argc, char* argv[]) {
       });
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-/*    clip(total_cells, mesh.device_points_, mesh.device_cells_,
+    clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
-         clipped_part.size_output_, clipped_part.output_, mesh.signs_);
-*/
+         clipped_part.size_output_, clipped_part.output_, mesh.signs_,
+	 clipped_part.clipped_cell_);
+
     auto const end = timer::elapsed(start); // time deep copy
 
     // Send to CPU
     mesh.send_to_cpu();
     clipped_part.send_to_cpu();
-
     auto const end_including_copy = timer::elapsed(start);
+
+    // Verify Results by Printing on the CPU ////////////////////////////////////////////////////////////////
+    print_results(end, end_including_copy, max_threads, total_cells,
+                  total_points, mesh.mirror_points_, mesh.mirror_cells_,
+                  clipped_part.mirror_intersect_points_,
+                  clipped_part.mirror_line_, mesh.mirror_num_verts_per_cell_,
+                  clipped_part.mirror_allPoints_,
+                  clipped_part.mirror_size_output_, clipped_part.mirror_output_,
+                  mesh.mirror_signs_);
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
@@ -123,63 +132,6 @@ int main(int argc, char* argv[]) {
 
     verify_intersection_points(total_cells, clipped_part, x.data(), y.data(),
                                tolerance);
-
-    //    if (line_rep == 0) { // line goes through nodes
-    //      int counter = 0;
-    ////      double x_y_value[20] = { 0,    0.25, 0.25, 0.25 /*0.5*/, 0.25, 0.25, 0.25,
-    ////                               0.5,  0.5,  0.5,  0.5,          0.5,  0.5,  0.75,
-    ////                               0.75, 0.75, 0.75, 0.75,         0.75, 1.0 };
-    //      //
-    //      //      for (int i = 0; i < total_cells; i++) {
-    //      //        if (clipped_part.mirror_intersect_points_(i).a.x != DBL_MAX) {
-    //      //          assert_equal(
-    //      //            clipped_part.mirror_intersect_points_(i).a.x, x_y_value[counter],
-    //      //            "Intersect A x_value at Cell " + std::to_string(i) + ": ");
-    //      //          assert_equal(
-    //      //            clipped_part.mirror_intersect_points_(i).a.y, x_y_value[counter],
-    //      //            "Intersect A y_value at Cell " + std::to_string(i) + ": ");
-    //      //
-    //      //          assert_equal(clipped_part.mirror_intersect_points_(i).b.x,
-    //      //                       x_y_value[counter + 1],
-    //      //                       "Intersect B x_value at Cell " + std::to_string(i) +
-    //      //                         ": ");
-    //      //          assert_equal(clipped_part.mirror_intersect_points_(i).b.y,
-    //      //                       x_y_value[counter + 1],
-    //      //                       "Intersect B y_value at Cell " + std::to_string(i) +
-    //      //                         ": ");
-    //      //
-    //      //          counter += 2;
-    //      //        }
-    //      //      }
-    //      //      std::cout << "100% Match!" << std::endl;
-    //    } else { // line doesnt go through nodes
-    //      int counter = 0;
-    //      double x_value[14] = { 0.125, 0,     0.125, 0.25,  0.375, 0.25,  0.375,
-    //                             0.5,   0.625, 0.5,   0.625, 0.75,  0.875, 0.75 };
-    //      double y_value[14] = { 0.25,  0.125, 0.25,  0.375, 0.5,   0.375, 0.5,
-    //                             0.625, 0.75,  0.625, 0.75,  0.875, 1.0,   0.875 };
-    //
-    //      for (int i = 0; i < total_cells; i++) {
-    //        if (clipped_part.mirror_intersect_points_(i).a.x != DBL_MAX) {
-    //          assert_equal(
-    //            clipped_part.mirror_intersect_points_(i).a.x, x_value[counter],
-    //            "Intersect A x_value at Cell " + std::to_string(i) + ": ");
-    //          assert_equal(
-    //            clipped_part.mirror_intersect_points_(i).a.y, y_value[counter],
-    //            "Intersect A y_value at Cell " + std::to_string(i) + ": ");
-    //
-    //          assert_equal(
-    //            clipped_part.mirror_intersect_points_(i).b.x, x_value[counter + 1],
-    //            "Intersect B x_value at Cell " + std::to_string(i) + ": ");
-    //          assert_equal(
-    //            clipped_part.mirror_intersect_points_(i).b.y, y_value[counter + 1],
-    //            "Intersect B y_value at Cell " + std::to_string(i) + ": ");
-    //
-    //          counter += 2;
-    //        }
-    //      }
-    //      std::cout << "100% Match!" << std::endl;
-    //    }
   }
 
   Kokkos::finalize();
