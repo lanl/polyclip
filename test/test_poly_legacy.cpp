@@ -19,19 +19,32 @@ int main(int argc, char* argv[]) {
     int const total_points = 11;
     int const total_cells = 4;
     int const max_edges_per_cell = 6;
-    int const total_lines = 4;
+    int total_lines = 0;
 
     int const line_rep =
       std::stoi(argv[1]); // 1: horizontal| 2: vertical| 3: arbitrary
     double const tolerance = std::stod(argv[2]);
 
     // Testing: distances for every cell
-    double horizontal[total_lines] = { -0.125, -0.125, -0.5, -0.75 };
-    double vertical[total_lines] = { -0.375, -0.625, -0.75, -0.625 };
+    if(line_rep == 1){
+       total_lines = 3;
+    } else if(line_rep == 2){
+       total_lines = 2;
+    } else{
+       total_lines = 3;
+    }
+
+   double horizontal[3] = { -0.125, -0.5, -0.75 };
+    double vertical[2] = { -0.375, -0.625};
+    double arbitrary[3] = {
+         -0.26516504294495535, -0.4419417382415923, -0.8838834764831844};
+ 
+   /* //double vertical[total_lines] = { -0.375, -0.625, -0.75, -0.625 };
     double arbitrary[total_lines] = {
       -0.26516504294495535, -0.4419417382415923, -0.618718433538229,
       -0.8838834764831844
-    }; // Test dummy: replace with -1
+      }; // Test dummy: replace with -1*/
+
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -139,11 +152,13 @@ int main(int argc, char* argv[]) {
       x = { 0.5, 0.0, 0.6875, 0.5, 0.9375, 0.375, 0.875, 0.5 };
       y = { 0.125, 0.125, 0.125, 0.125, 0.5, 0.5, 0.75, 0.75 };
     } else if (line_rep == 2) {
-      x = { 0.375, 0.375, 0.625, 0.625, 0.75, 0.75, 0.625, 0.625 };
-      y = { 0.0, 0.3125, 0.0833333333333333, 0.25, 0.25, 0.625, 0.625, 0.875 };
+      x = { 0.375, 0.375, 0.625, 0.625, 0.375, 0.375, 0.625, 0.625 };
+      y = { 0.0, 0.3125, 0.0833333333333333, 0.25, 0.312500000000000, 0.5, 0.625, 0.875 };
     } else {
-      x = { 0.375, 0.083333333, 0.575, 0.5, 0.625, 0.375, 0.625, 0.5 };
-      y = { 0.0, 0.291666666, 0.05, 0.125, 0.25, 0.5, 0.625, 0.75 };
+      x = { 0.375000000629262, 0.083333333752841, 0.575000000629262, 0.5,
+	    0.250000002097540, 0.250000000524385, 0.625000002097539, 0.5 };
+      y = { 0.0  , 0.291666666876421, 0.050000000419508, 0.125000001048770, 
+	   0.374999998951230, 0.375000000524385, 0.625, 0.750000002097539 };
     }
 
     verify_intersection_points(total_cells, clipped_part, x.data(), y.data(),
