@@ -17,10 +17,10 @@ int main(int argc, char* argv[]) {
     int const total_points = 11;
     int const total_cells = 4;
     int const max_edges_per_cell = 6;
-    int const total_lines = 4;
+    int const total_lines = 2;
 
     // Testing: distances for every cell
-    double vertical[total_lines] = { -0.375, -0.625, -0.75, -0.625 };
+    double vertical[total_lines] = { -0.375, -0.625 };
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -91,11 +91,12 @@ int main(int argc, char* argv[]) {
       });
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
- /*   clip(total_cells, mesh.device_points_, mesh.device_cells_,
+    clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
-         clipped_part.size_output_, clipped_part.output_, mesh.signs_);
-*/
+         clipped_part.size_output_, clipped_part.output_, mesh.signs_,
+	 clipped_part.clipped_cell_);
+
     mesh.send_to_cpu();
     clipped_part.send_to_cpu();
 
