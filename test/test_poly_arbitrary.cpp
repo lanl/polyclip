@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
 
     int vertices[total_cells] = { 5, 3, 6, 4, 3, 5, 3, 4, 4, 4 };
-    double mixed[total_lines] = { -0.375, -0.4419417382415923,
+    double mixed[total_lines] = { -0.375, -0.125,
                          	  -0.8838834764831844,};
 
     // All Nodes
@@ -132,13 +132,13 @@ int main(int argc, char* argv[]) {
         if (i == 0) { // Vertical Lines
           clipped_part.line_(i).n = { 1.0, 0.0 };
           clipped_part.line_(i).d = mixed[i];
-        } else { // Arbitrary Lines
+        } else if(i == 3) { // Arbitrary Lines
           clipped_part.line_(i).n = { 0.70710678, 0.70710678 };
           clipped_part.line_(i).d = mixed[i];
-        } /*else {
+        } else {
           clipped_part.line_(i).n = { 0.0, 1.0 }; // Horizontal Line
           clipped_part.line_(i).d = mixed[i];
-        }*/
+        }
       });
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
@@ -166,14 +166,12 @@ int main(int argc, char* argv[]) {
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
-    double x[16] = { 0.375, 0.375, 0.575000000629262, 0.5,
-	             0.375, 0.375, 0.625000002097539, 0.5, 
-		     0.375, 0.375, 0.000000001048770, 0, 
-		     0.375, 0.375, 0.625000001048770, 0.575000000629262 };
-    double y[16] = { 0, 0.3125, 0.050000000419508, 0.125000001048770, 
-	             0.3125, 0.5, 0.625, 0.750000002097539, 
-		     0.5, 0.625, 0.625, 0.625000001048770, 
-		     0.625, 0.875, 0, 0.050000000419508 };
+    double x[16] = { 0.375, 0.375, 0.6875, 0.5,
+	             0.375, 0.375, 0.375, 0.375, 
+		     0.375, 0.375, 1.0  , 0.6875 };
+    double y[16] = { 0, 0.3125, 0.125, 0.125, 
+	             0.3125, 0.5, 0.5, 0.625, 
+		     0.625, 0.875, 0.125, 0.125 };
     verify_intersection_points(total_cells, clipped_part, x, y, tolerance);
   }
 
