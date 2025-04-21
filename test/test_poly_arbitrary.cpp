@@ -155,15 +155,6 @@ int main(int argc, char* argv[]) {
     clipped_part.send_to_cpu();
     auto const end_including_copy = timer::elapsed(start);
 
-    // Verify Results by Printing on the CPU ////////////////////////////////////////////////////////////////
-    print_results(end, end_including_copy, max_threads, total_cells,
-                  total_points, mesh.mirror_points_, mesh.mirror_cells_,
-                  clipped_part.mirror_intersect_points_,
-                  clipped_part.mirror_line_, mesh.mirror_num_verts_per_cell_,
-                  clipped_part.mirror_allPoints_,
-                  clipped_part.mirror_size_output_, clipped_part.mirror_output_,
-                  mesh.mirror_signs_);
-
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
     double x[16] = { 0.375, 0.375, 0.6875, 0.5,
