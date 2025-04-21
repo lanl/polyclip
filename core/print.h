@@ -5,7 +5,6 @@
 #include <string>
 #include "geometry.h"
 #include <iomanip>
-#include <iomanip>
 
 namespace polyclip {
 
@@ -70,9 +69,8 @@ void print_results(int end,
     if (below > 0) {
       auto const pa = mirror_intersect_points_(j).a;
       auto const pb = mirror_intersect_points_(j).b;
-      std::cout << "Intersection Points at Cell  " << j << ": (" << pa.x << ", "
-                << pa.y << "), (" << pb.x << ", " << pb.y << ")" << std::endl;
-
+      std::cout << "Intersection Points at Cell  " << std::setprecision(15) << j << ": (" << pa.x << ", "
+                << pa.y << "), (" << pb.x << ", " << pb.y << ")" << std::fixed << std::endl;
     }
   }
 
