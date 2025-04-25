@@ -21,17 +21,15 @@ int main(int argc, char* argv[]) {
     int max_edges_per_cell = 6;
     int total_points = 17;
     double const tolerance = std::stod(argv[1]);
+    int const total_lines = 3;
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell);
+    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
 
-    int vertices[10] = { 5, 3, 6, 4, 3, 5, 3, 4, 4, 4 };
-    double mixed[10] = { -0.375, -0.4419417382415923,
-                         -0.5,   -0.8838834764831844,
-                         -2,     -2,
-                         -2,     -2,
-                         -2,     -2 };
+    int vertices[total_cells] = { 5, 3, 6, 4, 3, 5, 3, 4, 4, 4 };
+    double mixed[total_lines] = { -0.375, -0.125,
+                         	  -0.8838834764831844,};
 
     // All Nodes
     mesh.add_points(0, { 0.0, 0.0 });
@@ -130,11 +128,11 @@ int main(int argc, char* argv[]) {
 
     // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
     Kokkos::parallel_for(
-      total_cells, KOKKOS_LAMBDA(int i) {
+      total_lines, KOKKOS_LAMBDA(int i) {
         if (i == 0) { // Vertical Lines
           clipped_part.line_(i).n = { 1.0, 0.0 };
           clipped_part.line_(i).d = mixed[i];
-        } else if (i == 1 || i == 3) { // Arbitrary Lines
+        } else if(i == 3) { // Arbitrary Lines
           clipped_part.line_(i).n = { 0.70710678, 0.70710678 };
           clipped_part.line_(i).d = mixed[i];
         } else {
@@ -144,23 +142,27 @@ int main(int argc, char* argv[]) {
       });
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-    clip(total_cells, mesh.device_points_, mesh.device_cells_,
+    clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
-         clipped_part.size_output_, clipped_part.output_, mesh.signs_);
+         clipped_part.size_output_, clipped_part.output_, mesh.signs_,
+	 clipped_part.clipped_cell_);
 
     auto const end = timer::elapsed(start); // time deep copy
 
     // Send to CPU
     mesh.send_to_cpu();
     clipped_part.send_to_cpu();
-
     auto const end_including_copy = timer::elapsed(start);
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
-    double x[8] = { 0.375, 0.375, 0.575, 0.5, 0.9375, 0.375, 0.625, 0.5 };
-    double y[8] = { 0, 0.3125, 0.05, 0.125, 0.5, 0.5, 0.625, 0.75 };
+    double x[16] = { 0.375, 0.375, 0.6875, 0.5,
+	             0.375, 0.375, 0.375, 0.375, 
+		     0.375, 0.375, 1.0  , 0.6875 };
+    double y[16] = { 0, 0.3125, 0.125, 0.125, 
+	             0.3125, 0.5, 0.5, 0.625, 
+		     0.625, 0.875, 0.125, 0.125 };
     verify_intersection_points(total_cells, clipped_part, x, y, tolerance);
   }
 
