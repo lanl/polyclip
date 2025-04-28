@@ -33,6 +33,8 @@ int main(int argc, char* argv[]) {
       debug_flag = true;
 
     std::string file_name = argv[3];
+    std::string output;
+
     double const tolerance = std::stod(argv[1]);
     int const total_lines = 1;
 
@@ -95,7 +97,6 @@ int main(int argc, char* argv[]) {
       clipped_part.send_to_gpu();
 
 
-
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
@@ -121,6 +122,7 @@ int main(int argc, char* argv[]) {
     int below_index[4] = { 0, 1, 2, 5 };
     int above_index[4] = { 2, 3, 4, 5 };
     verify_clipped_polys(total_cells, clipped_part, above_index, below_index);
+
   }
 
   Kokkos::finalize();

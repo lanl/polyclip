@@ -39,6 +39,7 @@ int main(int argc, char* argv[]) {
       debug_flag = true;
 
     std::string file_name = argv[3];
+    std::string output;
 
     double arbitrary[2] = { 0.0, -0.08838834765 };
     int line_rep = std::stoi(
@@ -132,7 +133,6 @@ int main(int argc, char* argv[]) {
 
     verify_intersection_points(total_cells, clipped_part, x.data(), y.data(),
                                tolerance);
-
   }
 
   Kokkos::finalize();

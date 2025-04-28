@@ -41,4 +41,12 @@ add_test(NAME test_gmv_writer COMMAND test_gmv_writer)
 add_test(NAME test_gmv_reader COMMAND test_gmv_reader mesh/inmesh.gmv)
 add_test(NAME test_gmv_read_and_write COMMAND test_gmv_read_and_write mesh/inmesh.gmv)
 
+add_test(NAME compare_legacy_horizontal COMMAND compare_outputs "outputtest_clip_poly_legacy_horizontal.txt" "output_debugtest_clip_poly_legacy_horizontal.txt")
+add_test(NAME compare_legacy_vertical COMMAND compare_outputs "outputtest_clip_poly_legacy_vertical.txt" "output_debugtest_clip_poly_legacy_vertical.txt")
+add_test(NAME compare_legacy_diagonal COMMAND compare_outputs "outputtest_clip_poly_legacy_diagonal.txt" "output_debugtest_clip_poly_legacy_diagonal.txt")
+add_test(NAME compare_arbitrary COMMAND compare_outputs "outputtest_clip_poly_arbitrary.txt" "output_debugtest_clip_poly_arbitrary.txt")
+add_test(NAME compare_horizontal COMMAND compare_outputs "outputtest_clip_grid_horizontal.txt" "output_debugtest_clip_grid_horizontal.txt")
+add_test(NAME compare_diagonal_coincide COMMAND compare_outputs "outputtest_clip_grid_diagonal_coincide.txt" "output_debugtest_clip_grid_diagonal_coincide.txt")
+add_test(NAME compare_diagonal_parallel COMMAND compare_outputs "outputtest_clip_grid_diagonal_parallel.txt" "output_debugtest_clip_grid_diagonal_parallel.txt")
+
 file(COPY ${PROJECT_SOURCE_DIR}/data/mesh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
