@@ -116,19 +116,12 @@ int main(int argc, char* argv[]) {
     auto start = timer::now();
 
     // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
-    Kokkos::parallel_for(
-      total_lines, KOKKOS_LAMBDA(int i) {
-        if (line_rep == 1) { // Horizontal Lines
-          clipped_part.line_(i).n = { 0.0, 1.0 };
-          clipped_part.line_(i).d = horizontal[i];
-        } else if (line_rep == 2) { // Vertical Lines
-          clipped_part.line_(i).n = { 1.0, 0.0 };
-          clipped_part.line_(i).d = vertical[i];
-        } else { // Arbitrary Lines
-          clipped_part.line_(i).n = { 0.70710678, 0.70710678 };
-          clipped_part.line_(i).d = arbitrary[i];
-        }
-      });
+
+    Kokkos::Profiling::pushRegion("INIT LINE INTERFACE");
+
+    io::read_lines(clipped_part, "line_test");
+    clipped_part.send_to_cpu();
+
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,

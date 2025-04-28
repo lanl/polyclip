@@ -17,7 +17,7 @@ class Clipped_Part {
 
   // Verify results
   void send_to_cpu();
-
+  void send_to_gpu();
   // mesh data members for host and device
   Kokkos::View<Line*> line_;
   Kokkos::View<Segment*> intersect_points_;
