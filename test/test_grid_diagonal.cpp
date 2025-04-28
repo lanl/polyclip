@@ -34,14 +34,9 @@ int main(int argc, char* argv[]) {
       exit(1);
     }
 
-    bool debug_flag = false;
-    if(argc >= 5)
-      debug_flag = true;
-
     std::string file_name = argv[3];
     std::string output;
 
-    double arbitrary[2] = { 0.0, -0.08838834765 };
     int line_rep = std::stoi(
       argv[1]); // (0) Line goes through nodes (1) Line doesnt go through nodes
     double const tolerance = std::stod(argv[2]);

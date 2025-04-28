@@ -26,20 +26,13 @@ int main(int argc, char* argv[]) {
     int const total_points = 11;
     int const total_cells = 4;
     int const max_edges_per_cell = 6;
-<<<<<<< HEAD
     int total_lines = 0;
-=======
     if(argc < 4) {
       std::cout << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOLERANCE] [LINE_FILE_NAME]";
       exit(1);
     }
 
-    bool debug_flag = false;
-    if(argc >= 5)
-      debug_flag = true;
-
     std::string file_name = argv[3];
->>>>>>> 764ffee (I really really want to make sure that my code is functional. So doing an exhaustive test to be 100% certain that it works if the line files are created properly.)
 
     // We will arbitrarily set the output file name based on how we generate clipped lines. So this will set later.
     std::string output;
@@ -134,9 +127,7 @@ int main(int argc, char* argv[]) {
 
     Kokkos::Profiling::pushRegion("INIT LINE INTERFACE");
 
-<<<<<<< HEAD
-    io::read_lines(clipped_part, "line_test");
-=======
+
     io::read_lines(clipped_part, file_name);
     clipped_part.send_to_gpu();
 
@@ -159,7 +150,6 @@ int main(int argc, char* argv[]) {
     Kokkos::Profiling::popRegion();
 
     Kokkos::Profiling::pushRegion("CLIPPED PART: GPU-TO-CPU TRANSFER");
->>>>>>> 9e2e669 (Removed print statements.)
     clipped_part.send_to_cpu();
     Kokkos::Profiling::popRegion();
 
@@ -195,11 +185,7 @@ int main(int argc, char* argv[]) {
 
     verify_intersection_points(total_cells, clipped_part, x.data(), y.data(),
                                tolerance);
-<<<<<<< HEAD
-=======
 
-
->>>>>>> 9e2e669 (Removed print statements.)
   }
 
   Kokkos::finalize();

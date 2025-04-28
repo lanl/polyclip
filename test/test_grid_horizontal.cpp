@@ -24,13 +24,10 @@ int main(int argc, char* argv[]) {
     int total_points = n_nodes * n_nodes;
 
     if(argc < 3) {
-      std::cout << "Usage: test_clip_grid_horizontal [TOLERANCE] OPTIONAL: [LINE_FILE_NAME]";
+      std::cout << "Usage: test_clip_grid_horizontal [TOLERANCE] [LINE_FILE_NAME]";
       exit(1);
     }
 
-    bool debug_flag = false;
-    if(argc >= 4)
-      debug_flag = true;
 
     std::string file_name = argv[2];
     std::string output;
