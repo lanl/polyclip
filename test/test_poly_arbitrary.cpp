@@ -17,9 +17,9 @@ int main(int argc, char* argv[]) {
   {
     // initialize variables for the unstructured mesh
 
-    int total_cells = 10;
-    int max_edges_per_cell = 6;
-    int total_points = 17;
+    int const total_cells = 10;
+    int const max_edges_per_cell = 6;
+    int const total_points = 17;
 
     if(argc < 3) {
       std::cout << "Usage: test_clip_poly_arbitrary [TOLERANCE] [LINE_FILE_NAME]";
