@@ -6,6 +6,7 @@ add_executable(test_clip_grid_diagonal test_grid_diagonal.cpp)
 add_executable(test_gmv_writer test_write.cpp)
 add_executable(test_gmv_reader test_read.cpp)
 add_executable(test_gmv_read_and_write test_read_and_write.cpp)
+
 target_link_libraries(test_clip_poly_legacy PUBLIC polyclip)
 target_link_libraries(test_clip_poly_arbitrary PUBLIC polyclip)
 target_link_libraries(test_clip_grid_horizontal PUBLIC polyclip)
@@ -14,22 +15,16 @@ target_link_libraries(test_gmv_writer PUBLIC polyclip)
 target_link_libraries(test_gmv_reader PUBLIC polyclip)
 target_link_libraries(test_gmv_read_and_write PUBLIC polyclip)
 
-add_test(NAME test_clip_poly_legacy_horizontal COMMAND test_clip_poly_legacy 1 1.e-15 "test/lines/legacy_horizontal_lines")
-
-add_test(NAME test_clip_poly_legacy_vertical COMMAND test_clip_poly_legacy 2 1.e-15 "test/lines/legacy_vertical_lines")
-
-add_test(NAME test_clip_poly_legacy_diagonal COMMAND test_clip_poly_legacy 3 5.e-9 "test/lines/legacy_diagonal_lines")
-
-add_test(NAME test_clip_poly_arbitrary COMMAND test_clip_poly_arbitrary 5.e-9 "test/lines/arbitrary_lines")
-
-add_test(NAME test_clip_grid_horizontal COMMAND test_clip_grid_horizontal 1.e-15 "test/lines/horizontal_lines")
-
-add_test(NAME test_clip_grid_diagonal_coincide COMMAND test_clip_grid_diagonal 0 1.e-15 "test/lines/coincide_lines")
-
-add_test(NAME test_clip_grid_diagonal_parallel COMMAND test_clip_grid_diagonal 1 5.e-10 "test/lines/diagonal_lines")
-
+add_test(NAME test_clip_poly_legacy_horizontal COMMAND test_clip_poly_legacy 1 1.e-15 lines/legacy_horizontal_lines)
+add_test(NAME test_clip_poly_legacy_vertical COMMAND test_clip_poly_legacy 2 1.e-15 lines/legacy_vertical_lines)
+add_test(NAME test_clip_poly_legacy_diagonal COMMAND test_clip_poly_legacy 3 5.e-9 lines/legacy_diagonal_lines)
+add_test(NAME test_clip_poly_arbitrary COMMAND test_clip_poly_arbitrary 5.e-9 lines/arbitrary_lines)
+add_test(NAME test_clip_grid_horizontal COMMAND test_clip_grid_horizontal 1.e-15 lines/horizontal_lines)
+add_test(NAME test_clip_grid_diagonal_coincide COMMAND test_clip_grid_diagonal 0 1.e-15 lines/coincide_lines)
+add_test(NAME test_clip_grid_diagonal_parallel COMMAND test_clip_grid_diagonal 1 5.e-10 lines/diagonal_lines)
 add_test(NAME test_gmv_writer COMMAND test_gmv_writer)
 add_test(NAME test_gmv_reader COMMAND test_gmv_reader mesh/inmesh.gmv)
 add_test(NAME test_gmv_read_and_write COMMAND test_gmv_read_and_write mesh/inmesh.gmv)
 
 file(COPY ${PROJECT_SOURCE_DIR}/data/mesh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/test/lines DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
