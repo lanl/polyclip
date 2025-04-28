@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <list>
 #include <sstream>
 
 namespace polyclip {
@@ -120,22 +121,53 @@ void io::write_clipped(Mesh_Kokkos mesh,
 void io::read_lines(Clipped_Part& clips, const std::string& file_name) {
   std::ifstream line_file(file_name);
   std::string buffer;
+  std::vector<double> list_of_values(5);
   int index = 0;
 
+  bool is_single_flag = false;
+  bool has_cell_flag = false;
   while (std::getline(line_file, buffer)) {
+    if(is_single_flag) {
+      std::cout << "ERROR: " << file_name << " has mismatch syntax. If the first"
+      << " array of values only contain 3 numbers, then no other row is permitted.\n";
+      break;
+    }
     std::stringstream tokenizer(buffer);
-    std::string normal_x;
-    std::string normal_y;
-    std::string distance;
-    tokenizer >> normal_x;
-    tokenizer >> normal_y;
-    tokenizer >> distance;
-    auto x = std::stod(normal_x);
-    auto y = std::stod(normal_y);
-    auto dist = std::stod(distance);
-    clips.mirror_line_(index).n = { x, y };
-    clips.mirror_line_(index).d = dist;
-    index++;
+    std::string token;
+    while(tokenizer >> token) {
+      list_of_values[index] = std::stod(token);
+      index++;
+    }
+
+    if(index == 4) {
+      has_cell_flag = true;
+      auto cell = list_of_values[0];
+      auto x = list_of_values[1];
+      auto y = list_of_values[2];
+      auto dist = list_of_values[3];
+      clips.mirror_line_(cell).n = {x, y};
+      clips.mirror_line_(cell).d = dist;
+
+    }
+
+    else if(index == 3){
+      if(has_cell_flag) {
+        std::cout << "ERROR: " << file_name << " has mismatch syntax. The first row contains"
+        << " 4 values in the following format: [CELL] [NORMAL_X] [NORMAL_Y] [DISTANCE].\n As a result "
+        << "All subsequent array must adhere to the same format.\n";
+        break;
+      }
+      is_single_flag = true;
+      auto x = list_of_values[0];
+      auto y = list_of_values[1];
+      auto dist = list_of_values[2];
+      unsigned long num_of_lines = clips.line_.extent(0);
+      for(int i = 0; i < num_of_lines; i++) {
+        clips.mirror_line_(i).n = {x, y};
+        clips.mirror_line_(i).d = dist;
+      }
+    }
+    index = 0;
   }
 }
 

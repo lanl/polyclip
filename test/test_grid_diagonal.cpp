@@ -35,7 +35,6 @@ int main(int argc, char* argv[]) {
     }
 
     std::string file_name = argv[3];
-    std::string output;
 
     int line_rep = std::stoi(
       argv[1]); // (0) Line goes through nodes (1) Line doesnt go through nodes
