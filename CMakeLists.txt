@@ -12,6 +12,7 @@ option(BUILD_TESTS "Build tests" ON)
 add_compile_options(-Wno-deprecated-declarations)
 add_subdirectory(external/kokkos)
 
+
 # core
 add_library(polyclip core/mesh.cpp core/clipped_part.cpp gmv/io.cpp)
 target_include_directories(polyclip PUBLIC core gmv)
