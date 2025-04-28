@@ -9,6 +9,13 @@
 #include <omp.h>
 #include <cstdlib>
 #include "timer.h"
+#include "../core/clippings.h"
+#include "../core/mesh.h"
+#include "../core/print.h"
+#include "../core/clip.h"
+#include "../core/clipped_part.h"
+#include "../core/timer.h"
+#include "../gmv/io.h"
 
 int main(int argc, char* argv[]) {
   using namespace polyclip;
