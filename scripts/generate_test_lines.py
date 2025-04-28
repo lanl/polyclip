@@ -14,7 +14,7 @@ def main():
 
     with open("legacy_horizontal_lines", "a") as file:
         for i in legacy_horizontal:
-            file.write("0,1 " + str(i) + "\n")
+            file.write("0 1 " + str(i) + "\n")
 
     with open("legacy_vertical_lines", "w") as file:
         pass
@@ -28,7 +28,7 @@ def main():
 
     with open("legacy_diagonal_lines", "a") as file:
         for i in legacy_arbitrary:
-            file.write("0.70710678,0.70710678 " + str(i) + "\n")
+            file.write("0.70710678 0.70710678 " + str(i) + "\n")
 
     with open("arbitrary_lines", "w") as file:
         pass
@@ -38,28 +38,28 @@ def main():
             if i == 0:
                 file.write("1,0 " + str(arbitrary_mixed[i]) + "\n")
             elif i == 1 or i == 3:
-                file.write("0.70710678,0.70710678 " + str(arbitrary_mixed[i]) + "\n")
+                file.write("0.70710678 0.70710678 " + str(arbitrary_mixed[i]) + "\n")
             else:
-                file.write("0,1 " + str(arbitrary_mixed[i]) + "\n")
+                file.write("0 1 " + str(arbitrary_mixed[i]) + "\n")
 
     with open("horizontal_lines", "w") as file:
         pass
 
     with open("horizontal_lines", "a") as file:
         for i in horizontal:
-            file.write("0,1 " + str(i) + "\n")
+            file.write("0 1 " + str(i) + "\n")
 
     with open("coincide_lines", "w") as file:
         pass
 
     with open("coincide_lines", "a") as file:
         for i in range(16):
-            file.write("-0.70710678,0.70710678 " + str(arbitrary[0]) + "\n")
+            file.write("-0.70710678 0.70710678 " + str(arbitrary[0]) + "\n")
 
     with open("diagonal_lines", "w") as file:
         pass
 
     with open("diagonal_lines", "a") as file:
         for i in range(16):
-            file.write("-0.70710678,0.70710678 " + str(arbitrary[1]) + "\n")
+            file.write("-0.70710678 0.70710678 " + str(arbitrary[1]) + "\n")
 main()
