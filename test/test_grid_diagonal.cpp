@@ -12,6 +12,10 @@
 #include "../gmv/io.h"
 int main(int argc, char* argv[]) {
   using namespace polyclip;
+  if (argc < 4) {
+    std::cerr << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOL] [LINE_FILE]";
+    return EXIT_FAILURE;
+  }
 
   Kokkos::initialize(argc, argv);
   {
@@ -30,11 +34,6 @@ int main(int argc, char* argv[]) {
     Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell,
                               total_lines);
 
-    if (argc < 4) {
-      std::cout << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOLERANCE] "
-                   "[LINE_FILE_NAME]";
-      exit(1);
-    }
 
     std::string file_name = argv[3];
     std::string output;

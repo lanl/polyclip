@@ -12,6 +12,10 @@
 #include "../gmv/io.h"
 int main(int argc, char* argv[]) {
   using namespace polyclip;
+  if (argc < 3) {
+    std::cerr << "Usage: test_clip_grid_horizontal [TOL] [LINE_FILE]";
+    return EXIT_FAILURE;
+  }
 
   Kokkos::initialize(argc, argv);
   {
@@ -22,12 +26,6 @@ int main(int argc, char* argv[]) {
     int max_edges_per_cell = 4;
     int n_nodes = n_cells + 1;
     int total_points = n_nodes * n_nodes;
-
-    if (argc < 3) {
-      std::cout
-        << "Usage: test_clip_grid_horizontal [TOLERANCE] [LINE_FILE_NAME]";
-      exit(1);
-    }
 
     std::string file_name = argv[2];
 

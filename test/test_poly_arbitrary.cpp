@@ -1,32 +1,26 @@
-#include "clippings.h"
+
 #include "mesh.h"
-#include "print.h"
 #include "clip.h"
 #include "clipped_part.h"
-#include "intersect_n_d.h"
 #include <Kokkos_Core.hpp>
 #include <omp.h>
-#include <cstdlib>
 #include "timer.h"
 #include "test_predicates.h"
-#include "../gmv/io.h"
+#include "io.h"
+
 int main(int argc, char* argv[]) {
   using namespace polyclip;
+  if (argc < 3) {
+    std::cerr << "Usage: test_clip_poly_arbitrary [TOL] [LINE_FILE]";
+    return EXIT_FAILURE;
+  }
 
   Kokkos::initialize(argc, argv);
   {
     // initialize variables for the unstructured mesh
-
     int const total_cells = 10;
     int const max_edges_per_cell = 6;
     int const total_points = 17;
-
-    if (argc < 3) {
-      std::cout
-        << "Usage: test_clip_poly_arbitrary [TOLERANCE] [LINE_FILE_NAME]";
-      exit(1);
-    }
-
     std::string file_name = argv[2];
     double const tolerance = std::stod(argv[1]);
     int const total_lines = 2;

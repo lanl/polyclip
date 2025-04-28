@@ -19,6 +19,10 @@
 
 int main(int argc, char* argv[]) {
   using namespace polyclip;
+  if (argc < 4) {
+    std::cerr << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOL] [LINE_FILE]";
+    return EXIT_FAILURE;
+  }
 
   Kokkos::initialize(argc, argv);
   {
@@ -27,11 +31,6 @@ int main(int argc, char* argv[]) {
     int const total_cells = 4;
     int const max_edges_per_cell = 6;
     int total_lines = 0;
-    if (argc < 4) {
-      std::cout << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOLERANCE] "
-                   "[LINE_FILE_NAME]";
-      exit(1);
-    }
 
     std::string file_name = argv[3];
 
