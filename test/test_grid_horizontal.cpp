@@ -19,7 +19,6 @@ int main(int argc, char* argv[]) {
 
   Kokkos::initialize(argc, argv);
   {
-
     int const max_edges_per_cell = 4;
     int const n_cells = 4 * 4;
     int const n_points = 5 * 5;
@@ -31,7 +30,7 @@ int main(int argc, char* argv[]) {
     Mesh_Kokkos mesh = io::read_mesh("mesh/grid.gmv");
     mesh.send_to_gpu();
 
-    Clipped_Part clipped_part(n_points, n_cells, max_edges_per_cell,n_lines);
+    Clipped_Part clipped_part(n_points, n_cells, max_edges_per_cell, n_lines);
     io::read_lines(clipped_part, lines);
     clipped_part.send_to_gpu();
 
