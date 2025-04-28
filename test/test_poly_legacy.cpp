@@ -136,10 +136,12 @@ int main(int argc, char* argv[]) {
     Kokkos::Profiling::pushRegion("CLIPPING BELOW CELLS");
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-    clip(total_cells, mesh.device_points_, mesh.device_cells_,
-         clipped_part.intersect_points_, clipped_part.line_,
-         mesh.num_verts_per_cell_, clipped_part.allPoints_,
-         clipped_part.size_output_, clipped_part.output_, mesh.signs_);
+
+    clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
+      clipped_part.intersect_points_, clipped_part.line_,
+      mesh.num_verts_per_cell_, clipped_part.allPoints_,
+      clipped_part.size_output_, clipped_part.output_, mesh.signs_,clipped_part.clipped_cell_);
+
 
     Kokkos::Profiling::popRegion();
     int const end = timer::elapsed(start); // time deep copy
@@ -152,21 +154,6 @@ int main(int argc, char* argv[]) {
     Kokkos::Profiling::pushRegion("CLIPPED PART: GPU-TO-CPU TRANSFER");
     clipped_part.send_to_cpu();
     Kokkos::Profiling::popRegion();
-
-
-    // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-    clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
-         clipped_part.intersect_points_, clipped_part.line_,
-         mesh.num_verts_per_cell_, clipped_part.allPoints_,
-         clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-	 clipped_part.clipped_cell_);
-
-    int const end = timer::elapsed(start); // time deep copy
-
-    // Send to CPU
-    mesh.send_to_cpu();
-    clipped_part.send_to_cpu();
-    int const end_including_copy = timer::elapsed(start);
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     std::array<double, 8> x{}, y{};
