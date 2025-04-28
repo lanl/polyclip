@@ -41,6 +41,9 @@ int main(int argc, char* argv[]) {
     std::string file_name = argv[3];
 >>>>>>> 764ffee (I really really want to make sure that my code is functional. So doing an exhaustive test to be 100% certain that it works if the line files are created properly.)
 
+    // We will arbitrarily set the output file name based on how we generate clipped lines. So this will set later.
+    std::string output;
+
     int const line_rep =
       std::stoi(argv[1]); // 1: horizontal| 2: vertical| 3: arbitrary
     double const tolerance = std::stod(argv[2]);
