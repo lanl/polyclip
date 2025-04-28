@@ -53,13 +53,13 @@ def main():
         pass
 
     with open("test_clip_grid_diagonal_coincide.txt", "a") as file:
-        for i in range(2):
+        for i in range(16):
             file.write("-0.70710678,0.70710678 " + str(arbitrary[0]) + "\n")
 
     with open("test_clip_grid_diagonal_parallel.txt", "w") as file:
         pass
 
     with open("test_clip_grid_diagonal_parallel.txt", "a") as file:
-        for i in range(2):
+        for i in range(16):
             file.write("-0.70710678,0.70710678 " + str(arbitrary[1]) + "\n")
 main()
