@@ -124,23 +124,15 @@ void io::read_lines(Clipped_Part& clips, const std::string& file_name) {
 
   while (std::getline(line_file, buffer)) {
     std::stringstream tokenizer(buffer);
-    std::string tuple;
-
-    tokenizer >> tuple;
-    std::stringstream vertices(tuple);
-    std::string vertex;
-    std::vector<double> list_of_vertex;
-    while (std::getline(vertices, vertex, ',')) {
-      list_of_vertex.push_back(std::stod(vertex));
-    }
-
-    auto x = list_of_vertex[0];
-    auto y = list_of_vertex[1];
-    /* Should produce 2 tokens. One being a tuple (1,1,1). Second will be a simple double value.*/
-
+    std::string normal_x;
+    std::string normal_y;
     std::string distance;
+    tokenizer >> normal_x;
+    tokenizer >> normal_y;
     tokenizer >> distance;
-    double dist = std::stod(distance);
+    auto x = std::stod(normal_x);
+    auto y = std::stod(normal_y);
+    auto dist = std::stod(distance);
     clips.mirror_line_(index).n = { x, y };
     clips.mirror_line_(index).d = dist;
     index++;
