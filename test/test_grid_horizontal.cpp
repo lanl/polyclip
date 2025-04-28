@@ -23,11 +23,11 @@ int main(int argc, char* argv[]) {
     int n_nodes = n_cells + 1;
     int total_points = n_nodes * n_nodes;
 
-    if(argc < 3) {
-      std::cout << "Usage: test_clip_grid_horizontal [TOLERANCE] [LINE_FILE_NAME]";
+    if (argc < 3) {
+      std::cout
+        << "Usage: test_clip_grid_horizontal [TOLERANCE] [LINE_FILE_NAME]";
       exit(1);
     }
-
 
     std::string file_name = argv[2];
 
@@ -36,7 +36,8 @@ int main(int argc, char* argv[]) {
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
+    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell,
+                              total_lines);
 
     // All Nodes
     double lengthPerAxis = 1.0;
@@ -95,7 +96,7 @@ int main(int argc, char* argv[]) {
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-	 clipped_part.clipped_cell_);
+         clipped_part.clipped_cell_);
 
     auto const end = timer::elapsed(start); // time deep copy
 
@@ -115,7 +116,6 @@ int main(int argc, char* argv[]) {
     int below_index[4] = { 0, 1, 2, 5 };
     int above_index[4] = { 2, 3, 4, 5 };
     verify_clipped_polys(total_cells, clipped_part, above_index, below_index);
-
   }
 
   Kokkos::finalize();

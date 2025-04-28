@@ -10,7 +10,10 @@ namespace polyclip {
 class Clipped_Part {
  public:
   // constructor
-  Clipped_Part(int total_points, int total_cells, int max_edges_per_cell, int total_lines);
+  Clipped_Part(int total_points,
+               int total_cells,
+               int max_edges_per_cell,
+               int total_lines);
 
   // destructor
   ~Clipped_Part() = default;

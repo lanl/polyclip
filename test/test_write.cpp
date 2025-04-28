@@ -24,7 +24,8 @@ int main(int argc, char* argv[]) {
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
+    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell,
+                              total_lines);
 
     // All Nodes
     mesh.add_points(0, { 0.0, 0.0 });
@@ -95,7 +96,7 @@ int main(int argc, char* argv[]) {
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-	 clipped_part.clipped_cell_);
+         clipped_part.clipped_cell_);
 
     mesh.send_to_cpu();
     clipped_part.send_to_cpu();

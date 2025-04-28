@@ -24,222 +24,219 @@ void print_results(int end,
                    Kokkos::View<int***>::HostMirror mirror_output_,
                    Kokkos::View<int**>::HostMirror mirror_signs_,
                    std::string const& output_name = "") {
-
-
   std::ofstream output_file;
-  if(!output_name.empty()) {
+  if (!output_name.empty()) {
     output_file.open(output_name);
-  //   // Print elapsed time
-  // output_file << "Duration: " << end << " µs" << std::endl;
-  // output_file << "Deep copy: " << end_including_copy << " µs" << std::endl;
-  // output_file << "Max Threads: " << max_threads << std::endl << std::endl;
-  //
-  // // Print Cells
-  // output_file << std::endl;
-  output_file << "---------------- GPU Results ----------------" << std::endl;
-  output_file << std::endl;
-
-  output_file << "------ Cell + Edges ------" << std::endl;
-  for (int j = 0; j < total_cells; j++) { // Cell
-    output_file << "Cell " << j << ":" << std::endl;
-    int t = mirror_num_verts_per_cell_(j);
-    for (int i = 0; i < t; i++) { // Edge
-      output_file << "Edge " << i << " (" << mirror_cells_(j, i, 0) << ", ";
-      output_file << mirror_cells_(j, i, 1) << ") ";
-    }
+    //   // Print elapsed time
+    // output_file << "Duration: " << end << " µs" << std::endl;
+    // output_file << "Deep copy: " << end_including_copy << " µs" << std::endl;
+    // output_file << "Max Threads: " << max_threads << std::endl << std::endl;
+    //
+    // // Print Cells
+    // output_file << std::endl;
+    output_file << "---------------- GPU Results ----------------" << std::endl;
     output_file << std::endl;
-  }
-  output_file << std::endl;
 
-  // Print Point Coordinates
-  output_file << "------ Cell Vertices ------" << std::endl;
-  for (int j = 0; j < total_points; j++) { // All Points
-    output_file << "Point " << j << ": (" << mirror_points_(j).x << ", "
-              << mirror_points_(j).y << ")" << std::endl;
-  }
-
-  // Print Line
-  output_file << std::endl;
-  output_file << "------ Line ------" << std::endl;
-  for (int j = 0; j < total_cells; ++j) {
-    auto const pa = mirror_line_(j).n;
-    auto const dist = mirror_line_(j).d;
-    output_file << "Line at Cell  " << j << ": normal = (" << pa.x << ", " << pa.y
-              << ") and distance = " << dist << std::endl;
-  }
-
-  // Print Intersect Points
-  output_file << std::endl;
-  output_file << "------ Intersect Points ------" << std::endl;
-  for (int j = 0; j < total_cells; ++j) {
-    int below = mirror_size_output_(j, 0);
-    if (below > 0) {
-      auto const pa = mirror_intersect_points_(j).a;
-      auto const pb = mirror_intersect_points_(j).b;
-      output_file << "Intersection Points at Cell  " << j << ": (" << pa.x << ", "
-                << pa.y << "), (" << pb.x << ", " << pb.y << ")" << std::endl;
-    }
-  }
-
-  // Print all Points (Vertices + Intersect Points)
-  output_file << std::endl;
-  output_file << "------ All Points ------" << std::endl;
-  for (int c = 0; c < total_cells; c++) {
-    int t = mirror_num_verts_per_cell_(c) + 2;
-    int below = mirror_size_output_(c, 0);
-    if (below > 0) {
-      for (int i = 0; i < t; i++) {
-        auto const p = mirror_allPoints_(c, i);
-        output_file << "Points at Cell  " << c << ": (" << p.x << ", " << p.y
-                  << ") " << std::endl;
+    output_file << "------ Cell + Edges ------" << std::endl;
+    for (int j = 0; j < total_cells; j++) { // Cell
+      output_file << "Cell " << j << ":" << std::endl;
+      int t = mirror_num_verts_per_cell_(j);
+      for (int i = 0; i < t; i++) { // Edge
+        output_file << "Edge " << i << " (" << mirror_cells_(j, i, 0) << ", ";
+        output_file << mirror_cells_(j, i, 1) << ") ";
       }
       output_file << std::endl;
     }
-  }
+    output_file << std::endl;
 
-  // Output Results
-  output_file << std::endl;
-  output_file << "------ Output ------" << std::endl;
-  for (int c = 0; c < total_cells; c++) {
-    int below = mirror_size_output_(c, 0);
-    int above = mirror_size_output_(c, 1);
-    if (below > 0) {
-      output_file << "Cell " << c << " Output: " << std::endl;
-      for (int i = 0; i < below; i++) {
-        int const j = mirror_output_(c, 0, i);
-        auto const p = mirror_allPoints_(c, j);
-        output_file << "Below " << j << ": (" << p.x << ", " << p.y << ") "
-                  << std::endl;
+    // Print Point Coordinates
+    output_file << "------ Cell Vertices ------" << std::endl;
+    for (int j = 0; j < total_points; j++) { // All Points
+      output_file << "Point " << j << ": (" << mirror_points_(j).x << ", "
+                  << mirror_points_(j).y << ")" << std::endl;
+    }
+
+    // Print Line
+    output_file << std::endl;
+    output_file << "------ Line ------" << std::endl;
+    for (int j = 0; j < total_cells; ++j) {
+      auto const pa = mirror_line_(j).n;
+      auto const dist = mirror_line_(j).d;
+      output_file << "Line at Cell  " << j << ": normal = (" << pa.x << ", "
+                  << pa.y << ") and distance = " << dist << std::endl;
+    }
+
+    // Print Intersect Points
+    output_file << std::endl;
+    output_file << "------ Intersect Points ------" << std::endl;
+    for (int j = 0; j < total_cells; ++j) {
+      int below = mirror_size_output_(j, 0);
+      if (below > 0) {
+        auto const pa = mirror_intersect_points_(j).a;
+        auto const pb = mirror_intersect_points_(j).b;
+        output_file << "Intersection Points at Cell  " << j << ": (" << pa.x
+                    << ", " << pa.y << "), (" << pb.x << ", " << pb.y << ")"
+                    << std::endl;
       }
-      for (int i = 0; i < above; i++) {
-        int const j = mirror_output_(c, 1, i);
-        auto const p = mirror_allPoints_(c, j);
-        output_file << "Above " << j << ": (" << p.x << ", " << p.y << ") "
-                  << std::endl;
+    }
+
+    // Print all Points (Vertices + Intersect Points)
+    output_file << std::endl;
+    output_file << "------ All Points ------" << std::endl;
+    for (int c = 0; c < total_cells; c++) {
+      int t = mirror_num_verts_per_cell_(c) + 2;
+      int below = mirror_size_output_(c, 0);
+      if (below > 0) {
+        for (int i = 0; i < t; i++) {
+          auto const p = mirror_allPoints_(c, i);
+          output_file << "Points at Cell  " << c << ": (" << p.x << ", " << p.y
+                      << ") " << std::endl;
+        }
+        output_file << std::endl;
+      }
+    }
+
+    // Output Results
+    output_file << std::endl;
+    output_file << "------ Output ------" << std::endl;
+    for (int c = 0; c < total_cells; c++) {
+      int below = mirror_size_output_(c, 0);
+      int above = mirror_size_output_(c, 1);
+      if (below > 0) {
+        output_file << "Cell " << c << " Output: " << std::endl;
+        for (int i = 0; i < below; i++) {
+          int const j = mirror_output_(c, 0, i);
+          auto const p = mirror_allPoints_(c, j);
+          output_file << "Below " << j << ": (" << p.x << ", " << p.y << ") "
+                      << std::endl;
+        }
+        for (int i = 0; i < above; i++) {
+          int const j = mirror_output_(c, 1, i);
+          auto const p = mirror_allPoints_(c, j);
+          output_file << "Above " << j << ": (" << p.x << ", " << p.y << ") "
+                      << std::endl;
+        }
+        output_file << std::endl;
+      }
+    }
+
+    // Print signs
+    output_file << "------ Signs ------" << std::endl;
+    for (int i = 0; i < total_cells; i++) {
+      int t = mirror_num_verts_per_cell_(i) + 2;
+      for (int j = 0; j < t; j++) {
+        output_file << "Sign at cell " << i << ": " << mirror_signs_(i, j)
+                    << std::endl;
       }
       output_file << std::endl;
     }
-  }
-
-  // Print signs
-  output_file << "------ Signs ------" << std::endl;
-  for (int i = 0; i < total_cells; i++) {
-    int t = mirror_num_verts_per_cell_(i) + 2;
-    for (int j = 0; j < t; j++) {
-      output_file << "Sign at cell " << i << ": " << mirror_signs_(i, j)
-                << std::endl;
-    }
-    output_file << std::endl;
-  }
   }
 
   else {
+    // Print elapsed time
+    std::cout << "Duration: " << end << " µs" << std::endl;
+    std::cout << "Deep copy: " << end_including_copy << " µs" << std::endl;
+    std::cout << "Max Threads: " << max_threads << std::endl << std::endl;
 
-// Print elapsed time
-  std::cout << "Duration: " << end << " µs" << std::endl;
-  std::cout << "Deep copy: " << end_including_copy << " µs" << std::endl;
-  std::cout << "Max Threads: " << max_threads << std::endl << std::endl;
+    // Print Cells
+    std::cout << std::endl;
+    std::cout << "---------------- GPU Results ----------------" << std::endl;
+    std::cout << std::endl;
 
-  // Print Cells
-  std::cout << std::endl;
-  std::cout << "---------------- GPU Results ----------------" << std::endl;
-  std::cout << std::endl;
-
-  std::cout << "------ Cell + Edges ------" << std::endl;
-  for (int j = 0; j < total_cells; j++) { // Cell
-    std::cout << "Cell " << j << ":" << std::endl;
-    int t = mirror_num_verts_per_cell_(j);
-    for (int i = 0; i < t; i++) { // Edge
-      std::cout << "Edge " << i << " (" << mirror_cells_(j, i, 0) << ", ";
-      std::cout << mirror_cells_(j, i, 1) << ") ";
+    std::cout << "------ Cell + Edges ------" << std::endl;
+    for (int j = 0; j < total_cells; j++) { // Cell
+      std::cout << "Cell " << j << ":" << std::endl;
+      int t = mirror_num_verts_per_cell_(j);
+      for (int i = 0; i < t; i++) { // Edge
+        std::cout << "Edge " << i << " (" << mirror_cells_(j, i, 0) << ", ";
+        std::cout << mirror_cells_(j, i, 1) << ") ";
+      }
+      std::cout << std::endl;
     }
     std::cout << std::endl;
-  }
-  std::cout << std::endl;
 
-  // Print Point Coordinates
-  std::cout << "------ Cell Vertices ------" << std::endl;
-  for (int j = 0; j < total_points; j++) { // All Points
-    std::cout << "Point " << j << ": (" << mirror_points_(j).x << ", "
-              << mirror_points_(j).y << ")" << std::endl;
-  }
-
-  // Print Line
-  std::cout << std::endl;
-  std::cout << "------ Line ------" << std::endl;
-  for (int j = 0; j < total_cells; ++j) {
-    auto const pa = mirror_line_(j).n;
-    auto const dist = mirror_line_(j).d;
-    std::cout << "Line at Cell  " << j << ": normal = (" << pa.x << ", " << pa.y
-              << ") and distance = " << dist << std::endl;
-  }
-
-  // Print Intersect Points
-  std::cout << std::endl;
-  std::cout << "------ Intersect Points ------" << std::endl;
-  for (int j = 0; j < total_cells; ++j) {
-    int below = mirror_size_output_(j, 0);
-    if (below > 0) {
-      auto const pa = mirror_intersect_points_(j).a;
-      auto const pb = mirror_intersect_points_(j).b;
-      std::cout << "Intersection Points at Cell  " << std::setprecision(15) << j << ": (" << pa.x << ", "
-                << pa.y << "), (" << pb.x << ", " << pb.y << ")" << std::fixed << std::endl;
+    // Print Point Coordinates
+    std::cout << "------ Cell Vertices ------" << std::endl;
+    for (int j = 0; j < total_points; j++) { // All Points
+      std::cout << "Point " << j << ": (" << mirror_points_(j).x << ", "
+                << mirror_points_(j).y << ")" << std::endl;
     }
-  }
 
-  // Print all Points (Vertices + Intersect Points)
-  std::cout << std::endl;
-  std::cout << "------ All Points ------" << std::endl;
-  for (int c = 0; c < total_cells; c++) {
-    int t = mirror_num_verts_per_cell_(c) + 2;
-    int below = mirror_size_output_(c, 0);
-    if (below > 0) {
-      for (int i = 0; i < t; i++) {
-        auto const p = mirror_allPoints_(c, i);
-        std::cout << "Points at Cell  " << c << ": (" << p.x << ", " << p.y
-                  << ") " << std::endl;
+    // Print Line
+    std::cout << std::endl;
+    std::cout << "------ Line ------" << std::endl;
+    for (int j = 0; j < total_cells; ++j) {
+      auto const pa = mirror_line_(j).n;
+      auto const dist = mirror_line_(j).d;
+      std::cout << "Line at Cell  " << j << ": normal = (" << pa.x << ", "
+                << pa.y << ") and distance = " << dist << std::endl;
+    }
+
+    // Print Intersect Points
+    std::cout << std::endl;
+    std::cout << "------ Intersect Points ------" << std::endl;
+    for (int j = 0; j < total_cells; ++j) {
+      int below = mirror_size_output_(j, 0);
+      if (below > 0) {
+        auto const pa = mirror_intersect_points_(j).a;
+        auto const pb = mirror_intersect_points_(j).b;
+        std::cout << "Intersection Points at Cell  " << std::setprecision(15)
+                  << j << ": (" << pa.x << ", " << pa.y << "), (" << pb.x
+                  << ", " << pb.y << ")" << std::fixed << std::endl;
+      }
+    }
+
+    // Print all Points (Vertices + Intersect Points)
+    std::cout << std::endl;
+    std::cout << "------ All Points ------" << std::endl;
+    for (int c = 0; c < total_cells; c++) {
+      int t = mirror_num_verts_per_cell_(c) + 2;
+      int below = mirror_size_output_(c, 0);
+      if (below > 0) {
+        for (int i = 0; i < t; i++) {
+          auto const p = mirror_allPoints_(c, i);
+          std::cout << "Points at Cell  " << c << ": (" << p.x << ", " << p.y
+                    << ") " << std::endl;
+        }
+        std::cout << std::endl;
+      }
+    }
+
+    // Output Results
+    std::cout << std::endl;
+    std::cout << "------ Output ------" << std::endl;
+    for (int c = 0; c < total_cells; c++) {
+      int below = mirror_size_output_(c, 0);
+      int above = mirror_size_output_(c, 1);
+      if (below > 0) {
+        std::cout << "Cell " << c << " Output: " << std::endl;
+        for (int i = 0; i < below; i++) {
+          int const j = mirror_output_(c, 0, i);
+          auto const p = mirror_allPoints_(c, j);
+          std::cout << "Below " << j << ": (" << p.x << ", " << p.y << ") "
+                    << std::endl;
+        }
+        for (int i = 0; i < above; i++) {
+          int const j = mirror_output_(c, 1, i);
+          auto const p = mirror_allPoints_(c, j);
+          std::cout << "Above " << j << ": (" << p.x << ", " << p.y << ") "
+                    << std::endl;
+        }
+        std::cout << std::endl;
+      }
+    }
+
+    // Print signs
+    std::cout << "------ Signs ------" << std::endl;
+    for (int i = 0; i < total_cells; i++) {
+      int t = mirror_num_verts_per_cell_(i) + 2;
+      for (int j = 0; j < t; j++) {
+        std::cout << "Sign at cell " << i << ": " << mirror_signs_(i, j)
+                  << std::endl;
       }
       std::cout << std::endl;
     }
   }
-
-  // Output Results
-  std::cout << std::endl;
-  std::cout << "------ Output ------" << std::endl;
-  for (int c = 0; c < total_cells; c++) {
-    int below = mirror_size_output_(c, 0);
-    int above = mirror_size_output_(c, 1);
-    if (below > 0) {
-      std::cout << "Cell " << c << " Output: " << std::endl;
-      for (int i = 0; i < below; i++) {
-        int const j = mirror_output_(c, 0, i);
-        auto const p = mirror_allPoints_(c, j);
-        std::cout << "Below " << j << ": (" << p.x << ", " << p.y << ") "
-                  << std::endl;
-      }
-      for (int i = 0; i < above; i++) {
-        int const j = mirror_output_(c, 1, i);
-        auto const p = mirror_allPoints_(c, j);
-        std::cout << "Above " << j << ": (" << p.x << ", " << p.y << ") "
-                  << std::endl;
-      }
-      std::cout << std::endl;
-    }
-  }
-
-  // Print signs
-  std::cout << "------ Signs ------" << std::endl;
-  for (int i = 0; i < total_cells; i++) {
-    int t = mirror_num_verts_per_cell_(i) + 2;
-    for (int j = 0; j < t; j++) {
-      std::cout << "Sign at cell " << i << ": " << mirror_signs_(i, j)
-                << std::endl;
-    }
-    std::cout << std::endl;
-  }
-
-  }
-
 }
 
 } // namespace polyclip

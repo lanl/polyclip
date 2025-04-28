@@ -27,10 +27,12 @@ int main(int argc, char* argv[]) {
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
 
-    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
+    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell,
+                              total_lines);
 
-    if(argc < 4) {
-      std::cout << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOLERANCE] [LINE_FILE_NAME]";
+    if (argc < 4) {
+      std::cout << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOLERANCE] "
+                   "[LINE_FILE_NAME]";
       exit(1);
     }
 
@@ -92,17 +94,15 @@ int main(int argc, char* argv[]) {
 
     auto start = timer::now();
 
-
-      io::read_lines(clipped_part, file_name);
-      clipped_part.send_to_gpu();
-
+    io::read_lines(clipped_part, file_name);
+    clipped_part.send_to_gpu();
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-	 clipped_part.clipped_cell_);
+         clipped_part.clipped_cell_);
 
     auto const end = timer::elapsed(start); // time deep copy
 

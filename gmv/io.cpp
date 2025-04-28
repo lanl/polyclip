@@ -115,7 +115,6 @@ void io::write_clipped(Mesh_Kokkos mesh,
   gmv_file.close();
 }
 
-
 /* ------------------------------------------------------------------------- */
 void io::read_lines(Clipped_Part& clips, const std::string& file_name) {
   std::ifstream line_file(file_name);
@@ -171,8 +170,7 @@ void io::write_mesh(Mesh_Kokkos mesh, const std::string& file_name) {
 }
 
 /* ------------------------------------------------------------------------- */
-Mesh_Kokkos io::read_mesh(std::string const& file_name)
-{
+Mesh_Kokkos io::read_mesh(std::string const& file_name) {
   Mesh_Kokkos mesh = Mesh_Kokkos();
   std::ifstream gmv_file(file_name);
   std::string line;
@@ -269,6 +267,6 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name)
     }
   }
 
-    return mesh;
+  return mesh;
 }
-}
+} // namespace polyclip

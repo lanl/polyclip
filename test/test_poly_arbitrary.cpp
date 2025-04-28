@@ -21,8 +21,9 @@ int main(int argc, char* argv[]) {
     int const max_edges_per_cell = 6;
     int const total_points = 17;
 
-    if(argc < 3) {
-      std::cout << "Usage: test_clip_poly_arbitrary [TOLERANCE] [LINE_FILE_NAME]";
+    if (argc < 3) {
+      std::cout
+        << "Usage: test_clip_poly_arbitrary [TOLERANCE] [LINE_FILE_NAME]";
       exit(1);
     }
 
@@ -32,7 +33,8 @@ int main(int argc, char* argv[]) {
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
+    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell,
+                              total_lines);
 
     int vertices[total_cells] = { 5, 3, 6, 4, 3, 5, 3, 4, 4, 4 };
 
@@ -131,17 +133,15 @@ int main(int argc, char* argv[]) {
 #endif
     auto start = timer::now();
 
-
     io::read_lines(clipped_part, file_name);
     clipped_part.send_to_gpu();
-
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-	 clipped_part.clipped_cell_);
+         clipped_part.clipped_cell_);
 
     auto const end = timer::elapsed(start); // time deep copy
 
@@ -152,15 +152,12 @@ int main(int argc, char* argv[]) {
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
-    double x[12] = { 0.375, 0.375, 0.375, 0.375,
-                     0.625, 0.5, 0.375, 0.375,
-                     0.375, 0.375, 1.0, 0.9375 };
-    double y[12] = { 0, 0.3125, 0.3125, 0.5,
-                     0.625, 0.75, 0.5, 0.625,
-                     0.625, 0.875, 0.25, 0.3125 };
+    double x[12] = { 0.375, 0.375, 0.375, 0.375, 0.625, 0.5,
+                     0.375, 0.375, 0.375, 0.375, 1.0,   0.9375 };
+    double y[12] = { 0,   0.3125, 0.3125, 0.5,   0.625, 0.75,
+                     0.5, 0.625,  0.625,  0.875, 0.25,  0.3125 };
     verify_intersection_points(total_cells, clipped_part, x, y, tolerance);
   }
-
 
   Kokkos::finalize();
   return EXIT_SUCCESS;
