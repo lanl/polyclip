@@ -4,7 +4,7 @@ Multi-material cell clipping on the GPU
 
 ## Build instructions
 
-First get a node on Darwin, load modules and define `KOKKOS_PATH`
+First get a node on Darwin then load modules:
 
 ```sh
 salloc -p shared-gpu --qos=debug --time=03:00:00

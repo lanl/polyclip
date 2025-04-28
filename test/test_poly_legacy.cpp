@@ -9,6 +9,13 @@
 #include <omp.h>
 #include <cstdlib>
 #include "timer.h"
+#include "../core/clippings.h"
+#include "../core/mesh.h"
+#include "../core/print.h"
+#include "../core/clip.h"
+#include "../core/clipped_part.h"
+#include "../core/timer.h"
+#include "../gmv/io.h"
 
 int main(int argc, char* argv[]) {
   using namespace polyclip;
@@ -20,35 +27,30 @@ int main(int argc, char* argv[]) {
     int const total_cells = 4;
     int const max_edges_per_cell = 6;
     int total_lines = 0;
+    if (argc < 4) {
+      std::cout << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOLERANCE] "
+                   "[LINE_FILE_NAME]";
+      exit(1);
+    }
+
+    std::string file_name = argv[3];
 
     int const line_rep =
       std::stoi(argv[1]); // 1: horizontal| 2: vertical| 3: arbitrary
     double const tolerance = std::stod(argv[2]);
-
     // Testing: distances for every cell
-    if(line_rep == 1){
-       total_lines = 3;
-    } else if(line_rep == 2){
-       total_lines = 2;
-    } else{
-       total_lines = 3;
+    if (line_rep == 1) {
+      total_lines = 3;
+    } else if (line_rep == 2) {
+      total_lines = 2;
+    } else {
+      total_lines = 3;
     }
-
-   double horizontal[3] = { -0.125, -0.5, -0.75 };
-    double vertical[2] = { -0.375, -0.625};
-    double arbitrary[3] = {
-         -0.26516504294495535, -0.618718433538229, -0.8838834764831844};
- 
-   /* //double vertical[total_lines] = { -0.375, -0.625, -0.75, -0.625 };
-    double arbitrary[total_lines] = {
-      -0.26516504294495535, -0.4419417382415923, -0.618718433538229,
-      -0.8838834764831844
-      }; // Test dummy: replace with -1*/
-
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_cells);
+    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell,
+                              total_cells);
 
     // All Nodes
     mesh.add_points(0, { 0.0, 0.0 });
@@ -109,33 +111,35 @@ int main(int argc, char* argv[]) {
     auto start = timer::now();
 
     // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
-    Kokkos::parallel_for(
-      total_lines, KOKKOS_LAMBDA(int i) {
-        if (line_rep == 1) { // Horizontal Lines
-          clipped_part.line_(i).n = { 0.0, 1.0 };
-          clipped_part.line_(i).d = horizontal[i];
-        } else if (line_rep == 2) { // Vertical Lines
-          clipped_part.line_(i).n = { 1.0, 0.0 };
-          clipped_part.line_(i).d = vertical[i];
-        } else { // Arbitrary Lines
-          clipped_part.line_(i).n = { 0.70710678, 0.70710678 };
-          clipped_part.line_(i).d = arbitrary[i];
-        }
-      });
+
+    Kokkos::Profiling::pushRegion("INIT LINE INTERFACE");
+
+    io::read_lines(clipped_part, file_name);
+    clipped_part.send_to_gpu();
+
+    Kokkos::Profiling::popRegion();
+
+    Kokkos::Profiling::pushRegion("CLIPPING BELOW CELLS");
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
+
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-	 clipped_part.clipped_cell_);
+         clipped_part.clipped_cell_);
 
+    Kokkos::Profiling::popRegion();
     int const end = timer::elapsed(start); // time deep copy
 
     // Send to CPU
+    Kokkos::Profiling::pushRegion("MESH: GPU-TO-CPU TRANSFER");
     mesh.send_to_cpu();
+    Kokkos::Profiling::popRegion();
+
+    Kokkos::Profiling::pushRegion("CLIPPED PART: GPU-TO-CPU TRANSFER");
     clipped_part.send_to_cpu();
-    int const end_including_copy = timer::elapsed(start);
+    Kokkos::Profiling::popRegion();
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     std::array<double, 8> x{}, y{};
@@ -144,12 +148,21 @@ int main(int argc, char* argv[]) {
       y = { 0.125, 0.125, 0.125, 0.125, 0.5, 0.5, 0.75, 0.75 };
     } else if (line_rep == 2) {
       x = { 0.375, 0.375, 0.625, 0.625, 0.375, 0.375, 0.625, 0.625 };
-      y = { 0.0, 0.3125, 0.0833333333333333, 0.25, 0.312500000000000, 0.5, 0.625, 0.875 };
+      y = { 0.0,   0.3125, 0.0833333333333333, 0.25, 0.312500000000000, 0.5,
+            0.625, 0.875 };
     } else {
-      x = { 0.375000000629262, 0.083333333752841, 0.725000000880966, 0.625000001468277,
-	    0.625000001468277, 0.375000000734139, 0.625000002097539, 0.5 };
-      y = { 0.0  , 0.291666666876421, 0.150000000587311, 0.25, 
-	   0.25, 0.500000000734139, 0.625, 0.750000002097539 };
+      x = { 0.375000000629262, 0.083333333752841,
+            0.725000000880966, 0.625000001468277,
+            0.625000001468277, 0.375000000734139,
+            0.625000002097539, 0.5 };
+      y = { 0.0,
+            0.291666666876421,
+            0.150000000587311,
+            0.25,
+            0.25,
+            0.500000000734139,
+            0.625,
+            0.750000002097539 };
     }
 
     verify_intersection_points(total_cells, clipped_part, x.data(), y.data(),

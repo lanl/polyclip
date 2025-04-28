@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include "timer.h"
 #include "test_predicates.h"
-
+#include "../gmv/io.h"
 int main(int argc, char* argv[]) {
   using namespace polyclip;
 
@@ -26,8 +26,19 @@ int main(int argc, char* argv[]) {
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
-    double arbitrary[2] = { 0.0, -0.08838834765 };
+
+    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell,
+                              total_lines);
+
+    if (argc < 4) {
+      std::cout << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOLERANCE] "
+                   "[LINE_FILE_NAME]";
+      exit(1);
+    }
+
+    std::string file_name = argv[3];
+    std::string output;
+
     int line_rep = std::stoi(
       argv[1]); // (0) Line goes through nodes (1) Line doesnt go through nodes
     double const tolerance = std::stod(argv[2]);
@@ -83,20 +94,15 @@ int main(int argc, char* argv[]) {
 
     auto start = timer::now();
 
-    // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
-    Kokkos::parallel_for(
-      total_lines, KOKKOS_LAMBDA(int i) {
-        clipped_part.line_(i).n = { -0.70710678,
-                                    0.70710678 }; // Arbitrary Lines
-        clipped_part.line_(i).d = arbitrary[line_rep];
-      });
+    io::read_lines(clipped_part, file_name);
+    clipped_part.send_to_gpu();
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-	 clipped_part.clipped_cell_);
+         clipped_part.clipped_cell_);
 
     auto const end = timer::elapsed(start); // time deep copy
 

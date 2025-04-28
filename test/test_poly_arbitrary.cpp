@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include "timer.h"
 #include "test_predicates.h"
-
+#include "../gmv/io.h"
 int main(int argc, char* argv[]) {
   using namespace polyclip;
 
@@ -17,19 +17,26 @@ int main(int argc, char* argv[]) {
   {
     // initialize variables for the unstructured mesh
 
-    int total_cells = 10;
-    int max_edges_per_cell = 6;
-    int total_points = 17;
+    int const total_cells = 10;
+    int const max_edges_per_cell = 6;
+    int const total_points = 17;
+
+    if (argc < 3) {
+      std::cout
+        << "Usage: test_clip_poly_arbitrary [TOLERANCE] [LINE_FILE_NAME]";
+      exit(1);
+    }
+
+    std::string file_name = argv[2];
     double const tolerance = std::stod(argv[1]);
-    int const total_lines = 3;
+    int const total_lines = 2;
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
-    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
+    Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell,
+                              total_lines);
 
     int vertices[total_cells] = { 5, 3, 6, 4, 3, 5, 3, 4, 4, 4 };
-    double mixed[total_lines] = { -0.375, -0.125,
-                         	  -0.8838834764831844,};
 
     // All Nodes
     mesh.add_points(0, { 0.0, 0.0 });
@@ -126,27 +133,15 @@ int main(int argc, char* argv[]) {
 #endif
     auto start = timer::now();
 
-    // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
-    Kokkos::parallel_for(
-      total_lines, KOKKOS_LAMBDA(int i) {
-        if (i == 0) { // Vertical Lines
-          clipped_part.line_(i).n = { 1.0, 0.0 };
-          clipped_part.line_(i).d = mixed[i];
-        } else if(i == 3) { // Arbitrary Lines
-          clipped_part.line_(i).n = { 0.70710678, 0.70710678 };
-          clipped_part.line_(i).d = mixed[i];
-        } else {
-          clipped_part.line_(i).n = { 0.0, 1.0 }; // Horizontal Line
-          clipped_part.line_(i).d = mixed[i];
-        }
-      });
+    io::read_lines(clipped_part, file_name);
+    clipped_part.send_to_gpu();
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-	 clipped_part.clipped_cell_);
+         clipped_part.clipped_cell_);
 
     auto const end = timer::elapsed(start); // time deep copy
 
@@ -157,12 +152,10 @@ int main(int argc, char* argv[]) {
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
-    double x[16] = { 0.375, 0.375, 0.6875, 0.5,
-	             0.375, 0.375, 0.375, 0.375, 
-		     0.375, 0.375, 1.0  , 0.6875 };
-    double y[16] = { 0, 0.3125, 0.125, 0.125, 
-	             0.3125, 0.5, 0.5, 0.625, 
-		     0.625, 0.875, 0.125, 0.125 };
+    double x[12] = { 0.375, 0.375, 0.375, 0.375, 0.625, 0.5,
+                     0.375, 0.375, 0.375, 0.375, 1.0,   0.9375 };
+    double y[12] = { 0,   0.3125, 0.3125, 0.5,   0.625, 0.75,
+                     0.5, 0.625,  0.625,  0.875, 0.25,  0.3125 };
     verify_intersection_points(total_cells, clipped_part, x, y, tolerance);
   }
 
