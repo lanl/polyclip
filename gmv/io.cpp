@@ -115,8 +115,9 @@ void io::write_clipped(Mesh_Kokkos mesh,
   gmv_file.close();
 }
 
-/*------------------------------------------------------------- */
-void read_lines(Clipped_Part& clips, const std::string& file_name) {
+
+/* ------------------------------------------------------------------------- */
+void io::read_lines(Clipped_Part& clips, const std::string& file_name) {
   std::ifstream line_file(file_name);
   std::string buffer;
   int index = 0;
