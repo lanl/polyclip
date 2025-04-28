@@ -272,5 +272,3 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name)
     return mesh;
 }
 }
-
-} // namespace polyclip
