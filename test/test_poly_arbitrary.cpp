@@ -48,8 +48,8 @@ int main(int argc, char* argv[]) {
     mesh.add_points(6, { 1.0, 0.375 });
     mesh.add_points(7, { 0.875, 0.625 });
     mesh.add_points(8, { 0.5, 0.625 });
-    mesh.add_points(9, { 0.5, 0.875 });
-    mesh.add_points(10, { 0.875, 0.875 });
+    mesh.add_points(9, { 0.875, 0.875 });
+    mesh.add_points(10, { 0.5, 0.875 });
 
     // New points
     mesh.add_points(11, { 0.0, 0.375 });
@@ -81,9 +81,9 @@ int main(int argc, char* argv[]) {
 
     // Square
     mesh.add_edge(3, 0, { 8, 7 });
-    mesh.add_edge(3, 1, { 7, 10 });
-    mesh.add_edge(3, 2, { 10, 9 });
-    mesh.add_edge(3, 3, { 9, 8 });
+    mesh.add_edge(3, 1, { 7, 9 });
+    mesh.add_edge(3, 2, { 9, 10 });
+    mesh.add_edge(3, 3, { 10, 8 });
 
     // New Shapes ///////////////////////////
     mesh.add_edge(4, 0, { 4, 3 }); // Cell 4
