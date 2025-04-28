@@ -1,6 +1,9 @@
 compute_mode=$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader | head -n 1)
 compute_options=(12.0 10.0 9.0 8.9 8.6 8.0 7.5 7.2 7.0 6.1 6.0 5.3 5.2 5.0 3.7 3.5 3.2 3.0)
-architecture_options=("Kokkos_ARCH_BLACKWELL120" "Kokkos_ARCH_BLACKWELL100" "Kokkos_ARCH_HOPPER90"
+architecture_options=(
+"Kokkos_ARCH_BLACKWELL120"
+"Kokkos_ARCH_BLACKWELL100"
+"Kokkos_ARCH_HOPPER90"
 "Kokkos_ARCH_ADA89"
 "Kokkos_ARCH_AMPERE86"
 "Kokkos_ARCH_AMPERE80"
@@ -18,19 +21,15 @@ architecture_options=("Kokkos_ARCH_BLACKWELL120" "Kokkos_ARCH_BLACKWELL100" "Kok
 "Kokkos_ARCH_KEPLER30")
 
 located_index=-1
-
 for (( i=0; i < 18; i++ ))
   do
     result=$(echo "${compute_options[i]} == $compute_mode" | bc -l)
-
     if [[ $result -eq 1 ]]
     then
       located_index=$i
       break
     fi
   done
-
-
 
 KOKKOS_ARCHITECTURE=${architecture_options[$located_index]}
 base_directory=$(basename "$PWD")
@@ -57,12 +56,9 @@ INSTALL_DIR=${START_DIR}/kokkos/install
     -DCMAKE_CXX_EXTENSIONS=On \
     -D${KOKKOS_ARCHITECTURE}=On \
   ..
-
   make -j 10
   make install
-
 )
-
 
 (
   cd ${START_DIR}/kokkos-tools/build || { echo "Kokkos-Tools is not located at the proper directory!"; exit 1; }
@@ -78,7 +74,6 @@ INSTALL_DIR=${START_DIR}/kokkos/install
   make -j 10
   make install
 )
-
 
 export KOKKOS_TOOLS_LIBS=${MYDIR}/kokkos-tools/install/lib64/libkp_nvtx_connector.so
 # Make sure that your set environment works as intended.

@@ -6,8 +6,12 @@ if len(sys.argv) < 2:
 	exit(1)
 file_name = sys.argv[1]
 
-list_of_annotations = ['POPULATING CLIPPED PARTS', 'CLIPPING BELOW CELLS', 'MESH: GPU-TO-CPU TRANSFER', 'CLIPPED PART: GPU-TO-CPU TRANSFER']
-
+list_of_annotations = [
+	'POPULATING CLIPPED PARTS',
+	'CLIPPING BELOW CELLS',
+	'MESH: GPU-TO-CPU TRANSFER',
+	'CLIPPED PART: GPU-TO-CPU TRANSFER'
+]
 
 def query(db):
 	database = sqlite3.connect(db)
@@ -25,9 +29,7 @@ def query(db):
 	# 	with open(annotation + '.txt', 'a') as file:
 	# 		time = end - start
 	# 		file.write(str(time) + "\n")
-
 	cursor.close()
 	database.close()
-
 
 query(file_name)
