@@ -26,12 +26,24 @@ int main(int argc, char* argv[]) {
     int const total_points = 11;
     int const total_cells = 4;
     int const max_edges_per_cell = 6;
+<<<<<<< HEAD
     int total_lines = 0;
+=======
+    if(argc < 4) {
+      std::cout << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOLERANCE] [LINE_FILE_NAME]";
+      exit(1);
+    }
+
+    bool debug_flag = false;
+    if(argc >= 5)
+      debug_flag = true;
+
+    std::string file_name = argv[3];
+>>>>>>> 764ffee (I really really want to make sure that my code is functional. So doing an exhaustive test to be 100% certain that it works if the line files are created properly.)
 
     int const line_rep =
       std::stoi(argv[1]); // 1: horizontal| 2: vertical| 3: arbitrary
     double const tolerance = std::stod(argv[2]);
-
     // Testing: distances for every cell
     if(line_rep == 1){
        total_lines = 3;
@@ -123,6 +135,9 @@ int main(int argc, char* argv[]) {
     clipped_part.send_to_cpu();
 
 
+    Kokkos::Profiling::popRegion();
+
+
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
@@ -155,9 +170,6 @@ int main(int argc, char* argv[]) {
     verify_intersection_points(total_cells, clipped_part, x.data(), y.data(),
                                tolerance);
 
-    print_results(end, end_including_copy, max_threads, total_cells, total_points, mesh.mirror_points_, mesh.mirror_cells_
-      , clipped_part.mirror_intersect_points_, clipped_part.mirror_line_, mesh.mirror_num_verts_per_cell_, clipped_part.mirror_allPoints_
-      ,clipped_part.mirror_size_output_, clipped_part.mirror_output_, mesh.mirror_signs_);
 
   }
 

@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include "timer.h"
 #include "test_predicates.h"
-
+#include "../gmv/io.h"
 int main(int argc, char* argv[]) {
   using namespace polyclip;
 
@@ -22,6 +22,17 @@ int main(int argc, char* argv[]) {
     int max_edges_per_cell = 4;
     int n_nodes = n_cells + 1;
     int total_points = n_nodes * n_nodes;
+
+    if(argc < 4) {
+      std::cout << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOLERANCE] [LINE_FILE_NAME]";
+      exit(1);
+    }
+
+    bool debug_flag = false;
+    if(argc >= 5)
+      debug_flag = true;
+
+    std::string file_name = argv[3];
     double const tolerance = std::stod(argv[1]);
     int const total_lines = 1;
 
@@ -80,12 +91,10 @@ int main(int argc, char* argv[]) {
 #endif
     auto start = timer::now();
 
-    // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
-    Kokkos::parallel_for(
-      total_lines, KOKKOS_LAMBDA(int i) {
-        clipped_part.line_(i).n = { 0.0, 1.0 }; // Horizontal Lines
-        clipped_part.line_(i).d = horizontal[i];
-      });
+      io::read_lines(clipped_part, file_name);
+      clipped_part.send_to_gpu();
+
+
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,

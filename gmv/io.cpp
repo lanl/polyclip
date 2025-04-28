@@ -280,7 +280,7 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name)
     return mesh;
 }
 
-  void read_lines(Clipped_Part &clips, const std::string& file_name) {
+void read_lines(Clipped_Part &clips, const std::string& file_name) {
     std::ifstream line_file(file_name);
     std::string buffer;
     int index = 0;

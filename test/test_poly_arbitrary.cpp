@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include "timer.h"
 #include "test_predicates.h"
-
+#include "../gmv/io.h"
 int main(int argc, char* argv[]) {
   using namespace polyclip;
 
@@ -20,6 +20,17 @@ int main(int argc, char* argv[]) {
     int total_cells = 10;
     int max_edges_per_cell = 6;
     int total_points = 17;
+
+    if(argc < 4) {
+      std::cout << "Usage: test_clip_poly_legacy [LINE_TYPE] [TOLERANCE] [LINE_FILE_NAME]";
+      exit(1);
+    }
+
+    bool debug_flag = false;
+    if(argc >= 5)
+      debug_flag = true;
+
+    std::string file_name = argv[3];
     double const tolerance = std::stod(argv[1]);
     int const total_lines = 3;
 
@@ -126,20 +137,10 @@ int main(int argc, char* argv[]) {
 #endif
     auto start = timer::now();
 
-    // Overlapping Test Lines for every cell ////////////////////////////////////////////////////////////////
-    Kokkos::parallel_for(
-      total_lines, KOKKOS_LAMBDA(int i) {
-        if (i == 0) { // Vertical Lines
-          clipped_part.line_(i).n = { 1.0, 0.0 };
-          clipped_part.line_(i).d = mixed[i];
-        } else if(i == 3) { // Arbitrary Lines
-          clipped_part.line_(i).n = { 0.70710678, 0.70710678 };
-          clipped_part.line_(i).d = mixed[i];
-        } else {
-          clipped_part.line_(i).n = { 0.0, 1.0 }; // Horizontal Line
-          clipped_part.line_(i).d = mixed[i];
-        }
-      });
+
+      io::read_lines(clipped_part, file_name);
+      clipped_part.send_to_gpu();
+
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
