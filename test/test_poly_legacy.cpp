@@ -34,9 +34,6 @@ int main(int argc, char* argv[]) {
 
     std::string file_name = argv[3];
 
-    // We will arbitrarily set the output file name based on how we generate clipped lines. So this will set later.
-    std::string output;
-
     int const line_rep =
       std::stoi(argv[1]); // 1: horizontal| 2: vertical| 3: arbitrary
     double const tolerance = std::stod(argv[2]);
@@ -48,18 +45,6 @@ int main(int argc, char* argv[]) {
     } else{
        total_lines = 3;
     }
-
-   double horizontal[3] = { -0.125, -0.5, -0.75 };
-    double vertical[2] = { -0.375, -0.625};
-    double arbitrary[3] = {
-         -0.26516504294495535, -0.618718433538229, -0.8838834764831844};
- 
-   /* //double vertical[total_lines] = { -0.375, -0.625, -0.75, -0.625 };
-    double arbitrary[total_lines] = {
-      -0.26516504294495535, -0.4419417382415923, -0.618718433538229,
-      -0.8838834764831844
-      }; // Test dummy: replace with -1*/
-
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);

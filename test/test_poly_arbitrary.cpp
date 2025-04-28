@@ -27,7 +27,6 @@ int main(int argc, char* argv[]) {
     }
 
     std::string file_name = argv[2];
-    std::string output;
     double const tolerance = std::stod(argv[1]);
     int const total_lines = 3;
 
@@ -36,8 +35,6 @@ int main(int argc, char* argv[]) {
     Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
 
     int vertices[total_cells] = { 5, 3, 6, 4, 3, 5, 3, 4, 4, 4 };
-    double mixed[total_lines] = { -0.375, -0.125,
-                         	  -0.8838834764831844,};
 
     // All Nodes
     mesh.add_points(0, { 0.0, 0.0 });

@@ -120,8 +120,6 @@ void io::write_clipped(Mesh_Kokkos mesh,
 void io::read_lines(Clipped_Part& clips, const std::string& file_name) {
   std::ifstream line_file(file_name);
   std::string buffer;
-  int index = 0;
-
   while (std::getline(line_file, buffer)) {
     std::stringstream tokenizer(buffer);
     std::string normal_x;
@@ -135,7 +133,6 @@ void io::read_lines(Clipped_Part& clips, const std::string& file_name) {
     auto dist = std::stod(distance);
     clips.mirror_line_(index).n = { x, y };
     clips.mirror_line_(index).d = dist;
-    index++;
   }
 }
 

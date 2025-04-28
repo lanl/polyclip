@@ -30,7 +30,6 @@ int main(int argc, char* argv[]) {
 
 
     std::string file_name = argv[2];
-    std::string output;
 
     double const tolerance = std::stod(argv[1]);
     int const total_lines = 1;
@@ -38,7 +37,6 @@ int main(int argc, char* argv[]) {
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
     Clipped_Part clipped_part(total_points, total_cells, max_edges_per_cell, total_lines);
-    double horizontal[total_lines] = { -0.625};
 
     // All Nodes
     double lengthPerAxis = 1.0;
@@ -91,9 +89,6 @@ int main(int argc, char* argv[]) {
     auto start = timer::now();
     io::read_lines(clipped_part, file_name);
     clipped_part.send_to_gpu();
-
-      io::read_lines(clipped_part, file_name);
-      clipped_part.send_to_gpu();
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
