@@ -92,10 +92,11 @@ int main(int argc, char* argv[]) {
     int max_threads = 1;
 #endif
     auto start = timer::now();
+    io::read_lines(clipped_part, file_name);
+    clipped_part.send_to_gpu();
 
       io::read_lines(clipped_part, file_name);
       clipped_part.send_to_gpu();
-
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
     clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,

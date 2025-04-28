@@ -139,10 +139,8 @@ int main(int argc, char* argv[]) {
     auto start = timer::now();
 
 
-      io::read_lines(clipped_part, file_name);
-      clipped_part.send_to_gpu();
-
-      output = "output_debug" + file_name;
+    io::read_lines(clipped_part, file_name);
+    clipped_part.send_to_gpu();
 
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
@@ -168,9 +166,6 @@ int main(int argc, char* argv[]) {
 	             0.3125, 0.5, 0.5, 0.625, 
 		     0.625, 0.875, 0.125, 0.125 };
     verify_intersection_points(total_cells, clipped_part, x, y, tolerance);
-    print_results(end, end_including_copy, max_threads, total_cells, total_points, mesh.mirror_points_, mesh.mirror_cells_
-  , clipped_part.mirror_intersect_points_, clipped_part.mirror_line_, mesh.mirror_num_verts_per_cell_, clipped_part.mirror_allPoints_
-  ,clipped_part.mirror_size_output_, clipped_part.mirror_output_, mesh.mirror_signs_, output);
   }
 
 

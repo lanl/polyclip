@@ -134,7 +134,32 @@ int main(int argc, char* argv[]) {
 
     Kokkos::Profiling::pushRegion("INIT LINE INTERFACE");
 
+<<<<<<< HEAD
     io::read_lines(clipped_part, "line_test");
+=======
+    io::read_lines(clipped_part, file_name);
+    clipped_part.send_to_gpu();
+
+    Kokkos::Profiling::popRegion();
+
+    Kokkos::Profiling::pushRegion("CLIPPING BELOW CELLS");
+
+    // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
+    clip(total_cells, mesh.device_points_, mesh.device_cells_,
+         clipped_part.intersect_points_, clipped_part.line_,
+         mesh.num_verts_per_cell_, clipped_part.allPoints_,
+         clipped_part.size_output_, clipped_part.output_, mesh.signs_);
+
+    Kokkos::Profiling::popRegion();
+    int const end = timer::elapsed(start); // time deep copy
+
+    // Send to CPU
+    Kokkos::Profiling::pushRegion("MESH: GPU-TO-CPU TRANSFER");
+    mesh.send_to_cpu();
+    Kokkos::Profiling::popRegion();
+
+    Kokkos::Profiling::pushRegion("CLIPPED PART: GPU-TO-CPU TRANSFER");
+>>>>>>> 9e2e669 (Removed print statements.)
     clipped_part.send_to_cpu();
     Kokkos::Profiling::popRegion();
 
@@ -170,6 +195,11 @@ int main(int argc, char* argv[]) {
 
     verify_intersection_points(total_cells, clipped_part, x.data(), y.data(),
                                tolerance);
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 9e2e669 (Removed print statements.)
   }
 
   Kokkos::finalize();
