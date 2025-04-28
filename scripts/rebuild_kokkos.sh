@@ -21,11 +21,12 @@ located_index=-1
 
 for (( i=0; i < 18; i++ ))
   do
-    result=$(echo "${compute_options[i]} > $compute_mode" | bc -l)
+    result=$(echo "${compute_options[i]} == $compute_mode" | bc -l)
 
     if [[ $result -eq 1 ]]
     then
       located_index=$i
+      break
     fi
   done
 
@@ -33,16 +34,38 @@ for (( i=0; i < 18; i++ ))
 
 KOKKOS_ARCHITECTURE=${architecture_options[$located_index]}
 
+START_DIR=$(cat "../scripts/kokkos_config.txt")
+KOKKOS_DIR=${START_DIR}/kokkos/install/lib64/cmake/Kokkos
 
-INSTALL_DIR=${HOME}/kokkos/install
+INSTALL_DIR=${START_DIR}/kokkos/install
 
 cmake \
   -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
   -DKokkos_ENABLE_TESTS=On \
   -DKokkos_ENABLE_CUDA=On \
   -DCMAKE_CXX_EXTENSIONS=On \
-  -DKokkos_ARCH_VOLTA70=On \
+  -D${KOKKOS_ARCHITECTURE}=On \
 ..
 
 make -j 10
 make install
+
+
+(
+  cd ${START_DIR}/kokkos-tools/build || { echo "Kokkos-Tools is not located at the proper directory!"; exit 1; }
+  KOKKOS_DIR=${START_DIR}/kokkos/install/lib64/cmake/Kokkos
+  INSTALL_DIR=${START_DIR}/kokkos-tools/install
+
+  # on a gpu node, this should build nvtx stuff
+  cmake \
+    -DCMAKE_CXX_EXTENSIONS=Off \
+    -DKokkos_DIR=${KOKKOS_DIR} \
+    -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+    ..
+  make -j 10
+  make install
+)
+
+
+# export KOKKOS_TOOLS_LIBS=${MYDIR}/kokkos-tools/install/lib64/libkp_nvtx_connector.so
+# Make sure that your set environment works as intended.

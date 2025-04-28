@@ -148,7 +148,8 @@ void io::write_mesh(Mesh_Kokkos mesh, const std::string& file_name) {
 }
 
 /* ------------------------------------------------------------------------- */
-Mesh_Kokkos io::read_mesh(std::string const& file_name) {
+Mesh_Kokkos io::read_mesh(std::string const& file_name)
+{
   Mesh_Kokkos mesh = Mesh_Kokkos();
   std::ifstream gmv_file(file_name);
   std::string line;
@@ -245,6 +246,36 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name) {
     }
   }
 
-  return mesh;
+    return mesh;
 }
-} // namespace polyclip
+
+  void read_lines(Clipped_Part &clips, const std::string& file_name) {
+    std::ifstream line_file(file_name);
+    std::string buffer;
+    int index = 0;
+
+      while(std::getline(line_file, buffer)) {
+        std::stringstream tokenizer(buffer);
+        std::string tuple;
+
+        tokenizer >> tuple;
+        std::stringstream vertices(tuple);
+        std::string vertex;
+        std::vector<double> list_of_vertex;
+        while(std::getline(vertices, vertex, ',')) {
+          list_of_vertex.push_back(std::stod(vertex));
+        }
+
+        auto x = list_of_vertex[0];
+        auto y = list_of_vertex[1];
+        /* Should produce 2 tokens. One being a tuple (1,1,1). Second will be a simple double value.*/
+
+        std::string distance;
+        tokenizer >> distance;
+        double dist = std::stod(distance);
+        clips.line_(index).n = {x, y};
+        clips.line_(index).d = dist;
+        index++;
+      }
+  }
+}
