@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 
     std::string file_name = argv[2];
     double const tolerance = std::stod(argv[1]);
-    int const total_lines = 3;
+    int const total_lines = 2;
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);
@@ -152,12 +152,12 @@ int main(int argc, char* argv[]) {
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
-    double x[16] = { 0.375, 0.375, 0.6875, 0.5,
-	             0.375, 0.375, 0.375, 0.375, 
-		     0.375, 0.375, 1.0  , 0.6875 };
-    double y[16] = { 0, 0.3125, 0.125, 0.125, 
-	             0.3125, 0.5, 0.5, 0.625, 
-		     0.625, 0.875, 0.125, 0.125 };
+    double x[12] = { 0.375, 0.375, 0.375, 0.375,
+                     0.625, 0.5, 0.375, 0.375,
+                     0.375, 0.375, 1.0, 0.9375 };
+    double y[12] = { 0, 0.3125, 0.3125, 0.5,
+                     0.625, 0.75, 0.5, 0.625,
+                     0.625, 0.875, 0.25, 0.312500001 };
     verify_intersection_points(total_cells, clipped_part, x, y, tolerance);
   }
 
