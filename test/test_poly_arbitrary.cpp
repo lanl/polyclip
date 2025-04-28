@@ -157,7 +157,7 @@ int main(int argc, char* argv[]) {
                      0.375, 0.375, 1.0, 0.9375 };
     double y[12] = { 0, 0.3125, 0.3125, 0.5,
                      0.625, 0.75, 0.5, 0.625,
-                     0.625, 0.875, 0.25, 0.312500001 };
+                     0.625, 0.875, 0.25, 0.3125 };
     verify_intersection_points(total_cells, clipped_part, x, y, tolerance);
   }
 
