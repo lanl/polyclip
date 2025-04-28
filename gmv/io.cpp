@@ -284,7 +284,6 @@ void read_lines(Clipped_Part &clips, const std::string& file_name) {
     std::ifstream line_file(file_name);
     std::string buffer;
     int index = 0;
-
       while(std::getline(line_file, buffer)) {
         std::stringstream tokenizer(buffer);
         std::string tuple;
