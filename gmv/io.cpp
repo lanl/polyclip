@@ -119,25 +119,21 @@ void io::write_clipped(Mesh_Kokkos mesh,
 void io::read_lines(Clipped_Part& clips, const std::string& file_name) {
   std::ifstream line_file(file_name);
   std::string buffer;
+  std::stringstream tokenizer;
+  double x, y, d;
   int index = 0;
 
   while (std::getline(line_file, buffer)) {
-    std::stringstream tokenizer(buffer);
-    std::string normal_x;
-    std::string normal_y;
-    std::string distance;
-    tokenizer >> normal_x;
-    tokenizer >> normal_y;
-    tokenizer >> distance;
-    auto x = std::stod(normal_x);
-    auto y = std::stod(normal_y);
-    auto dist = std::stod(distance);
+    tokenizer.clear();
+    tokenizer.str(buffer);
+    tokenizer >> x >> y >> d;
     clips.mirror_line_(index).n = { x, y };
-    clips.mirror_line_(index).d = dist;
+    clips.mirror_line_(index).d = d;
     index++;
   }
 }
 
+/* ------------------------------------------------------------------------- */
 void io::write_mesh(Mesh_Kokkos mesh, const std::string& file_name) {
   std::ofstream gmv_file(file_name);
   int total_cells = mesh.mirror_cells_.extent(0);

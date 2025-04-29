@@ -2,6 +2,7 @@
 
 #include "mesh.h"
 #include "intersect_n_d.h"
+#include "clippings.h"
 
 namespace polyclip {
 
