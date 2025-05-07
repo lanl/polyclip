@@ -1,5 +1,5 @@
 export KOKKOS_TOOLS_LIBS=${MYDIR}/kokkos-tools/install/lib64/libkp_nvtx_connector.so
-if [ "$#" -lt 3 ]
+if [ "$#" -lt 2 ]
   then
     echo "USAGE: $0 [MESH_FILE] [LINE FILE]"
     exit 1
@@ -16,7 +16,7 @@ rootname="${mesh_file%.*}"
 for i in {1..5}
   do
     output_name="${rootname}_$i"
-    nsys profile --stats=true --output="$output_name"./test_mesh "$1" "$2"
+    nsys profile -t cuda,nvtx ./test_mesh "$1" "$2"
     nsys export --type sqlite --output="${output_name}.sqlite" "${output_name}.nsys-rep"
 done
 
