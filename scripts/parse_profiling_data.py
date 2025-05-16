@@ -100,3 +100,6 @@ def main():
 		plt.tight_layout()
 		plt.savefig("inmesh.png")
 		plt.close()
+
+	
+main()
