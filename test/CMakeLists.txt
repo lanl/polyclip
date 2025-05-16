@@ -6,7 +6,7 @@ add_executable(test_clip_grid_diagonal test_grid_diagonal.cpp)
 add_executable(test_gmv_writer test_write.cpp)
 add_executable(test_gmv_reader test_read.cpp)
 add_executable(test_gmv_read_and_write test_read_and_write.cpp)
-add_executable(test_mesh test_mesh_profiling.cpp)
+add_executable(test_mesh test_profiling.cpp)
 
 
 

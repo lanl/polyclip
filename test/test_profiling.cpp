@@ -31,12 +31,12 @@ int main(int argc, char* argv[]){
     //..
     std::string const file_name = argv[1];
     std::string const lines = argv[2];
+    Mesh_Kokkos mesh = io::read_mesh(argv[1]);
 
     Kokkos::Profiling::pushRegion("TOTAL RUNTIME");
 
     Kokkos::Profiling::pushRegion("GENERATING MESH");
 
-    Mesh_Kokkos mesh = io::read_mesh(argv[1]);
     mesh.send_to_gpu();
     Kokkos::Profiling::popRegion();
 
