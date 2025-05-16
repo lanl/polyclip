@@ -17,7 +17,7 @@ rootname="${file_name%.*}"
 for i in {1..5}
   do
     output_name="${rootname}_$i"
-    nsys profile -t cuda,nvtx ./test_mesh "$1" "$2"
+    nsys profile -t cuda,nvtx --output="$output_name" ./test_mesh "$1" "$2"
     nsys export --type sqlite --output="${output_name}.sqlite" "${output_name}.nsys-rep"
 done
 
