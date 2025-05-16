@@ -1,4 +1,4 @@
-export KOKKOS_TOOLS_LIBS=${MYDIR}/kokkos-tools/install/lib64/libkp_nvtx_connector.so
+export KOKKOS_TOOLS_LIBS=${HOME}/kokkos-tools/install/lib64/libkp_nvtx_connector.so
 if [ "$#" -lt 2 ]
   then
     echo "USAGE: $0 [MESH_FILE] [LINE FILE]"
@@ -12,7 +12,8 @@ if ! command -v nsys &> /dev/null
 fi
 
 mesh_file=$1
-rootname="${mesh_file%.*}"
+file_name="$(basename "$mesh_file")"
+rootname="${file_name%.*}"
 for i in {1..5}
   do
     output_name="${rootname}_$i"
