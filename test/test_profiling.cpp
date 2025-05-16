@@ -33,12 +33,7 @@ int main(int argc, char* argv[]){
     std::string const lines = argv[2];
     Mesh_Kokkos mesh = io::read_mesh(argv[1]);
 
-    Kokkos::Profiling::pushRegion("TOTAL RUNTIME");
 
-    Kokkos::Profiling::pushRegion("GENERATING MESH");
-
-    mesh.send_to_gpu();
-    Kokkos::Profiling::popRegion();
 
     int const max_edges_per_cell = 8;
     int const n_cells = static_cast<int>(mesh.mirror_cells_.extent(0));
@@ -46,11 +41,18 @@ int main(int argc, char* argv[]){
     int const n_lines = 1;
 
     Clipped_Part clipped_part(n_points, n_cells, max_edges_per_cell, n_lines);
-    Kokkos::Profiling::pushRegion("INIT LINE INTERFACE");
     io::read_lines(clipped_part, lines);
     clipped_part.send_to_gpu();
-    Kokkos::Profiling::popRegion();
+    // Kokkos::Profiling::pushRegion("INIT LINE INTERFACE");
+    //
+    //
+    // Kokkos::Profiling::popRegion();
+    Kokkos::Profiling::pushRegion("TOTAL RUNTIME");
 
+    Kokkos::Profiling::pushRegion("GENERATING MESH");
+
+    mesh.send_to_gpu();
+    Kokkos::Profiling::popRegion();
     Kokkos::Profiling::pushRegion("CLIPPING BELOW CELLS");
     clip(n_cells, n_lines, mesh.device_points_, mesh.device_cells_,
      clipped_part.intersect_points_, clipped_part.line_,
