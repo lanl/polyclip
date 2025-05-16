@@ -12,4 +12,5 @@ void write_clipped(Mesh_Kokkos mesh,
 void write_mesh(Mesh_Kokkos mesh, std::string const& file_name);
 Mesh_Kokkos read_mesh(std::string const& file_name);
 void read_lines(Clipped_Part& clips, const std::string& file_name);
+void flatten_gmv(std::string const& file_name);
 } // namespace polyclip::io
