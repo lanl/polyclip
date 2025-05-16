@@ -95,7 +95,7 @@ def main():
 		labels.append(f"Other ({(other_time / total_runtime) * 100}%)")
 		sizes.append(other_time/total_runtime)
 
-		plt.figure(7,7)
+		plt.figure(figsize=(7,7))
 		plt.pie(sizes, labels=labels, autopct=lambda p: f'{p:.1f}%', startangle = 90)
 		plt.title("Runtime analysis for Inmesh")
 		plt.axis("equal")
