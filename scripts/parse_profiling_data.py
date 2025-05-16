@@ -62,6 +62,7 @@ def main():
 		for annotation in list_of_annotations:
 			cursor.execute(f"SELECT end-start AS 'duration' FROM 'NVTX_EVENTS' WHERE text = '{annotation}';")
 			table = cursor.fetchall()
+			print(table)
 			temp_dictionary[annotation] = table[0][0]
 			if file in dictionary_values:
 				dictionary_values[file].append(temp_dictionary)
@@ -101,5 +102,5 @@ def main():
 		plt.savefig("inmesh.png")
 		plt.close()
 
-	
+
 main()
