@@ -10,7 +10,7 @@ if ! command -v nsys &> /dev/null
     echo "Error: Nsys is not currently installed on the node!"
     exit 1
 fi
-
+mkdir -p output/images
 mesh_file=$1
 file_name="$(basename "$mesh_file")"
 rootname="${file_name%.*}"
