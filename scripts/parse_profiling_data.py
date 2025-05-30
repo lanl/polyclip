@@ -14,7 +14,7 @@ file_name = sys.argv[1]
 # 			 "inmesh_3.sqlite",
 # 			 "inmesh_4.sqlite",
 # 			 "inmesh_5.sqlite"]
-sql_files = [f"output/{file_name}_{i}.sqlite" for i in range(1, 6)]
+sql_files = [f"{file_name}_{i}.sqlite" for i in range(1, 6)]
 dictionary_values = {}
 list_of_annotations = [
 	# 'TOTAL RUNTIME',
@@ -54,7 +54,7 @@ def query(db, basename):
 
 def generate_pie_chart():
 	for file in sql_files:
-		print(file)
+		# print(file)
 		database = sqlite3.connect(file)
 		cursor = database.cursor()
 		temp_dictionary = {}
