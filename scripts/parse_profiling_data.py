@@ -14,7 +14,7 @@ file_name = sys.argv[1]
 # 			 "inmesh_3.sqlite",
 # 			 "inmesh_4.sqlite",
 # 			 "inmesh_5.sqlite"]
-sql_files = [f"{file_name}_{i}.sqlite" for i in range(1, 6)]
+sql_files = [f"output/{file_name}_{i}.sqlite" for i in range(1, 6)]
 dictionary_values = {}
 list_of_annotations = [
 	# 'TOTAL RUNTIME',
@@ -93,7 +93,7 @@ def generate_pie_chart():
 		plt.title("Runtime analysis for Inmesh")
 		plt.axis("equal")
 		plt.tight_layout()
-		plt.savefig("inmesh.png")
+		plt.savefig("output/images/inmesh.png")
 		plt.close()
 
 def generate_bar_chart():
@@ -136,7 +136,7 @@ def generate_bar_chart():
 		plt.ylabel("Runtime")
 		plt.xticks(rotation=45, ha='right')
 		plt.tight_layout()
-		plt.savefig("inmesh_bar.png")
+		plt.savefig("output/inmesh_bar.png")
 		plt.close()
 
 
