@@ -52,11 +52,7 @@ def query(db, basename):
 	return list_of_values
 
 
-def get_avg_time():
-	pass
-
-
-def main():
+def generate_pie_chart():
 	for file in sql_files:
 		database = sqlite3.connect(file)
 		cursor = database.cursor()
@@ -88,7 +84,7 @@ def main():
 		remaining_runtime = 0
 		for annotation in list_of_annotations:
 			value = aggregate_values[annotation]
-			labels.append(f"{annotation} ({(value / total_runtime) * 100}%)")
+			labels.append(f"{annotation}")
 			sizes.append(value/total_runtime)
 			remaining_runtime += value
 
@@ -99,6 +95,56 @@ def main():
 		plt.tight_layout()
 		plt.savefig("inmesh.png")
 		plt.close()
+
+def generate_bar_chart():
+	for file in sql_files:
+		database = sqlite3.connect(file)
+		cursor = database.cursor()
+		temp_dictionary = {}
+		for annotation in list_of_annotations:
+			cursor.execute(f"SELECT end-start AS 'duration' FROM 'NVTX_EVENTS' WHERE text = '{annotation}';")
+			table = cursor.fetchall()
+			print(table)
+			print("Annotation - " + annotation)
+			temp_dictionary[annotation] = table[0][0]
+			if file in dictionary_values:
+				dictionary_values[file].append(temp_dictionary)
+			else:
+				dictionary_values[file] = [temp_dictionary]
+
+		aggregate_values = {}
+		total_runtime = 0
+		for key in list_of_annotations:
+			aggregate_values[key] = 0
+
+		for dict in dictionary_values.values():
+			for entry in dict:
+				for key, value in entry.items():
+					aggregate_values[key] += value
+					total_runtime += value
+
+		labels = []
+		values = []
+		for annotation in list_of_annotations:
+			value = aggregate_values[annotation]
+			labels.append(f"{annotation}")
+			values.append(value/total_runtime)
+
+		plt.figure(figsize=(14,8))
+		plt.bar(labels, values, color='red')
+		plt.title("Runtime analysis for Inmesh")
+		plt.ylabel("Runtime")
+		plt.xticks(rotation=45, ha='right')
+		plt.tight_layout()
+		plt.savefig("inmesh_bar.png")
+		plt.close()
+
+
+def main():
+	generate_pie_chart()
+	generate_bar_chart()
+
+
 
 
 main()
