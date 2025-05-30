@@ -5,16 +5,16 @@ matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 if len(sys.argv) < 2:
-	print("Provide the sqlite file as an argument.")
+	print("Provide the gmvfile base name")
 	exit(1)
 file_name = sys.argv[1]
 
-sql_files = ["inmesh_1.sqlite",
-			 "inmesh_2.sqlite",
-			 "inmesh_3.sqlite",
-			 "inmesh_4.sqlite",
-			 "inmesh_5.sqlite"]
-
+# sql_files = ["inmesh_1.sqlite",
+# 			 "inmesh_2.sqlite",
+# 			 "inmesh_3.sqlite",
+# 			 "inmesh_4.sqlite",
+# 			 "inmesh_5.sqlite"]
+sql_files = [f"{file_name}_{i}.sqlite" for i in range(1, 6)]
 dictionary_values = {}
 list_of_annotations = [
 	# 'TOTAL RUNTIME',

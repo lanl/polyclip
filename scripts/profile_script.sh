@@ -17,12 +17,12 @@ rootname="${file_name%.*}"
 for i in {1..5}
   do
     output_name="${rootname}_$i"
-    nsys profile -t cuda,nvtx --output="$output_name" ./test_mesh "$1" "$2"
-    nsys export --type sqlite --output="${output_name}.sqlite" "${output_name}.nsys-rep"
+    nsys profile -t cuda,nvtx --output="output/$output_name" ./test_mesh "$1" "$2"
+    nsys export --type sqlite --output="output/${output_name}.sqlite" "${output_name}.nsys-rep"
 done
 
 for i in {1..5}
   do
     output_name="${rootname}_$i"
-    python3 ../../scripts/parse_profiling_data.py "${output_name}.sqlite"
+    python3 ../../scripts/parse_profiling_data.py "output/$rootname"
 done
