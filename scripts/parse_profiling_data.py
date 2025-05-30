@@ -54,6 +54,7 @@ def query(db, basename):
 
 def generate_pie_chart():
 	for file in sql_files:
+		print(file)
 		database = sqlite3.connect(file)
 		cursor = database.cursor()
 		temp_dictionary = {}
