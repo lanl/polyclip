@@ -22,18 +22,9 @@ int main(int argc, char* argv[]){
   Kokkos::initialize(argc, argv);
   {
 
-    //target_link_libraries(test_mesh PUBLIC polyclip)
-
-    // test_mesh inmesh.gmv horizontal.dat
-    //nsys ./test_mesh inmesh.gmv horizontal.dat
-    //inmesh_1.sqlite
-    //inmesh_2.sqlite
-    //..
     std::string const file_name = argv[1];
     std::string const lines = argv[2];
     Mesh_Kokkos mesh = io::read_mesh(argv[1]);
-
-
 
     int const max_edges_per_cell = 8;
     int const n_cells = static_cast<int>(mesh.mirror_cells_.extent(0));
@@ -43,11 +34,6 @@ int main(int argc, char* argv[]){
     Clipped_Part clipped_part(n_points, n_cells, max_edges_per_cell, n_lines);
     io::read_lines(clipped_part, lines);
     clipped_part.send_to_gpu();
-    // Kokkos::Profiling::pushRegion("INIT LINE INTERFACE");
-    //
-    //
-    // Kokkos::Profiling::popRegion();
-    Kokkos::Profiling::pushRegion("TOTAL RUNTIME");
 
     Kokkos::Profiling::pushRegion("GENERATING MESH");
 
@@ -67,9 +53,6 @@ int main(int argc, char* argv[]){
     Kokkos::Profiling::pushRegion("CLIPPED PART: GPU-TO-CPU TRANSFER");
     clipped_part.send_to_cpu();
     Kokkos::Profiling::popRegion();
-
-    Kokkos::Profiling::popRegion();
-
   }
   Kokkos::finalize();
   return 0;

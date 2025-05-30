@@ -17,7 +17,7 @@ sql_files = ["inmesh_1.sqlite",
 
 dictionary_values = {}
 list_of_annotations = [
-	'TOTAL RUNTIME',
+	# 'TOTAL RUNTIME',
 	'GENERATING MESH',
 	'CLIPPING BELOW CELLS',
 	'MESH: GPU-TO-CPU TRANSFER',
@@ -73,6 +73,7 @@ def main():
 				dictionary_values[file] = [temp_dictionary]
 
 		aggregate_values = {}
+		total_runtime = 0
 		for key in list_of_annotations:
 			aggregate_values[key] = 0
 
@@ -80,22 +81,16 @@ def main():
 			for entry in dict:
 				for key, value in entry.items():
 					aggregate_values[key] += value
+					total_runtime += value
 
-		total_runtime = aggregate_values["TOTAL RUNTIME"]
 		labels = []
 		sizes = []
 		remaining_runtime = 0
 		for annotation in list_of_annotations:
-			if annotation != "TOTAL RUNTIME":
-				value = aggregate_values[annotation]
-				labels.append(f"{annotation} ({(value / total_runtime) * 100}%)")
-				sizes.append(value/total_runtime)
-				remaining_runtime += value
-
-		other_time = total_runtime - remaining_runtime
-
-		labels.append(f"Other ({(other_time / total_runtime) * 100}%)")
-		sizes.append(other_time/total_runtime)
+			value = aggregate_values[annotation]
+			labels.append(f"{annotation} ({(value / total_runtime) * 100}%)")
+			sizes.append(value/total_runtime)
+			remaining_runtime += value
 
 		plt.figure(figsize=(25,25))
 		plt.pie(sizes, labels=labels, autopct=lambda p: f'{p:.1f}%', startangle = 90)
