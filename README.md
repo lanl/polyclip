@@ -1,6 +1,6 @@
-# <img src="data/docs/logo.png" alt="logo" width="100">
+# polyclip
 
-`polyclip` is a code for 2D multi-material cell clipping on GPU.
+Polyclip is a code for 2D multi-material cell clipping on GPU.
 
 -----
 ### Build instructions
@@ -29,7 +29,7 @@ ctest --test-dir build --output-on-failure
 
 -----
 ### License and copyright
-It is open source under the [BSD-3 licence](./LICENSE).<br>
+It is open source under the [BSD-3](./LICENSE) license (O4915).<br>
 Main contributors:
 - Melanie Walsmith
 - Jonathan Mathurin
