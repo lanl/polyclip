@@ -19,6 +19,7 @@ target_include_directories(polyclip PUBLIC core gmv)
 target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
 
 # tests
+set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 if (BUILD_TESTS)
   set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
   enable_testing()
