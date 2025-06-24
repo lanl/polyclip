@@ -1,3 +1,14 @@
+# (c) 2025. Triad National Security, LLC. All rights reserved.
+# This program was produced under U.S. Government contract 89233218CNA000001
+# for Los Alamos National Laboratory (LANL), which is operated by Triad National
+# Security, LLC for the U.S. Department of Energy/National Nuclear Security
+# Administration. All rights in the program are reserved by Triad National
+# Security, LLC, and the U.S. Department of Energy/National Nuclear Security
+# Administration. The Government is granted for itself and others acting on its
+# behalf a nonexclusive, paid-up, irrevocable worldwide license in this material
+# to reproduce, prepare derivative works, distribute copies to the public,
+# perform publicly and display publicly, and to permit others to do so.
+
 compute_mode=$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader | head -n 1)
 compute_options=(12.0 10.0 9.0 8.9 8.6 8.0 7.5 7.2 7.0 6.1 6.0 5.3 5.2 5.0 3.7 3.5 3.2 3.0)
 architecture_options=(
