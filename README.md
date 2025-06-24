@@ -1,6 +1,6 @@
 # polyclip
 
-Polyclip is a code for 2D multi-material cell clipping on GPU.
+2D multi-material cell clipping on GPU.
 
 -----
 ### Build instructions
