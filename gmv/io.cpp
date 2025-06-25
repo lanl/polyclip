@@ -250,9 +250,10 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name) {
         int num_of_edges;
         parser >> num_of_edges;
 
-        if(num_of_edges > max_edges) {
+        if (num_of_edges > max_edges) {
           std::cout << "ERROR: Max # of Edges is " << max_edges << std::endl;
-          std::cout << "Mesh has a cell with " << num_of_edges << " vertices." << std::endl;
+          std::cout << "Mesh has a cell with " << num_of_edges << " vertices."
+                    << std::endl;
           exit(1);
         }
         mesh.mirror_num_verts_per_cell_(c) = num_of_edges;

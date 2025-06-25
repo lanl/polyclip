@@ -13,7 +13,7 @@
 #include "../gmv/io.h"
 
 using namespace polyclip;
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
   if (argc < 3) {
     std::cerr << "Usage: test_mesh [MESH_FILE] [LINE_FILE]";
     return EXIT_FAILURE;
@@ -21,7 +21,6 @@ int main(int argc, char* argv[]){
 
   Kokkos::initialize(argc, argv);
   {
-
     std::string const file_name = argv[1];
     std::string const lines = argv[2];
     Mesh_Kokkos mesh = io::read_mesh(argv[1]);
@@ -41,10 +40,10 @@ int main(int argc, char* argv[]){
     Kokkos::Profiling::popRegion();
     Kokkos::Profiling::pushRegion("CLIPPING BELOW CELLS");
     clip(n_cells, n_lines, mesh.device_points_, mesh.device_cells_,
-     clipped_part.intersect_points_, clipped_part.line_,
-     mesh.num_verts_per_cell_, clipped_part.allPoints_,
-     clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-     clipped_part.clipped_cell_);
+         clipped_part.intersect_points_, clipped_part.line_,
+         mesh.num_verts_per_cell_, clipped_part.allPoints_,
+         clipped_part.size_output_, clipped_part.output_, mesh.signs_,
+         clipped_part.clipped_cell_);
     Kokkos::Profiling::popRegion();
 
     Kokkos::Profiling::pushRegion("MESH: GPU-TO-CPU TRANSFER");
