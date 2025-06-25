@@ -10,6 +10,7 @@
 # perform publicly and display publicly, and to permit others to do so.
 
 import sqlite3
+import os
 import sys
 import matplotlib
 matplotlib.use('Agg')
@@ -19,13 +20,9 @@ if len(sys.argv) < 2:
 	print("Provide the gmvfile base name")
 	exit(1)
 file_name = sys.argv[1]
+end_index = int(sys.argv[2]) if len(sys.argv) > 2 else 5
 
-# sql_files = ["inmesh_1.sqlite",
-# 			 "inmesh_2.sqlite",
-# 			 "inmesh_3.sqlite",
-# 			 "inmesh_4.sqlite",
-# 			 "inmesh_5.sqlite"]
-sql_files = [f"{file_name}_{i}.sqlite" for i in range(1, 6)]
+sql_files = [f"{file_name}_{i}.sqlite" for i in range(1, end_index + 1)]
 dictionary_values = {}
 list_of_annotations = [
 	# 'TOTAL RUNTIME',
@@ -34,33 +31,6 @@ list_of_annotations = [
 	'MESH: GPU-TO-CPU TRANSFER',
 	'CLIPPED PART: GPU-TO-CPU TRANSFER'
 ]
-
-
-
-def query(db, basename):
-	database = sqlite3.connect(db)
-	cursor = database.cursor()
-
-	list_of_values = []
-	for annotation in list_of_annotations:
-		cursor.execute(f"SELECT end-start AS 'duration' FROM 'NVTX_EVENTS' WHERE text = '{annotation}';")
-		table = cursor.fetchall()
-		list_of_values.append(table[0][0])
-
-
-
-	# print("Description!")
-	# print(cursor.description)
-	# field_names = [i[0] for i in cursor.description]
-	# 	tables = cursor.fetchall()
-	# 	start = tables[0][0]
-	# 	end = tables[0][1]
-	# 	with open(annotation + '.txt', 'a') as file:
-	# 		time = end - start
-	# 		file.write(str(time) + "\n")
-	cursor.close()
-	database.close()
-	return list_of_values
 
 
 def generate_pie_chart():
@@ -105,7 +75,9 @@ def generate_pie_chart():
 		plt.title("Runtime analysis for Inmesh")
 		plt.axis("equal")
 		plt.tight_layout()
-		plt.savefig("output/images/inmesh.png")
+		base_name = os.path.basename(file_name)
+		output_path = f"output/images/{base_name}_pie.png"
+		plt.savefig(output_path)
 		plt.close()
 
 def generate_bar_chart():
@@ -148,8 +120,54 @@ def generate_bar_chart():
 		plt.ylabel("Runtime")
 		plt.xticks(rotation=45, ha='right')
 		plt.tight_layout()
-		plt.savefig("output/inmesh_bar.png")
+		base_name = os.path.basename(file_name)
+		output_path = f"output/images/{base_name}_bar.png"
+		plt.savefig(output_path)
 		plt.close()
+
+def process_single_file(file):
+	database = sqlite3.connect(file)
+	cursor = database.cursor()
+	annotation_durations = {}
+
+	total_runtime = 0
+	for annotation in list_of_annotations:
+		cursor.execute(f"SELECT end-start AS 'duration' FROM 'NVTX_EVENTS' WHERE text = ?;", (annotation,))
+		table = cursor.fetchall()
+		if table:
+			duration = table[0][0]
+		else:
+			duration = 0
+		annotation_durations[annotation] = duration
+		total_runtime += duration
+
+	labels = []
+	sizes = []
+	for annotation, duration in annotation_durations.items():
+		if duration > 0:
+			labels.append(f"{annotation} ({duration:.2f}s)")
+			sizes.append(duration)
+
+	# Pie Chart
+	plt.figure(figsize=(10, 10))
+	plt.pie(sizes, labels=labels, autopct=lambda p: f'{p:.1f}%', startangle=90)
+	plt.title(f"Single File Runtime: {os.path.basename(file)}")
+	plt.axis("equal")
+	plt.tight_layout()
+	os.makedirs("output/images", exist_ok=True)
+	plt.savefig(f"output/images/{os.path.splitext(os.path.basename(file))[0]}_pie.png")
+	plt.close()
+
+	# Bar Chart
+	plt.figure(figsize=(14, 8))
+	plt.bar(annotation_durations.keys(), [v / total_runtime for v in annotation_durations.values()], color='blue')
+	plt.title(f"Single File Bar Chart: {os.path.basename(file)}")
+	plt.ylabel("Fraction of Total Runtime")
+	plt.xticks(rotation=45, ha='right')
+	plt.tight_layout()
+	plt.savefig(f"output/images/{os.path.splitext(os.path.basename(file))[0]}_bar.png")
+	plt.close()
+
 
 
 def main():
