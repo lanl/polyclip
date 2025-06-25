@@ -213,7 +213,7 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name) {
       int num_of_cells;
       parser >> num_of_cells;
 
-      constexpr int max_edges = 8;
+      constexpr int max_edges = 10;
       Kokkos::resize(mesh.device_cells_, num_of_cells, max_edges, 2);
       Kokkos::resize(mesh.num_verts_per_cell_, num_of_cells);
       Kokkos::resize(mesh.signs_, num_of_cells, max_edges + 2);
@@ -249,6 +249,12 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name) {
 
         int num_of_edges;
         parser >> num_of_edges;
+
+        if(num_of_edges > max_edges) {
+          std::cout << "ERROR: Max # of Edges is " << max_edges << std::endl;
+          std::cout << "Mesh has a cell with " << num_of_edges << " vertices." << std::endl;
+          exit(1);
+        }
         mesh.mirror_num_verts_per_cell_(c) = num_of_edges;
         std::vector<int> list_of_nodes(num_of_edges);
 
