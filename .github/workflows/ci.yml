@@ -18,6 +18,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: submodules
+        with:
+          submodules: recursive
+
       - name: configure
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DKokkos_ENABLE_TESTS=OFF -DKokkos_ENABLE_CUDA=OFF -DKokkos_ENABLE_OPENMP=ON
 
