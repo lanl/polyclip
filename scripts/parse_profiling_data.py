@@ -112,7 +112,7 @@ def generate_bar_chart():
 		for annotation in list_of_annotations:
 			value = aggregate_values[annotation]
 			labels.append(f"{annotation}")
-			values.append(value/total_runtime)
+			values.append(value/end_index)
 
 		plt.figure(figsize=(14,8))
 		plt.bar(labels, values, color='red')

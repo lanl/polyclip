@@ -11,7 +11,7 @@
 # to reproduce, prepare derivative works, distribute copies to the public,
 # perform publicly and display publicly, and to permit others to do so.
 
-export KOKKOS_TOOLS_LIBS=${HOME}/kokkos-tools/install/lib64/libkp_nvtx_connector.so
+export KOKKOS_TOOLS_LIBS=${HOME}/dev/kokkos-tools/install/lib64/libkp_nvtx_connector.so
 if [ "$#" -lt 2 ]
   then
     echo "USAGE: $0 [MESH_FILE] [LINE_FILE] [NUM_ITERATIONS (optional)]"
