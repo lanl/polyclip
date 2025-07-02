@@ -90,8 +90,7 @@ def generate_bar_chart():
             table = cursor.fetchall()
             print(table)
             print("Annotation - " + annotation)
-            #duration = table[0][0] if table and table[0][0] is not None else 0
-            temp_dictionary[annotation] = table[0][0] #duration / 1_000.0
+            temp_dictionary[annotation] = table[0][0] 
             if file in dictionary_values:
                 dictionary_values[file].append(temp_dictionary)
             else:
