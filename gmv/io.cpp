@@ -143,7 +143,7 @@ void io::read_lines(Clipped_Part& clips, const std::string& file_name) {
     clips.mirror_line_(index).n = { x, y };
     clips.mirror_line_(index).d = d;
     index++;
-  }
+  } 
 }
 
 /* ------------------------------------------------------------------------- */

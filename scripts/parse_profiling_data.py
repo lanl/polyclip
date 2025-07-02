@@ -70,9 +70,9 @@ def generate_pie_chart():
 			sizes.append(value/total_runtime)
 			remaining_runtime += value
 
-		plt.figure(figsize=(25,25))
-		plt.pie(sizes, labels=labels, autopct=lambda p: f'{p:.1f}%', startangle = 90)
-		plt.title("Runtime analysis for Inmesh")
+		plt.figure(figsize=(38,25))
+		plt.pie(sizes, labels=labels, autopct=lambda p: f'{p:.1f}%', startangle = 90, textprops={'fontsize': 40})
+		plt.title("Runtime analysis for Inmesh", fontsize=85)
 		plt.axis("equal")
 		plt.tight_layout()
 		base_name = os.path.basename(file_name)
@@ -115,9 +115,9 @@ def generate_bar_chart():
 			values.append(value/end_index)
 
 		plt.figure(figsize=(14,8))
-		plt.bar(labels, values, color='red')
-		plt.title("Runtime analysis for Inmesh")
-		plt.ylabel("Runtime")
+		plt.bar(range(len(labels)), values, width=1.0, align='edge', color='blue')
+		plt.title("Runtime analysis for Inmesh", fontsize=40)
+		plt.ylabel("Runtime (µs)")
 		plt.xticks(rotation=45, ha='right')
 		plt.tight_layout()
 		base_name = os.path.basename(file_name)
