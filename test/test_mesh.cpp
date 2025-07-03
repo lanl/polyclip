@@ -11,11 +11,12 @@
 #include "timer.h"
 #include "test_predicates.h"
 #include "../gmv/io.h"
+#include <sstream>
 
 using namespace polyclip;
 int main(int argc, char* argv[]) {
-  if (argc < 3) {
-    std::cerr << "Usage: test_mesh [MESH_FILE] [LINE_FILE]";
+  if (argc < 4) {
+    std::cerr << "Usage: test_mesh [MESH_FILE] [LINE_FILE] [TOTAL_LINES]";
     return EXIT_FAILURE;
   }
 
@@ -28,7 +29,10 @@ int main(int argc, char* argv[]) {
     int const max_edges_per_cell = 8;
     int const n_cells = static_cast<int>(mesh.mirror_cells_.extent(0));
     int const n_points = static_cast<int>(mesh.mirror_points_.extent(0));
-    int const n_lines = 1;
+    
+    int n_lines;
+    std::istringstream iss(argv[3]);
+    iss >> n_lines;
 
     Clipped_Part clipped_part(n_points, n_cells, max_edges_per_cell, n_lines);
     io::read_lines(clipped_part, lines);
@@ -52,6 +56,26 @@ int main(int argc, char* argv[]) {
     Kokkos::Profiling::pushRegion("CLIPPED PART: GPU-TO-CPU TRANSFER");
     clipped_part.send_to_cpu();
     Kokkos::Profiling::popRegion();
+
+    //////////////////////////// Visual Test /////////////////////////////////
+    // GMV variable counters
+    int num_nodes = 0;
+    int num_polys = 0;
+
+    // GMV counter
+    for (int c = 0; c < n_cells; c++) { //Increase at every cell
+      int below = clipped_part.mirror_size_output_(c, 0);
+      num_nodes += mesh.mirror_num_verts_per_cell_(c);
+      num_polys++;
+      if (below > 0) { //Increase at every clipped cell
+        num_nodes += 2;
+        num_polys++;
+      }
+    }
+
+    io::write_clipped(mesh, clipped_part, num_nodes, num_polys,
+                      "test_clipped.gmv");
+    io::write_mesh(mesh, "test_mesh.gmv");
   }
   Kokkos::finalize();
   return 0;

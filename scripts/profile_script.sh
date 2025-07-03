@@ -11,10 +11,10 @@
 # to reproduce, prepare derivative works, distribute copies to the public,
 # perform publicly and display publicly, and to permit others to do so.
 
-export KOKKOS_TOOLS_LIBS=${HOME}/kokkos-tools/install/lib64/libkp_nvtx_connector.so
+export KOKKOS_TOOLS_LIBS=${HOME}/dev/kokkos-tools/install/lib64/libkp_nvtx_connector.so
 if [ "$#" -lt 2 ]
   then
-    echo "USAGE: $0 [MESH_FILE] [LINE_FILE] [NUM_ITERATIONS (optional)]"
+	  echo "USAGE: $0 [MESH_FILE] [LINE_FILE] [NUM_ITERATIONS (optional)] [TOTAL_LINES (optional)]"
     exit 1
 fi
 
@@ -24,15 +24,19 @@ if ! command -v nsys &> /dev/null
     exit 1
 fi
 mkdir -p output/images
+
 NUM_ITERATIONS="${3:-5}"  # Default to 5 if not provided
-mesh_file=$1
-file_name="$(basename "$mesh_file")"
+N_LINES="${4:-1}"	  # Default to 1 if not provided
+
+MESH_FILE=$1
+LINE_FILE=$2
+file_name="$(basename "$MESH_FILE")"
 rootname="${file_name%.*}"
 for ((i = 1; i <= NUM_ITERATIONS; i++))
 do
     output_name="${rootname}_$i"
     echo "Running iteration $i: generating $output_name"
-    nsys profile -t cuda,nvtx --output="output/$output_name" ./test_mesh "$MESH_FILE" "$LINE_FILE"
+    nsys profile -t cuda,nvtx --output="output/$output_name" ./test_mesh "$MESH_FILE" "$LINE_FILE" "$N_LINES"
     nsys export --type sqlite --output="output/${output_name}.sqlite" "output/${output_name}.nsys-rep"
 done
 
