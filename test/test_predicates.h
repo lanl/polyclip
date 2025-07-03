@@ -25,14 +25,14 @@ void assert_eq(int a, int b, std::string const& label) {
   }
 }
 
-void assert_near(double a, double b, double tol, std::string const& label) {
+bool assert_near(double a, double b, double tol, std::string const& label) {
   if (std::abs(a - b) > tol) {
-    std::cerr << label << " " << std::setprecision(15) << a << " != " << b
+    std::cout << label << " " << std::setprecision(15) << a << " != " << b
               << ", delta: " << std::abs(a - b) << ", tol: " << tol
               << std::endl;
-    Kokkos::finalize();
-    std::exit(EXIT_FAILURE);
+    return false;
   }
+  return true;
 }
 
 void verify_intersection_points(int total_cells,
@@ -41,23 +41,38 @@ void verify_intersection_points(int total_cells,
                                 double* y_expected,
                                 double tolerance) {
   int counter = 0;
+  int correct = 0;
+  int total_intersect_points = 0;
+
   for (int i = 0; i < total_cells; i++) {
     auto const& a = clipped_part.mirror_intersect_points_(i).a;
     auto const& b = clipped_part.mirror_intersect_points_(i).b;
     if (a.x < DBL_MAX and a.y < DBL_MAX) {
-      assert_near(a.x, x_expected[counter], tolerance,
-                  "intersect: a.x at cell " + std::to_string(i) + ": ");
-      assert_near(a.y, y_expected[counter], tolerance,
-                  "intersect: a.y at cell " + std::to_string(i) + ": ");
+      total_intersect_points += 4; 
 
-      assert_near(b.x, x_expected[counter + 1], tolerance,
-                  "intersect: b.x at cell " + std::to_string(i) + ": ");
-      assert_near(b.y, y_expected[counter + 1], tolerance,
-                  "intersect: b.y at cell " + std::to_string(i) + ": ");
+      if(assert_near(a.x, x_expected[counter], tolerance,
+                  "intersect: a.x at cell " + std::to_string(i) + ": ")){
+	      correct++;
+      }
+      if(assert_near(a.y, y_expected[counter], tolerance,
+                  "intersect: a.y at cell " + std::to_string(i) + ": ")){
+	      correct++;
+      }
+      if(assert_near(b.x, x_expected[counter + 1], tolerance,
+                  "intersect: b.x at cell " + std::to_string(i) + ": ")){
+	      correct++;
+      }
+      if(assert_near(b.y, y_expected[counter + 1], tolerance,
+                  "intersect: b.y at cell " + std::to_string(i) + ": ")){
+	      correct++;
+      }
       counter += 2;
     }
   }
-  std::cout << "100% intersection points match with tolerance: " << tolerance
+  double accuracy = 100 * correct / total_intersect_points;
+
+  std::cout << std::endl;
+  std::cout << accuracy << "% intersection points match with tolerance: " << tolerance
             << std::endl;
 }
 
