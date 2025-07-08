@@ -12,6 +12,7 @@
  */
 
 #include "io.h"
+#include <vector>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -26,8 +27,10 @@ void io::write_clipped(Mesh_Kokkos mesh,
                        int num_total_polys,
                        const std::string& file_name) {
   std::ofstream gmv_file(file_name);
+ // int non_clipped = 0;
+ // int clipped = 0;
 
-  // Original cells and pointsf
+  // Original cells and points
   int total_cells = mesh.mirror_cells_.extent(0);
   int points = mesh.mirror_points_.extent(0);
 
@@ -48,6 +51,7 @@ void io::write_clipped(Mesh_Kokkos mesh,
         int id = mesh.mirror_cells_(c, i, 0);
         auto const p = mesh.mirror_points_(id);
         gmv_file << p.x << " " << p.y << " " << 0.0 << "\n";
+	//non_clipped++;
       }
     } else { // Clipped cell
       v = mesh.mirror_num_verts_per_cell_(c) + 2;
@@ -55,6 +59,7 @@ void io::write_clipped(Mesh_Kokkos mesh,
         gmv_file << std::scientific << std::setprecision(17);
         auto const p = clipped_part.mirror_allPoints_(c, i);
         gmv_file << p.x << " " << p.y << " " << 0.0 << "\n";
+	//clipped++;
       }
     }
   }
@@ -62,6 +67,13 @@ void io::write_clipped(Mesh_Kokkos mesh,
   // Print Cells + All Clipped Cells
   gmv_file << "cells " << num_total_polys << "\n";
 
+ /* // Track cell id to provide materials
+  std::vector<int> below_cell(clipped);
+  std::vector<int> above_cell(clipped);
+  std::vector<int> non_clipped_cell(non_clipped);
+  int non_id = 0;
+  int clip_id = 0;
+*/
   // Print Cell Nodes /////////////////////////////////////////////////////////
   int node_increment =
     0; // keep track of what node we are on with respect to the gmv file
@@ -75,6 +87,8 @@ void io::write_clipped(Mesh_Kokkos mesh,
 
     // Cell with no Clipping ///////////////////
     if (below == 0) {
+     // non_clipped[non_id] = c;
+     // non_id++;
       for (int j = 0; j < num_verts; j++) {
         int const node_id = j + node_increment;
         store_points += std::to_string(node_id + 1) + " ";
@@ -87,6 +101,10 @@ void io::write_clipped(Mesh_Kokkos mesh,
 
     // Clipped Cell //////////////////////////
     else {
+      //below_cell[clip_id] = c;
+      //above_cell[clip_id] = c;
+      //clip_id++;
+
       for (int i = 0; i < below; i++) {
         int const j = clipped_part.mirror_output_(c, 0, i);
         int const node_id = j + node_increment;
@@ -114,13 +132,22 @@ void io::write_clipped(Mesh_Kokkos mesh,
   }
 
   gmv_file << "material\n";
-  gmv_file << num_total_polys << " 0\n";
-  for (int i = 1; i <= num_total_polys; i++) {
+  gmv_file << "2" << " 0\n";
+  for (int i = 1; i <= 2; i++) {
     gmv_file << "mat" << i << "\n";
   }
 
-  for (int i = 1; i <= num_total_polys; i++) {
-    gmv_file << i << " ";
+  for (int c = 0; c <= total_cells; c++) {
+    int mat_below = clipped_part.mirror_size_output_(c, 0);
+    int mat_above = clipped_part.mirror_size_output_(c, 1);
+
+    if(mat_below == 0){   // non-clipped cells
+       gmv_file << "1 ";
+    }
+    else{   // clipped cells
+       gmv_file << "1 ";
+       gmv_file << "2 ";
+    }
   }
 
   gmv_file << "\n";

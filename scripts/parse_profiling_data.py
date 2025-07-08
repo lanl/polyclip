@@ -70,9 +70,10 @@ def generate_pie_chart():
             sizes.append(value/total_runtime)
             remaining_runtime += value
 
-        plt.figure(figsize=(38,25))
-        plt.pie(sizes, labels=labels, autopct=lambda p: f'{p:.1f}%', startangle = 90, textprops={'fontsize': 40})
-        plt.title("Runtime analysis for Inmesh", fontsize=85)
+        fixed_labels = [label.replace(" ", "\n") for label in labels]
+        plt.figure(figsize=(38,35))
+        plt.pie(sizes, labels=fixed_labels, autopct=lambda p: f'{p:.1f}%', startangle = 90, textprops={'fontsize': 75})
+        plt.title("Runtime analysis for Inmesh\n\n", fontsize=100, weight='bold')
         plt.axis("equal")
         plt.tight_layout()
         base_name = os.path.basename(file_name)
