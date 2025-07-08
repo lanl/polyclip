@@ -115,13 +115,14 @@ def generate_bar_chart():
             labels.append(f"{annotation}")
             values.append(value/end_index)
 
+        fixed_labels = [label.replace(" ", "\n") for label in labels]
         plt.figure(figsize=(14,8))
         x_pos = range(len(labels))
         colors = ['blue', 'orange', 'green', 'red']
         plt.bar(x_pos, values, width=1.0, align='edge', color=colors)
-        plt.xticks([x + 0.5 for x in x_pos], labels, rotation=45, ha='right')
-        plt.title("Runtime analysis for Inmesh", fontsize=40)
-        plt.ylabel("Runtime (µs)")
+        plt.xticks([x + 0.5 for x in x_pos], fixed_labels, rotation=45, ha='right', fontsize=20)
+        plt.title("Runtime analysis for Inmesh", fontsize=40, weight='bold')
+        plt.ylabel("Runtime (µs)", fontsize=20)
         plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
