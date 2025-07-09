@@ -91,8 +91,11 @@ def generate_bar_chart():
         for annotation in list_of_annotations:
             cursor.execute(f"SELECT end-start AS 'duration' FROM 'NVTX_EVENTS' WHERE text = '{annotation}';")
             table = cursor.fetchall()
-            print(table)
-            print("Annotation - " + annotation)
+            
+            # Verify NVTX_EVENTS pulls kokkos regions
+            #print(table)
+            #print("Annotation - " + annotation)
+            
             temp_dictionary[annotation] = table[0][0] 
             if file in dictionary_values:
                 dictionary_values[file].append(temp_dictionary)
