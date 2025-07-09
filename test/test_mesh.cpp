@@ -34,15 +34,20 @@ int main(int argc, char* argv[]) {
     std::istringstream iss(argv[3]);
     iss >> n_lines;
 
+    //Kokkos::Profiling::pushRegion("INIT LINE INTERFACE ");
     Clipped_Part clipped_part(n_points, n_cells, max_edges_per_cell, n_lines);
     io::read_lines(clipped_part, lines);
+    //Kokkos::Profiling::popRegion();
+
+    Kokkos::Profiling::pushRegion("CLIPPED PART: CPU-TO-GPU TRANSFER ");
     clipped_part.send_to_gpu();
+    Kokkos::Profiling::popRegion();
 
-    Kokkos::Profiling::pushRegion("GENERATING MESH");
-
+    Kokkos::Profiling::pushRegion("MESH: CPU-TO-GPU TRANSFER ");
     mesh.send_to_gpu();
     Kokkos::Profiling::popRegion();
-    Kokkos::Profiling::pushRegion("CLIPPING BELOW CELLS");
+
+    Kokkos::Profiling::pushRegion("CLIPPING BELOW CELLS ");
     clip(n_cells, n_lines, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
@@ -50,10 +55,11 @@ int main(int argc, char* argv[]) {
          clipped_part.clipped_cell_);
     Kokkos::Profiling::popRegion();
 
-    Kokkos::Profiling::pushRegion("MESH: GPU-TO-CPU TRANSFER");
+    Kokkos::Profiling::pushRegion("MESH: GPU-TO-CPU TRANSFER ");
     mesh.send_to_cpu();
     Kokkos::Profiling::popRegion();
-    Kokkos::Profiling::pushRegion("CLIPPED PART: GPU-TO-CPU TRANSFER");
+
+    Kokkos::Profiling::pushRegion("CLIPPED PART: GPU-TO-CPU TRANSFER ");
     clipped_part.send_to_cpu();
     Kokkos::Profiling::popRegion();
 
