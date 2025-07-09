@@ -34,10 +34,8 @@ int main(int argc, char* argv[]) {
     std::istringstream iss(argv[3]);
     iss >> n_lines;
 
-    //Kokkos::Profiling::pushRegion("INIT LINE INTERFACE ");
     Clipped_Part clipped_part(n_points, n_cells, max_edges_per_cell, n_lines);
     io::read_lines(clipped_part, lines);
-    //Kokkos::Profiling::popRegion();
 
     Kokkos::Profiling::pushRegion("CLIPPED PART: CPU-TO-GPU TRANSFER ");
     clipped_part.send_to_gpu();
