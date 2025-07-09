@@ -12,7 +12,6 @@
  */
 
 #include "io.h"
-#include <vector>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -49,7 +48,6 @@ void io::write_clipped(Mesh_Kokkos mesh,
         int id = mesh.mirror_cells_(c, i, 0);
         auto const p = mesh.mirror_points_(id);
         gmv_file << p.x << " " << p.y << " " << 0.0 << "\n";
-	//non_clipped++;
       }
     } else { // Clipped cell
       v = mesh.mirror_num_verts_per_cell_(c) + 2;
@@ -57,7 +55,6 @@ void io::write_clipped(Mesh_Kokkos mesh,
         gmv_file << std::scientific << std::setprecision(17);
         auto const p = clipped_part.mirror_allPoints_(c, i);
         gmv_file << p.x << " " << p.y << " " << 0.0 << "\n";
-	//clipped++;
       }
     }
   }
@@ -90,7 +87,6 @@ void io::write_clipped(Mesh_Kokkos mesh,
 
     // Clipped Cell //////////////////////////
     else {
-
       for (int i = 0; i < below; i++) {
         int const j = clipped_part.mirror_output_(c, 0, i);
         int const node_id = j + node_increment;
