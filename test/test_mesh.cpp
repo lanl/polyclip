@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
   {
     std::string const file_name = argv[1];
     std::string const lines = argv[2];
+    std::string const material_format = argv[4];
     Mesh_Kokkos mesh = io::read_mesh(argv[1]);
 
     int const max_edges_per_cell = 8;
@@ -78,7 +79,7 @@ int main(int argc, char* argv[]) {
     }
 
     io::write_clipped(mesh, clipped_part, num_nodes, num_polys,
-                      "test_clipped.gmv");
+                      "test_clipped.gmv", material_format);
     io::write_mesh(mesh, "test_mesh.gmv");
   }
   Kokkos::finalize();
