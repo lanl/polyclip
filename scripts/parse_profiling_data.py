@@ -75,7 +75,7 @@ def generate_pie_chart():
         fixed_labels = [label.replace(" ", "\n") for label in labels]
         plt.figure(figsize=(38,35))
         plt.pie(sizes, labels=fixed_labels, autopct=lambda p: f'{p:.1f}%', startangle = 90, textprops={'fontsize': 73})
-        plt.title("Runtime analysis for Inmesh\n\n", fontsize=100, weight='bold')
+        plt.title("Runtime Analysis\n\n", fontsize=100, weight='bold')
         plt.axis("equal")
         plt.tight_layout()
         base_name = os.path.basename(file_name)
@@ -126,7 +126,7 @@ def generate_bar_chart():
         colors = ['blue', 'orange', 'green', 'red', 'purple']
         plt.bar(x_pos, values, width=1.0, align='edge', color=colors)
         plt.xticks([x + 1.0 for x in x_pos], fixed_labels, rotation=45, ha='right', fontsize=20)
-        plt.title("Runtime analysis for Inmesh", fontsize=40, weight='bold')
+        plt.title("Runtime Analysis", fontsize=40, weight='bold')
         plt.ylabel("Runtime (µs)", fontsize=20)
         plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
         plt.xticks(rotation=45, ha='right')
