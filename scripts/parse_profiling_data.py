@@ -26,10 +26,12 @@ sql_files = [f"{file_name}_{i}.sqlite" for i in range(1, end_index + 1)]
 dictionary_values = {}
 list_of_annotations = [
     # 'TOTAL RUNTIME',
-    'GENERATING MESH',
-    'CLIPPING BELOW CELLS',
-    'MESH: GPU-TO-CPU TRANSFER',
-    'CLIPPED PART: GPU-TO-CPU TRANSFER'
+    #'INIT LINE INTERFACE ',
+    'CLIPPED PART: CPU-TO-GPU TRANSFER ',
+    'MESH: CPU-TO-GPU TRANSFER ',
+    'CLIPPING BELOW CELLS ',
+    'MESH: GPU-TO-CPU TRANSFER ',
+    'CLIPPED PART: GPU-TO-CPU TRANSFER '
 ]
 
 
@@ -70,9 +72,10 @@ def generate_pie_chart():
             sizes.append(value/total_runtime)
             remaining_runtime += value
 
-        plt.figure(figsize=(38,25))
-        plt.pie(sizes, labels=labels, autopct=lambda p: f'{p:.1f}%', startangle = 90, textprops={'fontsize': 40})
-        plt.title("Runtime analysis for Inmesh", fontsize=85)
+        fixed_labels = [label.replace(" ", "\n") for label in labels]
+        plt.figure(figsize=(38,35))
+        plt.pie(sizes, labels=fixed_labels, autopct=lambda p: f'{p:.1f}%', startangle = 90, textprops={'fontsize': 73})
+        plt.title("Runtime Analysis\n\n", fontsize=100, weight='bold')
         plt.axis("equal")
         plt.tight_layout()
         base_name = os.path.basename(file_name)
@@ -88,8 +91,11 @@ def generate_bar_chart():
         for annotation in list_of_annotations:
             cursor.execute(f"SELECT end-start AS 'duration' FROM 'NVTX_EVENTS' WHERE text = '{annotation}';")
             table = cursor.fetchall()
-            print(table)
-            print("Annotation - " + annotation)
+            
+            # Verify NVTX_EVENTS pulls kokkos regions
+            #print(table)
+            #print("Annotation - " + annotation)
+            
             temp_dictionary[annotation] = table[0][0] 
             if file in dictionary_values:
                 dictionary_values[file].append(temp_dictionary)
@@ -114,13 +120,14 @@ def generate_bar_chart():
             labels.append(f"{annotation}")
             values.append(value/end_index)
 
+        fixed_labels = [label.replace(" ", "\n") for label in labels]
         plt.figure(figsize=(14,8))
         x_pos = range(len(labels))
-        colors = ['blue', 'orange', 'green', 'red']
+        colors = ['blue', 'orange', 'green', 'red', 'purple']
         plt.bar(x_pos, values, width=1.0, align='edge', color=colors)
-        plt.xticks([x + 0.5 for x in x_pos], labels, rotation=45, ha='right')
-        plt.title("Runtime analysis for Inmesh", fontsize=40)
-        plt.ylabel("Runtime (µs)")
+        plt.xticks([x + 1.0 for x in x_pos], fixed_labels, rotation=45, ha='right', fontsize=20)
+        plt.title("Runtime Analysis", fontsize=40, weight='bold')
+        plt.ylabel("Runtime (µs)", fontsize=20)
         plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
