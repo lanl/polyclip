@@ -26,11 +26,10 @@ sql_files = [f"{file_name}_{i}.sqlite" for i in range(1, end_index + 1)]
 dictionary_values = {}
 list_of_annotations = [
     # 'TOTAL RUNTIME',
-    #'INIT LINE INTERFACE ',
     'CLIPPED PART: CPU-TO-GPU TRANSFER ',
     'MESH: CPU-TO-GPU TRANSFER ',
     'CLIPPING BELOW CELLS ',
-    'MESH: GPU-TO-CPU TRANSFER ',
+    #'MESH: GPU-TO-CPU TRANSFER ',
     'CLIPPED PART: GPU-TO-CPU TRANSFER '
 ]
 
@@ -118,12 +117,20 @@ def generate_bar_chart():
         for annotation in list_of_annotations:
             value = aggregate_values[annotation]
             labels.append(f"{annotation}")
-            values.append(value/end_index)
+            values.append((value/end_index) * 1e-6)
 
+        total_time = sum(values)
         fixed_labels = [label.replace(" ", "\n") for label in labels]
         plt.figure(figsize=(14,8))
         x_pos = range(len(labels))
-        colors = ['blue', 'orange', 'green', 'red', 'purple']
+        colors = ['blue', 'orange', 'green', 'red']
+        plt.text(0.02, 0.98, f'Total Time: {total_time:.4f} µs', color='grey', transform=plt.gca().transAxes, fontsize=14, verticalalignment='top', horizontalalignment='left', zorder=11)
+
+        # Duration Labels
+        for i, val in enumerate(values):
+            label = f'{val:.2f} µs'
+            plt.text(i + 0.5, val, label, ha='center', va='bottom',fontsize=14)
+
         plt.bar(x_pos, values, width=1.0, align='edge', color=colors)
         plt.xticks([x + 1.0 for x in x_pos], fixed_labels, rotation=45, ha='right', fontsize=20)
         plt.title("Runtime Analysis", fontsize=40, weight='bold')
