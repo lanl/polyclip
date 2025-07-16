@@ -25,7 +25,8 @@ namespace polyclip {
 void io::materials(Mesh_Kokkos mesh,
 		   Clipped_Part clipped_part, 
 		   int total_cells, 
-		   int mat, std::ofstream& gmv_file){
+		   int mat, std::ofstream& gmv_file,
+		   int n_lines){
   if(mat == 1){ // all cells clipped (small meshes)
     // Two materials: (1) below (2) above
     gmv_file << "material\n";
@@ -65,27 +66,41 @@ void io::materials(Mesh_Kokkos mesh,
     }
     
     // Line Details 
-    double nx = clipped_part.mirror_line_(0).n.x;
-    double ny = clipped_part.mirror_line_(0).n.y;
-    double d = clipped_part.mirror_line_(0).d;
+   // double nx = clipped_part.mirror_line_(0).n.x;
+   // double ny = clipped_part.mirror_line_(0).n.y;
+   // double d = clipped_part.mirror_line_(0).d;
 
     // Material setup
     for (int c = 0; c <= total_cells; c++) {
         int mat_below = clipped_part.mirror_size_output_(c, 0);
+	
+	for(int l = 0; l < n_lines; l++){
+	    // Line Details 
+    	   double nx = clipped_part.mirror_line_(l).n.x;
+           double ny = clipped_part.mirror_line_(l).n.y;
+           double d = clipped_part.mirror_line_(l).d;
+           
+	   if(mat_below == 0){   // non-clipped cells
+             int id = mesh.mirror_cells_(c, 0, 0);
+	     auto const p = mesh.mirror_points_(id);
+	     double side = nx * p.x + ny * p.y;
 
-        if(mat_below == 0){   // non-clipped cells
-          int id = mesh.mirror_cells_(c, 0, 0);
-	  auto const p = mesh.mirror_points_(id);
-	  double side = nx * p.x + ny * p.y;
+	     if(side < d){
+	        gmv_file << "1 "; 
+	     } else{
+	        gmv_file << "2 "; 
+	     }       
+           }
+           else{   // clipped cells
+	     auto const p = clipped_part.mirror_allPoints_(c, 0);
+             double side = nx * p.x + ny * p.y;
 
-	  if(side < d){
-	     gmv_file << "1 "; 
-	  } else{
-	     gmv_file << "2 "; 
-	  }       
-        }
-        else{   // clipped cells
-          gmv_file << "1 2 "; 
+             if(side < d){
+                gmv_file << "1 ";
+             } else{
+                gmv_file << "2 ";
+             }
+	   }
 	}
     }
   }
@@ -97,7 +112,8 @@ void io::write_clipped(Mesh_Kokkos mesh,
                        int num_total_nodes,
                        int num_total_polys,
                        const std::string& file_name,
-		       const std::string& material_format) {
+		       const std::string& material_format,
+		       int n_lines) {
   std::ofstream gmv_file(file_name);
   int mat = std::stoi(material_format);
 
@@ -187,7 +203,7 @@ void io::write_clipped(Mesh_Kokkos mesh,
     }
   }
 
-  io::materials(mesh, clipped_part, total_cells, mat, gmv_file);
+  io::materials(mesh, clipped_part, total_cells, mat, gmv_file, n_lines);
 
   gmv_file << "\n";
   gmv_file << "endgmv\n";

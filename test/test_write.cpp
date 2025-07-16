@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
     assert_eq(num_nodes, 26, "write clipped: num_nodes");
     assert_eq(num_polys, 8, "write clipped: num_polys");
     io::write_clipped(mesh, clipped_part, num_nodes, num_polys,
-                      "test_clipped.gmv", "1");
+                      "test_clipped.gmv", "1", total_lines);
     io::write_mesh(mesh, "test_mesh.gmv");
   }
 
