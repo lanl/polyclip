@@ -58,50 +58,99 @@ void io::materials(Mesh_Kokkos mesh,
             gmv_file << "1 2 ";
         }
     }
-  } else{   //flip experiment
+  } else{   //flip
     gmv_file << "material\n";
     gmv_file << "2" << " 0\n";
     for (int i = 1; i <= 2; i++) {
         gmv_file << "mat" << i << "\n";
     }
-    
-    // Line Details 
-   // double nx = clipped_part.mirror_line_(0).n.x;
-   // double ny = clipped_part.mirror_line_(0).n.y;
-   // double d = clipped_part.mirror_line_(0).d;
 
     // Material setup
     for (int c = 0; c <= total_cells; c++) {
         int mat_below = clipped_part.mirror_size_output_(c, 0);
-	
-	for(int l = 0; l < n_lines; l++){
-	    // Line Details 
-    	   double nx = clipped_part.mirror_line_(l).n.x;
-           double ny = clipped_part.mirror_line_(l).n.y;
-           double d = clipped_part.mirror_line_(l).d;
-           
-	   if(mat_below == 0){   // non-clipped cells
-             int id = mesh.mirror_cells_(c, 0, 0);
-	     auto const p = mesh.mirror_points_(id);
-	     double side = nx * p.x + ny * p.y;
+	int mat_above = clipped_part.mirror_size_output_(c, 1);
 
-	     if(side < d){
-	        gmv_file << "1 "; 
-	     } else{
-	        gmv_file << "2 "; 
-	     }       
-           }
-           else{   // clipped cells
-	     auto const p = clipped_part.mirror_allPoints_(c, 0);
+        if(mat_below == 0){   // non-clipped cells
+	  int const id = mesh.mirror_cells_(c, 0, 0);
+          auto const p = mesh.mirror_points_(id);
+	  bool below_any = false;
+
+	  for(int l = 0; l < n_lines; l++){
+             // Line Details 
+             double nx = clipped_part.mirror_line_(l).n.x;
+             double ny = clipped_part.mirror_line_(l).n.y;
+             double d = clipped_part.mirror_line_(l).d; 
              double side = nx * p.x + ny * p.y;
 
-             if(side < d){
-                gmv_file << "1 ";
-             } else{
-                gmv_file << "2 ";
-             }
-	   }
+       	     if(side < d){	// check if its below any line
+		below_any = true;
+		break;
+	     }
+	  }	     
+
+	  // Non-clip cell material
+          if(below_any){
+	     gmv_file << "1 ";
+	  } else{
+	     gmv_file << "2 "; 
+	  }
 	}
+       else{   // clipped cells
+          // Below
+	  bool below_clip_any_0 = false;
+	  bool below_clip_any_1 = false;
+
+	  for (int i = 0; i < mat_below; i++) {
+             int const j = clipped_part.mirror_output_(c, 0, i);
+	     auto const p = clipped_part.mirror_allPoints_(c, j);
+	     //bool below_any = false;
+
+	      for(int l = 0; l < n_lines; l++){
+                // Line Details
+                double nx = clipped_part.mirror_line_(l).n.x;
+                double ny = clipped_part.mirror_line_(l).n.y;
+                double d = clipped_part.mirror_line_(l).d;
+                double side = nx * p.x + ny * p.y;
+
+                if(side < d){      // check if its below any line
+                   below_clip_any_0 = true;
+                   break;
+                }
+             }
+	  }
+	  // material
+          if(below_clip_any_0){
+             gmv_file << "1 ";
+          } else{
+             gmv_file << "2 ";
+          }
+
+	  // Above
+	  for (int i = 0; i < mat_above; i++) {
+             int const j = clipped_part.mirror_output_(c, 1, i);
+             auto const p = clipped_part.mirror_allPoints_(c, j);
+            // bool below_any = false;
+
+              for(int l = 0; l < n_lines; l++){
+                // Line Details
+                double nx = clipped_part.mirror_line_(l).n.x;
+                double ny = clipped_part.mirror_line_(l).n.y;
+                double d = clipped_part.mirror_line_(l).d;
+                double side = nx * p.x + ny * p.y;
+
+                if(side < d){      // check if its below any line
+                   below_clip_any_1 = true;
+                   break;
+                }
+             }
+	  }
+	  // cell material
+          if(below_clip_any_1){
+             gmv_file << "1 ";
+          } else{
+             gmv_file << "2 ";
+	  }
+       }
     }
   }
 }
