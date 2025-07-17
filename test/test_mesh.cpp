@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
     }
 
     io::write_clipped(mesh, clipped_part, num_nodes, num_polys,
-                      "test_clipped.gmv", material_format);
+                      "test_clipped.gmv", material_format, n_lines);
     io::write_mesh(mesh, "test_mesh.gmv");
   }
   Kokkos::finalize();
