@@ -20,14 +20,15 @@ namespace polyclip::io {
 void materials(Mesh_Kokkos mesh,
 	       Clipped_Part clipped_part, 
 	       int total_cells, 
-	       int mat, std::ofstream& gmv_file,
+	       int material_format,
+	       std::ofstream& gmv_file,
 	       int n_lines);
 void write_clipped(Mesh_Kokkos mesh,
                    Clipped_Part clipped_part,
                    int num_total_nodes,
                    int num_total_polys,
                    std::string const& file_name,
-		   const std::string& material_format,
+		   const std::string& material_type,
 		   int n_lines);
 void write_mesh(Mesh_Kokkos mesh, std::string const& file_name);
 Mesh_Kokkos read_mesh(std::string const& file_name);

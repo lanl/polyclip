@@ -25,9 +25,10 @@ namespace polyclip {
 void io::materials(Mesh_Kokkos mesh,
 		   Clipped_Part clipped_part, 
 		   int total_cells, 
-		   int mat, std::ofstream& gmv_file,
+		   int material_format,
+		   std::ofstream& gmv_file,
 		   int n_lines){
-  if(mat == 1){ // all cells clipped (small meshes)
+  if(material_format == 1){ // all cells clipped (small meshes)
     // Two materials: (1) below (2) above
     gmv_file << "material\n";
     gmv_file << "2" << " 0\n";
@@ -39,7 +40,7 @@ void io::materials(Mesh_Kokkos mesh,
        gmv_file << "1 2 ";
     }
   }
-  else if(mat == 2){ // clipped cells + non-clipped cells + multiple lines
+  else if(material_format == 2){ // clipped cells + non-clipped cells + multiple lines
     // Three materials: (1) below (2) above (3) non-clipped
     gmv_file << "material\n";
     gmv_file << "3" << " 0\n";
@@ -49,111 +50,49 @@ void io::materials(Mesh_Kokkos mesh,
   
     // Material setup
     for (int c = 0; c <= total_cells; c++) {
-        int mat_below = clipped_part.mirror_size_output_(c, 0);
+        int num_clip = clipped_part.mirror_size_output_(c, 0);
 
-        if(mat_below == 0){   // non-clipped cells
+        if(num_clip == 0){   // non-clipped cells
             gmv_file << "3 ";
         }
         else{   // clipped cells
             gmv_file << "1 2 ";
         }
     }
-  } else{   //flip
+  } else{   //flip experiment
     gmv_file << "material\n";
     gmv_file << "2" << " 0\n";
     for (int i = 1; i <= 2; i++) {
         gmv_file << "mat" << i << "\n";
     }
+    
+    // Line Details 
+    double nx = clipped_part.mirror_line_(0).n.x;
+    double ny = clipped_part.mirror_line_(0).n.y;
+    double d = clipped_part.mirror_line_(0).d;
 
     // Material setup
     for (int c = 0; c <= total_cells; c++) {
-        int mat_below = clipped_part.mirror_size_output_(c, 0);
-	int mat_above = clipped_part.mirror_size_output_(c, 1);
+        int num_clip = clipped_part.mirror_size_output_(c, 0);
 
-        if(mat_below == 0){   // non-clipped cells
-	  int const id = mesh.mirror_cells_(c, 0, 0);
-          auto const p = mesh.mirror_points_(id);
-	  bool below_any = false;
+        if(num_clip == 0){   // non-clipped cells
+          int id = mesh.mirror_cells_(c, 0, 0);
+	  auto const p = mesh.mirror_points_(id);
+	  double side = nx * p.x + ny * p.y;
 
-	  for(int l = 0; l < n_lines; l++){
-             // Line Details 
-             double nx = clipped_part.mirror_line_(l).n.x;
-             double ny = clipped_part.mirror_line_(l).n.y;
-             double d = clipped_part.mirror_line_(l).d; 
-             double side = nx * p.x + ny * p.y;
-
-       	     if(side < d){	// check if its below any line
-		below_any = true;
-		break;
-	     }
-	  }	     
-
-	  // Non-clip cell material
-          if(below_any){
-	     gmv_file << "1 ";
+	  if(side < d){
+	     gmv_file << "1 "; 
 	  } else{
 	     gmv_file << "2 "; 
-	  }
+	  }       
+        }
+        else{   // clipped cells
+          gmv_file << "1 2 "; 
 	}
-       else{   // clipped cells
-          // Below
-	  bool below_clip_any_0 = false;
-	  bool below_clip_any_1 = false;
-
-	  for (int i = 0; i < mat_below; i++) {
-             int const j = clipped_part.mirror_output_(c, 0, i);
-	     auto const p = clipped_part.mirror_allPoints_(c, j);
-	     //bool below_any = false;
-
-	      for(int l = 0; l < n_lines; l++){
-                // Line Details
-                double nx = clipped_part.mirror_line_(l).n.x;
-                double ny = clipped_part.mirror_line_(l).n.y;
-                double d = clipped_part.mirror_line_(l).d;
-                double side = nx * p.x + ny * p.y;
-
-                if(side < d){      // check if its below any line
-                   below_clip_any_0 = true;
-                   break;
-                }
-             }
-	  }
-	  // material
-          if(below_clip_any_0){
-             gmv_file << "1 ";
-          } else{
-             gmv_file << "2 ";
-          }
-
-	  // Above
-	  for (int i = 0; i < mat_above; i++) {
-             int const j = clipped_part.mirror_output_(c, 1, i);
-             auto const p = clipped_part.mirror_allPoints_(c, j);
-            // bool below_any = false;
-
-              for(int l = 0; l < n_lines; l++){
-                // Line Details
-                double nx = clipped_part.mirror_line_(l).n.x;
-                double ny = clipped_part.mirror_line_(l).n.y;
-                double d = clipped_part.mirror_line_(l).d;
-                double side = nx * p.x + ny * p.y;
-
-                if(side < d){      // check if its below any line
-                   below_clip_any_1 = true;
-                   break;
-                }
-             }
-	  }
-	  // cell material
-          if(below_clip_any_1){
-             gmv_file << "1 ";
-          } else{
-             gmv_file << "2 ";
-	  }
-       }
     }
   }
 }
+
 
 /* ------------------------------------------------------------------------- */
 void io::write_clipped(Mesh_Kokkos mesh,
@@ -161,10 +100,10 @@ void io::write_clipped(Mesh_Kokkos mesh,
                        int num_total_nodes,
                        int num_total_polys,
                        const std::string& file_name,
-		       const std::string& material_format,
+		       const std::string& material_type,
 		       int n_lines) {
   std::ofstream gmv_file(file_name);
-  int mat = std::stoi(material_format);
+  int material_format = std::stoi(material_type);
 
   // Original cells and points
   int total_cells = mesh.mirror_cells_.extent(0);
@@ -252,7 +191,7 @@ void io::write_clipped(Mesh_Kokkos mesh,
     }
   }
 
-  io::materials(mesh, clipped_part, total_cells, mat, gmv_file, n_lines);
+  io::materials(mesh, clipped_part, total_cells, material_format, gmv_file, n_lines);
 
   gmv_file << "\n";
   gmv_file << "endgmv\n";
