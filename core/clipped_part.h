@@ -33,8 +33,12 @@ class Clipped_Part {
   // Verify results
   void send_to_cpu();
   void send_to_gpu();
+
+  // whether to use end points for interface lines or not
+  bool use_end_points_ = false;
   // mesh data members for host and device
   Kokkos::View<Line*> line_;
+  Kokkos::View<Segment*> end_points_;
   Kokkos::View<Segment*> intersect_points_;
   Kokkos::View<int***> output_;     // cell, above/below, edge
   Kokkos::View<int**> size_output_; // cell, above/below
@@ -42,6 +46,7 @@ class Clipped_Part {
   Kokkos::View<bool*> clipped_cell_;
 
   Kokkos::View<Line*>::HostMirror mirror_line_;
+  Kokkos::View<Segment*>::HostMirror mirror_end_points_;
   Kokkos::View<Segment*>::HostMirror mirror_intersect_points_;
   Kokkos::View<int***>::HostMirror mirror_output_;
   Kokkos::View<int**>::HostMirror mirror_size_output_;
