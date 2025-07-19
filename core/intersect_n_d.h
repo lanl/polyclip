@@ -22,7 +22,9 @@ Segment intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
                                      Kokkos::View<int***> cells,
                                      int c,
                                      Line const& line,
-                                     Kokkos::View<int*> num_verts_per_cell) {
+                                     Segment const& end_points,
+                                     Kokkos::View<int*> num_verts_per_cell,
+                                     bool use_end_points) {
   int const n = num_verts_per_cell(c);
   Point pts[2];
   constexpr Point const DUMMY = { DBL_MAX, DBL_MAX };
@@ -59,6 +61,7 @@ Segment intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
       y_min = points(a).y;
     }
 
+
     double const& a1 = n1.x;
     double const& b1 = n1.y;
     double const& a2 = n2.x;
@@ -79,10 +82,23 @@ Segment intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
 
       if (x < x_min or x > x_max or y < y_min or y > y_max) {
         continue;
+      } else if (use_end_points) {
+        // check if c is inside [p,q]
+        double const px = end_points.a.x;
+        double const py = end_points.a.y;
+        double const qx = end_points.b.x;
+        double const qy = end_points.b.y;
+        double const dot = (qx - px) * (x - px) + (qy - py) * (y - py);
+        double const len2 = (qx - px) * (qx - px) + (qy - py) * (qy - py);
+        if (dot < 0. or dot > len2) { // outside
+          continue;
+        }
       }
+
       pts[k] = { x, y };
       k++;
     }
+
   }
 
   // Check if line intersects

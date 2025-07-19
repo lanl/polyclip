@@ -32,5 +32,5 @@ void write_clipped(Mesh_Kokkos mesh,
 		   int n_lines);
 void write_mesh(Mesh_Kokkos mesh, std::string const& file_name);
 Mesh_Kokkos read_mesh(std::string const& file_name);
-void read_lines(Clipped_Part& clips, const std::string& file_name);
+void read_lines(Clipped_Part& clips, const std::string& file_name, bool with_end_points = false);
 } // namespace polyclip::io

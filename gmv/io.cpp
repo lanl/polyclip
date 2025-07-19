@@ -199,21 +199,35 @@ void io::write_clipped(Mesh_Kokkos mesh,
 }
 
 /* ------------------------------------------------------------------------- */
-void io::read_lines(Clipped_Part& clips, const std::string& file_name) {
+void io::read_lines(Clipped_Part& clips, const std::string& file_name, bool with_end_points) {
   std::ifstream line_file(file_name);
   std::string buffer;
   std::stringstream tokenizer;
-  double x, y, d;
+  double x, y, d, px, py, qx, qy;
   int index = 0;
 
-  while (std::getline(line_file, buffer)) {
-    tokenizer.clear();
-    tokenizer.str(buffer);
-    tokenizer >> x >> y >> d;
-    clips.mirror_line_(index).n = { x, y };
-    clips.mirror_line_(index).d = d;
-    index++;
-  } 
+  if (with_end_points) {
+    clips.use_end_points_ = true;
+    while (std::getline(line_file, buffer)) {
+      tokenizer.clear();
+      tokenizer.str(buffer);
+      tokenizer >> x >> y >> d >> px >> py >> qx >> qy;
+      clips.mirror_line_(index).n = { x, y };
+      clips.mirror_line_(index).d = d;
+      clips.mirror_end_points_(index).a = { px, py };
+      clips.mirror_end_points_(index).b = { qx, qy };
+      index++;
+    }
+  } else {
+    while (std::getline(line_file, buffer)) {
+      tokenizer.clear();
+      tokenizer.str(buffer);
+      tokenizer >> x >> y >> d;
+      clips.mirror_line_(index).n = { x, y };
+      clips.mirror_line_(index).d = d;
+      index++;
+    }
+  }
 }
 
 /* ------------------------------------------------------------------------- */
