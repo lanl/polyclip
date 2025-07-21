@@ -65,45 +65,38 @@ void io::materials(Mesh_Kokkos mesh,
     for (int i = 1; i <= 2; i++) {
         gmv_file << "mat" << i << "\n";
     }
-    
-    // Line Details 
-    //double nx = clipped_part.mirror_line_(0).n.x;
-    //double ny = clipped_part.mirror_line_(0).n.y;
-    //double d = clipped_part.mirror_line_(0).d;
 
     // Material setup
     for (int c = 0; c <= total_cells; c++) {
         int num_clip = clipped_part.mirror_size_output_(c, 0);
 	bool below_line = false;
-	//bool above_line = true;
+	bool clipped = true;
+	
+	if(num_clip == 0){
+	   clipped = false; //non-clipped cell
 
-	for(int l = 0; l < n_lines; l++){
-	   // Line Details
-    	   double nx = clipped_part.mirror_line_(l).n.x;
-    	   double ny = clipped_part.mirror_line_(l).n.y;
-    	   double d = clipped_part.mirror_line_(l).d;
+	   for(int l = 0; l < n_lines; l++){
+	      // Line Details
+    	      double nx = clipped_part.mirror_line_(l).n.x;
+    	      double ny = clipped_part.mirror_line_(l).n.y;
+    	      double d = clipped_part.mirror_line_(l).d;
 
-           if(num_clip == 0){   // non-clipped cells
               int id = mesh.mirror_cells_(c, 0, 0);
 	      auto const p = mesh.mirror_points_(id);
 	      double side = nx * p.x + ny * p.y;
 
-	      if(side < -d){
+	      if(side < -d){	// orientation with respect to the line
                  below_line = true;
-	         break;
-	        //gmv_file << "1 "; 
-	      } //else{
-	        //   gmv_file << "2 "; 
-	     //  }       
-             }
-	   else{   // clipped cells
-            gmv_file << "1 2 "; 
+	         break; 
+	      }       
 	   }
-	   
-	   if(num_clip == 0){
-	      gmv_file << (below_line ? "1 " : "2 ");
-	   }
-       }
+	}
+
+	if(clipped){ // clipped cell materials
+	   gmv_file << "1 2 ";
+	}else{ // non-clipped cell materials
+           gmv_file << (below_line ? "1 " : "2 ");
+        }
     }
   }
 }
