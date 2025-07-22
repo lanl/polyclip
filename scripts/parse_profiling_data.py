@@ -10,6 +10,7 @@
 # perform publicly and display publicly, and to permit others to do so.
 
 import sqlite3
+import numpy as np
 import pandas as pd
 import os
 import sys
@@ -33,32 +34,33 @@ list_of_annotations = [
 ]
 
 def durations():
-    aggregate_values = {a: 0 for a in list_of_annotations}
+    aggregate_values = {a: [] for a in list_of_annotations}
 
     for file in csv_files:
         df = pd.read_csv(file)
         for annotation in list_of_annotations:
-            print("Annotation - " + annotation)
+            #print("Annotation - " + annotation) #DEBUG
             match = df[df["Range"].str.strip() == annotation.strip()]
             if not match.empty:
                 ns = match.iloc[0]["Total Time (ns)"]
-                aggregate_values[annotation] += ns
-                print(f"Time - {ns} ns")
+                aggregate_values[annotation].append(ns)
+                #print(f"Time - {ns} ns") #DEBUG
     
     return aggregate_values
 
 
 def generate_pie_chart(aggregate_values):
-        total_runtime = sum(aggregate_values.values()) 
-        
         labels = []
         sizes = []
         for annotation in list_of_annotations:
-            ns = aggregate_values[annotation]
-            if ns > 0:
+            durations = aggregate_values[annotation]
+            if durations:
+                ns_median = np.median(durations)
                 labels.append(f"{annotation}")
-                sizes.append(ns/total_runtime)
-
+                sizes.append(ns_median)
+        
+        total_time = sum(sizes)
+        sizes = [s/total_time for s in sizes]
 
         fixed_labels = [label.replace(" ", "\n") for label in labels]
         plt.figure(figsize=(38,35))
@@ -76,8 +78,12 @@ def generate_bar_chart(aggregate_values):
         values = []
 
         for annotation, ns in aggregate_values.items():
+            #print("////////////TIME: " + str(ns)) #DEBUG
+            median = np.median(ns)
             labels.append(annotation)
-            values.append((ns/end_index) * 1e-6)
+            #print("Annotation - " + annotation) #DEBUG
+            #print("Median - " + str(median * 1e-6)) #DEBUG
+            values.append(median * 1e-6)
 
         total_time = sum(values)
         fixed_labels = [label.replace(" ", "\n") for label in labels]
@@ -97,7 +103,7 @@ def generate_bar_chart(aggregate_values):
         plt.ylabel("Runtime (ms)", fontsize=20)
         plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
         plt.xticks(rotation=45, ha='right')
-        plt.ylim(0, 1)
+        #plt.ylim(0, 1)
         plt.tight_layout()
         base_name = os.path.basename(file_name)
         output_path = f"output/images/{base_name}_bar.png"
