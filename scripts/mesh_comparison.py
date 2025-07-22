@@ -2,8 +2,8 @@ import os
 import matplotlib.pyplot as plt
 
 # Data from all meshes
-timed_values = [0.7196, 0.8141, 0.7511, 0.8029, 0.7891, 0.9912, 1.1089]
-total_cells = [4, 4, 4, 10, 16, 465, 465]
+timed_values = [4.9006, 5.6175, 5.6354, 6.9660]
+total_cells = [1, 4, 8, 16]
 
 # Create new directory
 out_dir = "compare"
@@ -13,8 +13,8 @@ os.makedirs(out_dir, exist_ok=True)
 plt.figure(figsize=(8, 5))
 plt.plot(total_cells, timed_values, marker='o', linestyle='-', color='blue')
 plt.ylabel("Time (ms)")
-plt.xlabel("Number of Cells Clipped")
-plt.title("Cells Clipped Over Time")
+plt.xlabel("Number of Lines Clipping")
+plt.title("Duration of Clipping Below Cells Region Across Multiple Lines \nin a 0.08 Unit Mesh")
 plt.grid(True)
 
 # Save as figure
