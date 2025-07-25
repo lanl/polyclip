@@ -29,8 +29,8 @@ int main(int argc, char* argv[]) {
     Mesh_Kokkos mesh = io::read_mesh(argv[1]);
 
     int const max_edges_per_cell = 8;
-    int const n_cells = static_cast<int>(mesh.mirror_cells_.extent(0));
-    int const n_points = static_cast<int>(mesh.mirror_points_.extent(0));
+    int const n_cells = static_cast<int>(mesh.cells_.extent(0));
+    int const n_points = static_cast<int>(mesh.points_.extent(0));
     
     int n_lines;
     std::istringstream iss(argv[3]);
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
     //Kokkos::Profiling::popRegion();
 
     Kokkos::Profiling::pushRegion("CLIPPING BELOW CELLS");
-    clip(n_cells, n_lines, clipped_part.use_end_points_, mesh.device_points_, mesh.device_cells_,
+    clip(n_cells, n_lines, clipped_part.use_end_points_, mesh.points_, mesh.cells_,
          clipped_part.intersect_points_, clipped_part.line_, clipped_part.end_points_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_,
@@ -66,8 +66,8 @@ int main(int argc, char* argv[]) {
 
     // GMV counter
     for (int c = 0; c < n_cells; c++) { //Increase at every cell
-      int below = clipped_part.mirror_size_output_(c, 0);
-      num_nodes += mesh.mirror_num_verts_per_cell_(c);
+      int below = clipped_part.size_output_(c, 0);
+      num_nodes += mesh.num_verts_per_cell_(c);
       num_polys++;
       if (below > 0) { //Increase at every clipped cell
         num_nodes += 2;
