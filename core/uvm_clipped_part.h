@@ -14,9 +14,9 @@
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Vector.hpp>
-#include "geometry.h"
+#include "uvm_geometry.h"
 
-namespace polyclip {
+namespace uvm_polyclip {
 
 // Materials needed for the mesh
 class Clipped_Part {
@@ -31,8 +31,8 @@ class Clipped_Part {
   ~Clipped_Part() = default;
 
   // Verify results
-  //void send_to_cpu();
-  //void send_to_gpu();
+  void send_to_cpu();
+  void send_to_gpu();
 
   // whether to use end points for interface lines or not
   bool use_end_points_ = false;

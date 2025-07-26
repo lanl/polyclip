@@ -14,10 +14,11 @@
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Vector.hpp>
-#include "geometry.h"
+#include "uvm_geometry.h"
 
 #define MAX_NUM_EDGES_PER_CELL 8
-namespace polyclip {
+
+namespace uvm_polyclip {
 
 // Mesh containing the coordinates and the cell
 class Mesh_Kokkos {
@@ -33,8 +34,8 @@ class Mesh_Kokkos {
   // create list of all the points and create cells
   void add_points(int point_index, Point coordinates);
   void add_edge(int cell_index, int edge, Edge const& points);
-  //void send_to_gpu();
-  //void send_to_cpu();
+  void send_to_gpu();
+  void send_to_cpu();
 
   // mesh data members for host and device
   Kokkos::View<Point*, Kokkos::CudaUVMSpace> points_;

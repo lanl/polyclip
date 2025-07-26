@@ -17,7 +17,7 @@ add_executable(test_gmv_writer test_write.cpp)
 add_executable(test_gmv_reader test_read.cpp)
 add_executable(test_gmv_read_and_write test_read_and_write.cpp)
 add_executable(test_mesh test_mesh.cpp)
-
+add_executable(test_uvm_mesh test_uvm_mesh.cpp)
 
 
 target_link_libraries(test_clip_poly_legacy PUBLIC polyclip)
@@ -29,6 +29,7 @@ target_link_libraries(test_gmv_reader PUBLIC polyclip)
 target_link_libraries(test_gmv_read_and_write PUBLIC polyclip)
 target_link_libraries(test_gmv_read_and_write PUBLIC polyclip)
 target_link_libraries(test_mesh PUBLIC polyclip)
+target_link_libraries(test_uvm_mesh PUBLIC polyclip)
 
 add_test(NAME test_clip_poly_legacy_horizontal COMMAND test_clip_poly_legacy 1 1.e-15 lines/legacy_horizontal_line.dat)
 add_test(NAME test_clip_poly_legacy_vertical COMMAND test_clip_poly_legacy 2 1.e-15 lines/legacy_vertical_lines.dat)

@@ -25,7 +25,7 @@ add_subdirectory(external/kokkos)
 
 
 # core
-add_library(polyclip core/mesh.cpp core/clipped_part.cpp gmv/io.cpp)
+add_library(polyclip core/mesh.cpp core/clipped_part.cpp gmv/io.cpp core/uvm_mesh.cpp core/uvm_clipped_part.cpp gmv/uvm_io.cpp)
 target_include_directories(polyclip PUBLIC core gmv)
 target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
 

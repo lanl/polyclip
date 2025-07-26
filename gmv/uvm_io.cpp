@@ -19,7 +19,7 @@
 
 #include <string>
 
-namespace polyclip {
+namespace uvm_polyclip {
 
 /* ------------------------------------------------------------------------- */
 void io::materials(Mesh_Kokkos mesh,
@@ -290,7 +290,7 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name) {
       parser >> num_of_nodes;
 
       Kokkos::resize(mesh.points_, num_of_nodes); // malloc
-      mesh.mirror_points_ = Kokkos::create_mirror_view(mesh.points_);
+      //mesh.points_ = Kokkos::create_mirror_view(mesh.points_);
 
       for (int i = 0; i < num_of_nodes; i++) {
         std::getline(gmv_file, line);
@@ -310,10 +310,10 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name) {
       Kokkos::resize(mesh.num_verts_per_cell_, num_of_cells);
       Kokkos::resize(mesh.signs_, num_of_cells, max_edges + 2);
 
-      mesh.cells_ = Kokkos::create_mirror_view(mesh.cells_);
-      mesh.mirror_num_verts_per_cell_ =
-        Kokkos::create_mirror_view(mesh.num_verts_per_cell_);
-      mesh.signs_ = Kokkos::create_mirror_view(mesh.signs_);
+     // mesh.cells_ = Kokkos::create_mirror_view(mesh.cells_);
+      //mesh.mirror_num_verts_per_cell_ =
+      //Kokkos::create_mirror_view(mesh.num_verts_per_cell_);
+      //mesh.signs_ = Kokkos::create_mirror_view(mesh.signs_);
 
       // (!) the vertices of a cell may be listed in several lines,
       // so put all remaining lines into buffer and parse it later.

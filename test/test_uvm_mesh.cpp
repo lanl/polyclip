@@ -1,19 +1,20 @@
 
-#include "clippings.h"
+#include "uvm_clippings.h"
 #include "uvm_mesh.h"
-#include "print.h"
-#include "clip.h"
+//#include "print.h"
+#include "uvm_clip.h"
 #include "uvm_clipped_part.h"
-#include "intersect_n_d.h"
+#include "uvm_intersect_n_d.h"
 #include <Kokkos_Core.hpp>
 #include <omp.h>
 #include <cstdlib>
 #include "timer.h"
-#include "test_predicates.h"
+//#include "test_predicates.h"
 #include "../gmv/uvm_io.h"
 #include <sstream>
 
-using namespace polyclip;
+using namespace uvm_polyclip;
+
 int main(int argc, char* argv[]) {
   if (argc < 4) {
     std::cerr << "Usage: test_mesh [MESH_FILE] [LINE_FILE] [TOTAL_LINES] [MATERIAL_FORMAT] [USE_END_POINTS]";
@@ -40,12 +41,12 @@ int main(int argc, char* argv[]) {
     io::read_lines(clipped_part, lines, use_end_points);
 
     Kokkos::Profiling::pushRegion("CLIPPED PART: CPU-TO-GPU TRANSFER");
-    //clipped_part.send_to_gpu();
+    clipped_part.send_to_gpu();
     Kokkos::Profiling::popRegion();
 
-    //Kokkos::Profiling::pushRegion("MESH: CPU-TO-GPU TRANSFER");
+    Kokkos::Profiling::pushRegion("MESH: CPU-TO-GPU TRANSFER");
     mesh.send_to_gpu();
-    //Kokkos::Profiling::popRegion();
+    Kokkos::Profiling::popRegion();
 
     Kokkos::Profiling::pushRegion("CLIPPING BELOW CELLS");
     clip(n_cells, n_lines, clipped_part.use_end_points_, mesh.points_, mesh.cells_,
@@ -56,7 +57,7 @@ int main(int argc, char* argv[]) {
     Kokkos::Profiling::popRegion();
 
     Kokkos::Profiling::pushRegion("CLIPPED PART: GPU-TO-CPU TRANSFER");
-    //clipped_part.send_to_cpu();
+    clipped_part.send_to_cpu();
     Kokkos::Profiling::popRegion();
 
     //////////////////////////// Visual Test /////////////////////////////////

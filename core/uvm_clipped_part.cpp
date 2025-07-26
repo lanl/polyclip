@@ -12,7 +12,7 @@
  */
 #include "uvm_clipped_part.h"
 
-namespace polyclip {
+namespace uvm_polyclip {
 
 // Create the Mesh //////////////////////////////////////////////////////////////////////
 Clipped_Part::Clipped_Part(int total_points,
@@ -38,16 +38,16 @@ Clipped_Part::Clipped_Part(int total_points,
 }
 
 // GPU to CPU ///////////////////////////////////////////////////////////////////////////////////////
-/*void Clipped_Part::send_to_cpu() {
-  Kokkos::deep_copy(mirror_output_, output_);
-  Kokkos::deep_copy(mirror_size_output_, size_output_);
-  Kokkos::deep_copy(mirror_allPoints_, allPoints_);
-  Kokkos::deep_copy(mirror_intersect_points_, intersect_points_);
-  Kokkos::deep_copy(mirror_line_, line_);
-  Kokkos::deep_copy(mirror_end_points_, end_points_);
+void Clipped_Part::send_to_cpu() {
+  //Kokkos::deep_copy(mirror_output_, output_);
+  //Kokkos::deep_copy(mirror_size_output_, size_output_);
+  //Kokkos::deep_copy(mirror_allPoints_, allPoints_);
+  //Kokkos::deep_copy(mirror_intersect_points_, intersect_points_);
+  //Kokkos::deep_copy(mirror_line_, line_);
+  //Kokkos::deep_copy(mirror_end_points_, end_points_);
 }
 void Clipped_Part::send_to_gpu() {
-  Kokkos::deep_copy(line_, mirror_line_);
-  Kokkos::deep_copy(end_points_, mirror_end_points_);
-}*/
+  //Kokkos::deep_copy(line_, mirror_line_);
+  //Kokkos::deep_copy(end_points_, mirror_end_points_);
+}
 } // namespace polyclip
