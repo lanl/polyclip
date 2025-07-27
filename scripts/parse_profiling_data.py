@@ -101,7 +101,7 @@ def generate_bar_chart(aggregate_values):
         plt.xticks([x + 1.0 for x in x_pos], fixed_labels, rotation=45, ha='right', fontsize=20)
         plt.title("Runtime Analysis", fontsize=40, weight='bold')
         plt.ylabel("Runtime (ms)", fontsize=20)
-        plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+        plt.ticklabel_format(axis='y', style='plain')
         plt.xticks(rotation=45, ha='right')
         #plt.ylim(0, 1)
         plt.tight_layout()
