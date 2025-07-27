@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
     mesh.send_to_gpu();
     Kokkos::Profiling::popRegion();
 
-    Kokkos::Profiling::pushRegion("CLIPPING BELOW CELLS");
+    Kokkos::Profiling::pushRegion("CLIPPING CELLS");
     clip(n_cells, n_lines, clipped_part.use_end_points_, mesh.device_points_, mesh.device_cells_,
          clipped_part.intersect_points_, clipped_part.line_, clipped_part.end_points_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,

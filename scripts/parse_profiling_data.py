@@ -29,7 +29,7 @@ dictionary_values = {}
 list_of_annotations = [
     'CLIPPED PART: CPU-TO-GPU TRANSFER',
     'MESH: CPU-TO-GPU TRANSFER',
-    'CLIPPING BELOW CELLS',
+    'CLIPPING CELLS',
     'CLIPPED PART: GPU-TO-CPU TRANSFER '
 ]
 
