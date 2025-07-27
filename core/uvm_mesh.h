@@ -40,12 +40,8 @@ class Mesh_Kokkos {
   // mesh data members for host and device
   Kokkos::View<Point*, Kokkos::CudaUVMSpace> points_;
   Kokkos::View<int***, Kokkos::CudaUVMSpace> cells_; // cell, edge, vertex
-  //Kokkos::View<Point*>::HostMirror mirror_points_;
-  //Kokkos::View<int***>::HostMirror mirror_cells_;
 
   Kokkos::View<int*, Kokkos::CudaUVMSpace> num_verts_per_cell_;
   Kokkos::View<int**, Kokkos::CudaUVMSpace> signs_; // cell, allPoints
-  //Kokkos::View<int*>::HostMirror mirror_num_verts_per_cell_;
-  //Kokkos::View<int**>::HostMirror mirror_signs_;
 };
 } // namespace polyclip

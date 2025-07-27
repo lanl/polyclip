@@ -44,12 +44,6 @@ class Clipped_Part {
   Kokkos::View<int**, Kokkos::CudaUVMSpace> size_output_; // cell, above/below
   Kokkos::View<Point**, Kokkos::CudaUVMSpace> allPoints_; // cell, allPoints
   Kokkos::View<bool*, Kokkos::CudaUVMSpace> clipped_cell_;
-  /*
-  Kokkos::View<Line*>::HostMirror mirror_line_;
-  Kokkos::View<Segment*>::HostMirror mirror_end_points_;
-  Kokkos::View<Segment*>::HostMirror mirror_intersect_points_;
-  Kokkos::View<int***>::HostMirror mirror_output_;
-  Kokkos::View<int**>::HostMirror mirror_size_output_;
-  Kokkos::View<Point**>::HostMirror mirror_allPoints_;*/
+  
 };
 } // namespace polyclip
