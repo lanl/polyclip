@@ -65,20 +65,9 @@ int main(int argc, char* argv[]) {
     int num_nodes = 0;
     int num_polys = 0;
 
-    // GMV counter
-    for (int c = 0; c < n_cells; c++) { //Increase at every cell
-      int below = clipped_part.size_output_(c, 0);
-      num_nodes += mesh.num_verts_per_cell_(c);
-      num_polys++;
-      if (below > 0) { //Increase at every clipped cell
-        num_nodes += 2;
-        num_polys++;
-      }
-    }
-
     io::write_clipped(mesh, clipped_part, num_nodes, num_polys,
-                      "test_clipped.gmv", material_format, n_lines);
-    io::write_mesh(mesh, "test_mesh.gmv");
+                      "uvm_test_clipped.gmv", material_format, n_lines);
+    io::write_mesh(mesh, "uvm_test_mesh.gmv");
   }
   Kokkos::finalize();
   return 0;

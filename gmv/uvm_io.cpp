@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 
 #include <string>
 
@@ -51,7 +52,6 @@ void io::materials(Mesh_Kokkos mesh,
     // Material setup
     for (int c = 0; c <= total_cells; c++) {
         int num_clip = clipped_part.size_output_(c, 0);
-
         if(num_clip == 0){   // non-clipped cells
             gmv_file << "3 ";
         }
@@ -117,6 +117,19 @@ void io::write_clipped(Mesh_Kokkos mesh,
   int total_cells = mesh.cells_.extent(0);
   int points = mesh.points_.extent(0);
 
+  // GMV counter
+  for (int c = 0; c < total_cells; c++) { //Increase at every cell
+    int below = clipped_part.size_output_(c, 0);
+    num_total_nodes += mesh.num_verts_per_cell_(c);
+    num_total_polys++;
+    if (below > 0) { //Increase at every clipped cell
+      num_total_nodes += 2;
+      num_total_polys++;
+    }
+  }
+  // DEBUG
+  //std::cout << "Poly + Nodes: " << num_total_polys << " " << num_total_nodes << std::endl; 
+
   // Print all points
   gmv_file << "gmvinput ascii\n";
   gmv_file << "nodev " << num_total_nodes << "\n";
@@ -125,6 +138,9 @@ void io::write_clipped(Mesh_Kokkos mesh,
   for (int c = 0; c < total_cells; c++) {
     int below = clipped_part.size_output_(c, 0);
     int v;
+    
+    // DEBUG
+    //std::cout << "Below io: " << below << std::endl; 
 
     // Check if its a Clipped Cell
     if (below == 0) { // Non-clipped cell
