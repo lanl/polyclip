@@ -10,8 +10,8 @@
 First get a node then load modules:
 
 ```sh
-salloc -p shared-gpu --qos=debug --time=03:00:00
-module load cmake cuda/12.0.0
+salloc -p volta-x86 --qos=debug --time=02:00:00
+module load cmake/3.29.2 cuda/12.3.1 gcc/12.2.0
 ```
 
 Then build the code with CUDA backend:
@@ -21,9 +21,11 @@ git clone --recursive git@github.com:lanl/polyclip.git
 cd polyclip
 cmake -B build \
   -DKokkos_ENABLE_TESTS=OFF \
+  -DKokkos_ENABLE_SERIAL=ON \
+  -DKokkos_ENABLE_OPENMP=ON \
   -DKokkos_ENABLE_CUDA=ON \
-  -DKokkos_ENABLE_OPENMP=ON
-cmake --build build -j $(nproc) 
+  -DKokkos_ENABLE_CUDA_UVM=OFF   # turn on to use UVM 
+cmake --build build --parallel
 ctest --test-dir build --output-on-failure 
 ```
 
