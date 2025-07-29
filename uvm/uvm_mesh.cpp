@@ -1,0 +1,51 @@
+/*
+ * (c) 2025. Triad National Security, LLC. All rights reserved.
+ * This program was produced under U.S. Government contract 89233218CNA000001
+ * for Los Alamos National Laboratory (LANL), which is operated by Triad National
+ * Security, LLC for the U.S. Department of Energy/National Nuclear Security
+ * Administration. All rights in the program are reserved by Triad National
+ * Security, LLC, and the U.S. Department of Energy/National Nuclear Security
+ * Administration. The Government is granted for itself and others acting on its
+ * behalf a nonexclusive, paid-up, irrevocable worldwide license in this material
+ * to reproduce, prepare. derivative works, distribute copies to the public,
+ * perform publicly and display publicly, and to permit others to do so.
+ */
+#include "uvm_mesh.h"
+
+/*
+    Code Description:
+        - Creates the Mesh
+        - Identifies the Cells of the Mesh
+*/
+
+namespace uvm_polyclip {
+
+// Create the Mesh //////////////////////////////////////////////////////////////////////
+Mesh_Kokkos::Mesh_Kokkos(int total_points,
+                         int total_cells,
+                         int max_edges_per_cell) {
+  Kokkos::resize(points_, total_points); // malloc
+  Kokkos::resize(cells_, total_cells, max_edges_per_cell, 2);
+  Kokkos::resize(num_verts_per_cell_, total_cells);
+  Kokkos::resize(signs_, total_cells, max_edges_per_cell + 2);
+}
+
+// Storing Coordinates of all the points on the host ////////////////////////////////////////////////
+void Mesh_Kokkos::add_points(int point, Point coordinate) {
+  points_(point) = { (coordinate.x), (coordinate.y) };
+}
+
+// Storing Components of a Cell on the host /////////////////////////////////////////////////////////
+void Mesh_Kokkos::add_edge(int cell, int edge, Edge const& node) {
+  cells_(cell, edge, 0) = node.a;
+  cells_(cell, edge, 1) = node.b;
+}
+
+// CPU to GPU ///////////////////////////////////////////////////////////////////////////////////////
+void Mesh_Kokkos::send_to_gpu() {
+}
+
+// GPU to CPU ///////////////////////////////////////////////////////////////////////////////////////
+void Mesh_Kokkos::send_to_cpu() {
+}
+} // namespace polyclip
