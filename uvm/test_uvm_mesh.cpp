@@ -9,7 +9,7 @@
 #include <Kokkos_Core.hpp>
 #include <omp.h>
 #include <cstdlib>
-#include "timer.h"
+#include "../core/timer.h"
 #include <sstream>
 
 using namespace uvm_polyclip;
