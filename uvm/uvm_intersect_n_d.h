@@ -12,7 +12,7 @@
  */
 #pragma once
 
-#include "uvm_mesh.h"
+#include "../core/uvm_mesh.h"
 #include "uvm_geometry.h"
 #include <map>
 

@@ -1,16 +1,15 @@
 
 #include "uvm_clippings.h"
 #include "uvm_mesh.h"
-//#include "print.h"
 #include "uvm_clip.h"
 #include "uvm_clipped_part.h"
 #include "uvm_intersect_n_d.h"
+#include "uvm_io.h"
+
 #include <Kokkos_Core.hpp>
 #include <omp.h>
 #include <cstdlib>
 #include "timer.h"
-//#include "test_predicates.h"
-#include "../gmv/uvm_io.h"
 #include <sstream>
 
 using namespace uvm_polyclip;
