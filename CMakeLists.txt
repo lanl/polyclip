@@ -26,7 +26,7 @@ add_subdirectory(external/kokkos)
 # core
 if (Kokkos_ENABLE_CUDA_UVM)
   add_library(polyclip uvm/uvm_mesh.cpp uvm/uvm_clipped_part.cpp uvm/uvm_io.cpp)
-  target_include_directories(polyclip PUBLIC core gmv)
+  target_include_directories(polyclip PUBLIC uvm)
   target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
 else ()
   add_library(polyclip core/mesh.cpp core/clipped_part.cpp gmv/io.cpp)
