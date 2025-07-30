@@ -105,8 +105,8 @@ int main(int argc, char* argv[]) {
       });
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-    clip(total_cells, total_lines, mesh.device_points_, mesh.device_cells_,
-         clipped_part.intersect_points_, clipped_part.line_,
+    clip(total_cells, total_lines, clipped_part.use_end_points_, mesh.device_points_, mesh.device_cells_,
+         clipped_part.intersect_points_, clipped_part.line_, clipped_part.end_points_,
          mesh.num_verts_per_cell_, clipped_part.allPoints_,
          clipped_part.size_output_, clipped_part.output_, mesh.signs_,
          clipped_part.clipped_cell_);
@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
     assert_eq(num_nodes, 26, "write clipped: num_nodes");
     assert_eq(num_polys, 8, "write clipped: num_polys");
     io::write_clipped(mesh, clipped_part, num_nodes, num_polys,
-                      "test_clipped.gmv", "1");
+                      "test_clipped.gmv", "1", total_lines);
     io::write_mesh(mesh, "test_mesh.gmv");
   }
 

@@ -18,8 +18,6 @@ add_executable(test_gmv_reader test_read.cpp)
 add_executable(test_gmv_read_and_write test_read_and_write.cpp)
 add_executable(test_mesh test_mesh.cpp)
 
-
-
 target_link_libraries(test_clip_poly_legacy PUBLIC polyclip)
 target_link_libraries(test_clip_poly_arbitrary PUBLIC polyclip)
 target_link_libraries(test_clip_grid_horizontal PUBLIC polyclip)

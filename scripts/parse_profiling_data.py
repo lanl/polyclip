@@ -10,6 +10,8 @@
 # perform publicly and display publicly, and to permit others to do so.
 
 import sqlite3
+import numpy as np
+import pandas as pd
 import os
 import sys
 import matplotlib
@@ -22,55 +24,43 @@ if len(sys.argv) < 2:
 file_name = sys.argv[1]
 end_index = int(sys.argv[2]) if len(sys.argv) > 2 else 5
 
-sql_files = [f"{file_name}_{i}.sqlite" for i in range(1, end_index + 1)]
+csv_files = [f"{file_name}_{i}_summary_nvtxsum.csv" for i in range(1, end_index + 1)]
 dictionary_values = {}
 list_of_annotations = [
-    # 'TOTAL RUNTIME',
-    #'INIT LINE INTERFACE ',
-    'CLIPPED PART: CPU-TO-GPU TRANSFER ',
-    'MESH: CPU-TO-GPU TRANSFER ',
-    'CLIPPING BELOW CELLS ',
-    'MESH: GPU-TO-CPU TRANSFER ',
+    'CLIPPED PART: CPU-TO-GPU TRANSFER',
+    'MESH: CPU-TO-GPU TRANSFER',
+    'CLIPPING CELLS',
     'CLIPPED PART: GPU-TO-CPU TRANSFER '
 ]
 
+def durations():
+    aggregate_values = {a: [] for a in list_of_annotations}
 
-def generate_pie_chart():
-    for file in sql_files:
-        # print(file)
-        database = sqlite3.connect(file)
-        cursor = database.cursor()
-        temp_dictionary = {}
+    for file in csv_files:
+        df = pd.read_csv(file)
         for annotation in list_of_annotations:
-            cursor.execute(f"SELECT end-start AS 'duration' FROM 'NVTX_EVENTS' WHERE text = '{annotation}';")
-            table = cursor.fetchall()
-            # print(table)
-            # print("Annotation - " + annotation)
-            temp_dictionary[annotation] = table[0][0]
-            if file in dictionary_values:
-                dictionary_values[file].append(temp_dictionary)
-            else:
-                dictionary_values[file] = [temp_dictionary]
+            #print("Annotation - " + annotation) #DEBUG
+            match = df[df["Range"].str.strip() == annotation.strip()]
+            if not match.empty:
+                ns = match.iloc[0]["Total Time (ns)"]
+                aggregate_values[annotation].append(ns)
+                #print(f"Time - {ns} ns") #DEBUG
+    
+    return aggregate_values
 
-        aggregate_values = {}
-        total_runtime = 0
-        for key in list_of_annotations:
-            aggregate_values[key] = 0
 
-        for dict in dictionary_values.values():
-            for entry in dict:
-                for key, value in entry.items():
-                    aggregate_values[key] += value
-                    total_runtime += value
-
+def generate_pie_chart(aggregate_values):
         labels = []
         sizes = []
-        remaining_runtime = 0
         for annotation in list_of_annotations:
-            value = aggregate_values[annotation]
-            labels.append(f"{annotation}")
-            sizes.append(value/total_runtime)
-            remaining_runtime += value
+            durations = aggregate_values[annotation]
+            if durations:
+                ns_median = np.median(durations)
+                labels.append(f"{annotation}")
+                sizes.append(ns_median)
+        
+        total_time = sum(sizes)
+        sizes = [s/total_time for s in sizes]
 
         fixed_labels = [label.replace(" ", "\n") for label in labels]
         plt.figure(figsize=(38,35))
@@ -83,53 +73,37 @@ def generate_pie_chart():
         plt.savefig(output_path)
         plt.close()
 
-def generate_bar_chart():
-    for file in sql_files:
-        database = sqlite3.connect(file)
-        cursor = database.cursor()
-        temp_dictionary = {}
-        for annotation in list_of_annotations:
-            cursor.execute(f"SELECT end-start AS 'duration' FROM 'NVTX_EVENTS' WHERE text = '{annotation}';")
-            table = cursor.fetchall()
-            
-            # Verify NVTX_EVENTS pulls kokkos regions
-            #print(table)
-            #print("Annotation - " + annotation)
-            
-            temp_dictionary[annotation] = table[0][0] 
-            if file in dictionary_values:
-                dictionary_values[file].append(temp_dictionary)
-            else:
-                dictionary_values[file] = [temp_dictionary]
-
-        aggregate_values = {}
-        total_runtime = 0
-        for key in list_of_annotations:
-            aggregate_values[key] = 0
-
-        for dict in dictionary_values.values():
-            for entry in dict:
-                for key, value in entry.items():
-                    aggregate_values[key] += value
-                    total_runtime += value
-
+def generate_bar_chart(aggregate_values):
         labels = []
         values = []
-        for annotation in list_of_annotations:
-            value = aggregate_values[annotation]
-            labels.append(f"{annotation}")
-            values.append(value/end_index)
 
+        for annotation, ns in aggregate_values.items():
+            #print("////////////TIME: " + str(ns)) #DEBUG
+            median = np.median(ns)
+            labels.append(annotation)
+            #print("Annotation - " + annotation) #DEBUG
+            #print("Median - " + str(median * 1e-6)) #DEBUG
+            values.append(median * 1e-6)
+
+        total_time = sum(values)
         fixed_labels = [label.replace(" ", "\n") for label in labels]
         plt.figure(figsize=(14,8))
         x_pos = range(len(labels))
-        colors = ['blue', 'orange', 'green', 'red', 'purple']
+        colors = ['blue', 'orange', 'green', 'red']
+        plt.text(0.02, 0.98, f'Total Time: {total_time:.4f} ms', color='grey', transform=plt.gca().transAxes, fontsize=14, verticalalignment='top', horizontalalignment='left', zorder=11)
+
+        # Duration Labels
+        for i, val in enumerate(values):
+            label = f'{val:.4f} ms'
+            plt.text(i + 0.5, val, label, ha='center', va='bottom',fontsize=14)
+
         plt.bar(x_pos, values, width=1.0, align='edge', color=colors)
         plt.xticks([x + 1.0 for x in x_pos], fixed_labels, rotation=45, ha='right', fontsize=20)
         plt.title("Runtime Analysis", fontsize=40, weight='bold')
-        plt.ylabel("Runtime (µs)", fontsize=20)
-        plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+        plt.ylabel("Runtime (ms)", fontsize=20)
+        plt.ticklabel_format(axis='y', style='plain')
         plt.xticks(rotation=45, ha='right')
+        #plt.ylim(0, 1)
         plt.tight_layout()
         base_name = os.path.basename(file_name)
         output_path = f"output/images/{base_name}_bar.png"
@@ -182,8 +156,9 @@ def process_single_file(file):
 
 
 def main():
-    generate_pie_chart()
-    generate_bar_chart()
+    aggregate_values = durations()
+    generate_pie_chart(aggregate_values)
+    generate_bar_chart(aggregate_values)
 
 
 

@@ -23,18 +23,27 @@ option(BUILD_TESTS "Build tests" ON)
 add_compile_options(-Wno-deprecated-declarations)
 add_subdirectory(external/kokkos)
 
-
 # core
-add_library(polyclip core/mesh.cpp core/clipped_part.cpp gmv/io.cpp)
-target_include_directories(polyclip PUBLIC core gmv)
-target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
+if (Kokkos_ENABLE_CUDA_UVM)
+  add_library(polyclip uvm/uvm_mesh.cpp uvm/uvm_clipped_part.cpp uvm/uvm_io.cpp)
+  target_include_directories(polyclip PUBLIC uvm)
+  target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
+else ()
+  add_library(polyclip core/mesh.cpp core/clipped_part.cpp gmv/io.cpp)
+  target_include_directories(polyclip PUBLIC core gmv)
+  target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
+endif ()
 
 # tests
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 if (BUILD_TESTS)
   set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
   enable_testing()
-  add_subdirectory(test)
+  if (Kokkos_ENABLE_CUDA_UVM)
+    add_subdirectory(uvm)
+  else ()
+    add_subdirectory(test)
+  endif ()
 endif ()
 
 if (FORMAT_CODE)

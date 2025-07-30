@@ -40,7 +40,7 @@ for ((i = 1; i <= NUM_ITERATIONS; i++))
 do
     output_name="${rootname}_$i"
     echo "Running iteration $i: generating $output_name"
-    nsys profile -t cuda,nvtx --output="output/$output_name" ./test_mesh "$MESH_FILE" "$LINE_FILE" "$N_LINES" "$MATERIAL_FORMAT" "$USE_END_POINTS"
+    nsys profile -t cuda,nvtx --output="output/$output_name" ./test_uvm_mesh "$MESH_FILE" "$LINE_FILE" "$N_LINES" "$MATERIAL_FORMAT" "$USE_END_POINTS"
     nsys stats --report nvtxsum --format csv -o "output/${output_name}_summary" "output/${output_name}.nsys-rep"
 done
 

@@ -11,15 +11,16 @@
  * perform publicly and display publicly, and to permit others to do so.
  */
 
-#include "io.h"
+#include "uvm_io.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 
 #include <string>
 
-namespace polyclip {
+namespace uvm_polyclip {
 
 /* ------------------------------------------------------------------------- */
 void io::materials(Mesh_Kokkos mesh,
@@ -50,8 +51,7 @@ void io::materials(Mesh_Kokkos mesh,
   
     // Material setup
     for (int c = 0; c <= total_cells; c++) {
-        int num_clip = clipped_part.mirror_size_output_(c, 0);
-
+        int num_clip = clipped_part.size_output_(c, 0);
         if(num_clip == 0){   // non-clipped cells
             gmv_file << "3 ";
         }
@@ -68,7 +68,7 @@ void io::materials(Mesh_Kokkos mesh,
 
     // Material setup
     for (int c = 0; c <= total_cells; c++) {
-        int num_clip = clipped_part.mirror_size_output_(c, 0);
+        int num_clip = clipped_part.size_output_(c, 0);
 	bool below_line = false;
 	bool clipped = true;
 	
@@ -77,12 +77,12 @@ void io::materials(Mesh_Kokkos mesh,
 
 	   for(int l = 0; l < n_lines; l++){
 	      // Line Details
-    	      double nx = clipped_part.mirror_line_(l).n.x;
-    	      double ny = clipped_part.mirror_line_(l).n.y;
-    	      double d = clipped_part.mirror_line_(l).d;
+    	      double nx = clipped_part.line_(l).n.x;
+    	      double ny = clipped_part.line_(l).n.y;
+    	      double d = clipped_part.line_(l).d;
 
-              int id = mesh.mirror_cells_(c, 0, 0);
-	      auto const p = mesh.mirror_points_(id);
+              int id = mesh.cells_(c, 0, 0);
+	      auto const p = mesh.points_(id);
 	      double side = nx * p.x + ny * p.y;
 
 	      if(side < -d){	// orientation with respect to the line
@@ -114,8 +114,21 @@ void io::write_clipped(Mesh_Kokkos mesh,
   int material_format = std::stoi(material_type);
 
   // Original cells and points
-  int total_cells = mesh.mirror_cells_.extent(0);
-  int points = mesh.mirror_points_.extent(0);
+  int total_cells = mesh.cells_.extent(0);
+  int points = mesh.points_.extent(0);
+
+  // GMV counter
+  for (int c = 0; c < total_cells; c++) { //Increase at every cell
+    int below = clipped_part.size_output_(c, 0);
+    num_total_nodes += mesh.num_verts_per_cell_(c);
+    num_total_polys++;
+    if (below > 0) { //Increase at every clipped cell
+      num_total_nodes += 2;
+      num_total_polys++;
+    }
+  }
+  // DEBUG
+  //std::cout << "Poly + Nodes: " << num_total_polys << " " << num_total_nodes << std::endl; 
 
   // Print all points
   gmv_file << "gmvinput ascii\n";
@@ -123,23 +136,26 @@ void io::write_clipped(Mesh_Kokkos mesh,
 
   // Print all points /////////////////////////////////////////////////////////
   for (int c = 0; c < total_cells; c++) {
-    int below = clipped_part.mirror_size_output_(c, 0);
+    int below = clipped_part.size_output_(c, 0);
     int v;
+    
+    // DEBUG
+    //std::cout << "Below io: " << below << std::endl; 
 
     // Check if its a Clipped Cell
     if (below == 0) { // Non-clipped cell
-      v = mesh.mirror_num_verts_per_cell_(c);
+      v = mesh.num_verts_per_cell_(c);
       for (int i = 0; i < v; i++) {
         gmv_file << std::scientific << std::setprecision(17);
-        int id = mesh.mirror_cells_(c, i, 0);
-        auto const p = mesh.mirror_points_(id);
+        int id = mesh.cells_(c, i, 0);
+        auto const p = mesh.points_(id);
         gmv_file << p.x << " " << p.y << " " << 0.0 << "\n";
       }
     } else { // Clipped cell
-      v = mesh.mirror_num_verts_per_cell_(c) + 2;
+      v = mesh.num_verts_per_cell_(c) + 2;
       for (int i = 0; i < v; i++) {
         gmv_file << std::scientific << std::setprecision(17);
-        auto const p = clipped_part.mirror_allPoints_(c, i);
+        auto const p = clipped_part.allPoints_(c, i);
         gmv_file << p.x << " " << p.y << " " << 0.0 << "\n";
       }
     }
@@ -154,10 +170,10 @@ void io::write_clipped(Mesh_Kokkos mesh,
   for (int c = 0; c < total_cells; c++) {
     gmv_file << "general 1 ";
     std::string store_points = "";
-    int num_verts = mesh.mirror_num_verts_per_cell_(c);
+    int num_verts = mesh.num_verts_per_cell_(c);
 
-    int below = clipped_part.mirror_size_output_(c, 0);
-    int above = clipped_part.mirror_size_output_(c, 1);
+    int below = clipped_part.size_output_(c, 0);
+    int above = clipped_part.size_output_(c, 1);
 
     // Cell with no Clipping ///////////////////
     if (below == 0) {
@@ -174,7 +190,7 @@ void io::write_clipped(Mesh_Kokkos mesh,
     // Clipped Cell //////////////////////////
     else {
       for (int i = 0; i < below; i++) {
-        int const j = clipped_part.mirror_output_(c, 0, i);
+        int const j = clipped_part.output_(c, 0, i);
         int const node_id = j + node_increment;
         store_points += std::to_string(node_id + 1) + " ";
       }
@@ -184,7 +200,7 @@ void io::write_clipped(Mesh_Kokkos mesh,
       std::string store_points = "";
 
       for (int i = 0; i < above; i++) {
-        int const j = clipped_part.mirror_output_(c, 1, i);
+        int const j = clipped_part.output_(c, 1, i);
         int const node_id = j + node_increment;
         store_points += std::to_string(node_id + 1) + " ";
       }
@@ -220,10 +236,10 @@ void io::read_lines(Clipped_Part& clips, const std::string& file_name, bool with
       tokenizer.clear();
       tokenizer.str(buffer);
       tokenizer >> x >> y >> d >> px >> py >> qx >> qy;
-      clips.mirror_line_(index).n = { x, y };
-      clips.mirror_line_(index).d = d;
-      clips.mirror_end_points_(index).a = { px, py };
-      clips.mirror_end_points_(index).b = { qx, qy };
+      clips.line_(index).n = { x, y };
+      clips.line_(index).d = d;
+      clips.end_points_(index).a = { px, py };
+      clips.end_points_(index).b = { qx, qy };
       index++;
     }
   } else {
@@ -231,8 +247,8 @@ void io::read_lines(Clipped_Part& clips, const std::string& file_name, bool with
       tokenizer.clear();
       tokenizer.str(buffer);
       tokenizer >> x >> y >> d;
-      clips.mirror_line_(index).n = { x, y };
-      clips.mirror_line_(index).d = d;
+      clips.line_(index).n = { x, y };
+      clips.line_(index).d = d;
       index++;
     }
   }
@@ -241,16 +257,16 @@ void io::read_lines(Clipped_Part& clips, const std::string& file_name, bool with
 /* ------------------------------------------------------------------------- */
 void io::write_mesh(Mesh_Kokkos mesh, const std::string& file_name) {
   std::ofstream gmv_file(file_name);
-  int total_cells = mesh.mirror_cells_.extent(0);
-  int points = mesh.mirror_points_.extent(0);
+  int total_cells = mesh.cells_.extent(0);
+  int points = mesh.points_.extent(0);
 
   gmv_file << "gmvinput ascii\n";
   gmv_file << "nodev " << points << "\n";
 
   // Print all points /////////////////////////////////////////////////////////
-  for (int c = 0; c < mesh.mirror_points_.extent(0); c++) {
+  for (int c = 0; c < mesh.points_.extent(0); c++) {
     gmv_file << std::scientific << std::setprecision(17);
-    auto const p = mesh.mirror_points_(c);
+    auto const p = mesh.points_(c);
     gmv_file << p.x << " " << p.y << " " << 0.0 << "\n";
   }
 
@@ -259,10 +275,10 @@ void io::write_mesh(Mesh_Kokkos mesh, const std::string& file_name) {
 
   for (int c = 0; c < total_cells; c++) {
     gmv_file << "general 1 ";
-    int const num_verts = mesh.mirror_num_verts_per_cell_(c);
+    int const num_verts = mesh.num_verts_per_cell_(c);
     gmv_file << num_verts << " ";
     for (int j = 0; j < num_verts; j++) {
-      gmv_file << mesh.mirror_cells_(c, j, 0) + 1 << " ";
+      gmv_file << mesh.cells_(c, j, 0) + 1 << " ";
     }
     gmv_file << std::endl;
   }
@@ -289,8 +305,8 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name) {
       int num_of_nodes;
       parser >> num_of_nodes;
 
-      Kokkos::resize(mesh.device_points_, num_of_nodes); // malloc
-      mesh.mirror_points_ = Kokkos::create_mirror_view(mesh.device_points_);
+      Kokkos::resize(mesh.points_, num_of_nodes); // malloc
+      //mesh.points_ = Kokkos::create_mirror_view(mesh.points_);
 
       for (int i = 0; i < num_of_nodes; i++) {
         std::getline(gmv_file, line);
@@ -306,14 +322,14 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name) {
       parser >> num_of_cells;
 
       constexpr int max_edges = 10;
-      Kokkos::resize(mesh.device_cells_, num_of_cells, max_edges, 2);
+      Kokkos::resize(mesh.cells_, num_of_cells, max_edges, 2);
       Kokkos::resize(mesh.num_verts_per_cell_, num_of_cells);
       Kokkos::resize(mesh.signs_, num_of_cells, max_edges + 2);
 
-      mesh.mirror_cells_ = Kokkos::create_mirror_view(mesh.device_cells_);
-      mesh.mirror_num_verts_per_cell_ =
-        Kokkos::create_mirror_view(mesh.num_verts_per_cell_);
-      mesh.mirror_signs_ = Kokkos::create_mirror_view(mesh.signs_);
+     // mesh.cells_ = Kokkos::create_mirror_view(mesh.cells_);
+      //mesh.mirror_num_verts_per_cell_ =
+      //Kokkos::create_mirror_view(mesh.num_verts_per_cell_);
+      //mesh.signs_ = Kokkos::create_mirror_view(mesh.signs_);
 
       // (!) the vertices of a cell may be listed in several lines,
       // so put all remaining lines into buffer and parse it later.
@@ -348,7 +364,7 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name) {
                     << std::endl;
           exit(1);
         }
-        mesh.mirror_num_verts_per_cell_(c) = num_of_edges;
+        mesh.num_verts_per_cell_(c) = num_of_edges;
         std::vector<int> list_of_nodes(num_of_edges);
 
         int j = 0;

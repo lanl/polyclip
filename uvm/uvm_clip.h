@@ -12,11 +12,11 @@
  */
 #pragma once //prevent headers being used twice
 
-#include "mesh.h"
-#include "intersect_n_d.h"
-#include "clippings.h"
+#include "uvm_mesh.h"
+#include "uvm_intersect_n_d.h"
+#include "uvm_clippings.h"
 
-namespace polyclip {
+namespace uvm_polyclip {
 
 void clip(int total_cells,
           int total_lines,

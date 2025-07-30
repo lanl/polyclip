@@ -13,10 +13,10 @@
 #pragma once
 
 #include <string>
-#include "mesh.h"
-#include "clipped_part.h"
+#include "uvm_mesh.h"
+#include "uvm_clipped_part.h"
 
-namespace polyclip::io {
+namespace uvm_polyclip::io {
 void materials(Mesh_Kokkos mesh,
 	       Clipped_Part clipped_part, 
 	       int total_cells, 
