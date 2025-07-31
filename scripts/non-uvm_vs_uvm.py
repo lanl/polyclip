@@ -30,7 +30,7 @@ for i, val in enumerate(values):
 
 plt.bar(x_pos, values, width=1.0, align='edge', color=colors)
 plt.xticks([x + 0.5 for x in x_pos], fixed_labels, rotation=45, ha='right', fontsize=20)
-plt.title("Kokkos Region of Clipping Below Runtime\n Comparing Non-UVM Vs. UVM", fontsize=30, weight='bold')
+plt.title("Clipping Runtime", fontsize=30, weight='bold')
 plt.ylabel("Runtime (ms)", fontsize=20)
 plt.ticklabel_format(axis='y', style='plain')
 plt.xticks(rotation=45, ha='right')
