@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     int const total_lines = 2;
 
     // Testing: distances for every cell
-    double vertical[total_lines] = { -0.375, -0.625 };
+    real vertical[total_lines] = { -0.375, -0.625 };
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh(total_points, total_cells, max_edges_per_cell);

@@ -37,7 +37,11 @@ int main(int argc, char* argv[]) {
     int const n_points = 5 * 5;
     int const n_lines = 1;
     std::string const lines = argv[2];
-    double const tolerance = std::stod(argv[1]);
+#ifdef USE_SINGLE_PRECISION
+    real const tolerance = std::stof(argv[1]);
+#else
+    real const tolerance = std::stod(argv[1]);
+#endif
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
     Mesh_Kokkos mesh = io::read_mesh("mesh/grid.gmv");
@@ -60,8 +64,8 @@ int main(int argc, char* argv[]) {
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
-    double x[8] = { 0.25, 0, 0.5, 0.25, 0.75, 0.5, 1.0, 0.75 };
-    double y[8] = { 0.625, 0.625, 0.625, 0.625, 0.625, 0.625, 0.625, 0.625 };
+    real x[8] = { 0.25, 0, 0.5, 0.25, 0.75, 0.5, 1.0, 0.75 };
+    real y[8] = { 0.625, 0.625, 0.625, 0.625, 0.625, 0.625, 0.625, 0.625 };
     verify_intersection_points(n_cells, clipped_part, x, y, tolerance);
 
     // Output Points

@@ -77,13 +77,13 @@ void io::materials(Mesh_Kokkos mesh,
 
 	   for(int l = 0; l < n_lines; l++){
 	      // Line Details
-    	      double nx = clipped_part.mirror_line_(l).n.x;
-    	      double ny = clipped_part.mirror_line_(l).n.y;
-    	      double d = clipped_part.mirror_line_(l).d;
+    	      real nx = clipped_part.mirror_line_(l).n.x;
+    	      real ny = clipped_part.mirror_line_(l).n.y;
+    	      real d = clipped_part.mirror_line_(l).d;
 
               int id = mesh.mirror_cells_(c, 0, 0);
 	      auto const p = mesh.mirror_points_(id);
-	      double side = nx * p.x + ny * p.y;
+	      real side = nx * p.x + ny * p.y;
 
 	      if(side < -d){	// orientation with respect to the line
                  below_line = true;
@@ -211,7 +211,7 @@ void io::read_lines(Clipped_Part& clips, const std::string& file_name, bool with
   std::ifstream line_file(file_name);
   std::string buffer;
   std::stringstream tokenizer;
-  double x, y, d, px, py, qx, qy;
+  real x, y, d, px, py, qx, qy;
   int index = 0;
 
   if (with_end_points) {
@@ -297,7 +297,7 @@ Mesh_Kokkos io::read_mesh(std::string const& file_name) {
         parser.clear();
         parser.str(line);
 
-        double x, y, z;
+        real x, y, z;
         parser >> x >> y >> z;
         mesh.add_points(i, { x, y });
       }

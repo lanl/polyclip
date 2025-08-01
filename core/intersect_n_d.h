@@ -15,6 +15,13 @@
 #include "mesh.h"
 #include "geometry.h"
 #include <map>
+#include <iomanip>
+
+#ifdef USE_SINGLE_PRECISION
+  constexpr real ZERO = 1.e-15;
+#else
+  constexpr real ZERO = 1.e-8;
+#endif
 
 namespace polyclip {
 KOKKOS_INLINE_FUNCTION
@@ -27,22 +34,23 @@ Segment intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
                                      bool use_end_points) {
   int const n = num_verts_per_cell(c);
   Point pts[2];
-  constexpr Point const DUMMY = { DBL_MAX, DBL_MAX };
+  constexpr Point const DUMMY = { std::numeric_limits<real>::max(),
+                                  std::numeric_limits<real>::max() };
 
   int k = 0;
 
   for (int i = 0; i < n and k < 2; ++i) {
-    double x_min, y_min, x_max, y_max;
+    real x_min, y_min, x_max, y_max;
     int const a = cells(c, i, 0);
     int const b = cells(c, i, 1);
 
     // Interface Normal and Distance
     Point const n1 = line.n;
-    double const d1 = line.d;
+    real const d1 = line.d;
 
     // Current Edge normal vector and distanc
     Point const n2 = normVec(points(a), points(b));
-    double const d2 = -dotProduct(points(a), n2);
+    real const d2 = -dotProduct(points(a), n2);
 
     // Deduce bounds on coordinates of the edge we are currently viewing
 
@@ -62,34 +70,34 @@ Segment intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
     }
 
 
-    double const& a1 = n1.x;
-    double const& b1 = n1.y;
-    double const& a2 = n2.x;
-    double const& b2 = n2.y;
+    real const& a1 = n1.x;
+    real const& b1 = n1.y;
+    real const& a2 = n2.x;
+    real const& b2 = n2.y;
 
     // Compute the determinate
-    double const det = (a1 * b2) - (a2 * b1);
+    real const det = (a1 * b2) - (a2 * b1);
 
     if (fabs(det) < 1.e-15) {
       continue;
     } else {
       // Compute intersection points using Cramers rule
 
-      double const xa = (-d1 * b2) - (-d2 * b1);
-      double const ya = (a1 * -d2) - (a2 * -d1);
-      double const x = xa / det;
-      double const y = ya / det;
+      real const xa = (-d1 * b2) - (-d2 * b1);
+      real const ya = (a1 * -d2) - (a2 * -d1);
+      real const x = xa / det;
+      real const y = ya / det;
 
       if (x < x_min or x > x_max or y < y_min or y > y_max) {
         continue;
       } else if (use_end_points) {
         // check if c is inside [p,q]
-        double const px = end_points.a.x;
-        double const py = end_points.a.y;
-        double const qx = end_points.b.x;
-        double const qy = end_points.b.y;
-        double const dot = (qx - px) * (x - px) + (qy - py) * (y - py);
-        double const len2 = (qx - px) * (qx - px) + (qy - py) * (qy - py);
+        real const px = end_points.a.x;
+        real const py = end_points.a.y;
+        real const qx = end_points.b.x;
+        real const qy = end_points.b.y;
+        real const dot = (qx - px) * (x - px) + (qy - py) * (y - py);
+        real const len2 = (qx - px) * (qx - px) + (qy - py) * (qy - py);
         if (dot < 0. or dot > len2) { // outside
           continue;
         }

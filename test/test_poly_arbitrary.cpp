@@ -33,7 +33,11 @@ int main(int argc, char* argv[]) {
     int const n_cells = 10;
     int const n_points = 17;
     int const n_lines = 2;
-    double const tolerance = std::stod(argv[1]);
+#ifdef USE_SINGLE_PRECISION
+    real const tolerance = std::stof(argv[1]);
+#else
+    real const tolerance = std::stod(argv[1]);
+#endif
     std::string const lines = argv[2];
 
     // Create mesh /////////////////////////////////////////////////////////////////////////////////////////
@@ -57,9 +61,9 @@ int main(int argc, char* argv[]) {
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
-    double x[12] = { 0.375, 0.375, 0.375, 0.375, 0.625, 0.5,
+    real x[12] = { 0.375, 0.375, 0.375, 0.375, 0.625, 0.5,
                      0.375, 0.375, 0.375, 0.375, 1.0,   0.9375 };
-    double y[12] = { 0,   0.3125, 0.3125, 0.5,   0.625, 0.75,
+    real y[12] = { 0,   0.3125, 0.3125, 0.5,   0.625, 0.75,
                      0.5, 0.625,  0.625,  0.875, 0.25,  0.3125 };
     verify_intersection_points(n_cells, clipped_part, x, y, tolerance);
   }

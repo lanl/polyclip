@@ -44,7 +44,11 @@ int main(int argc, char* argv[]) {
     int const n_points = 11;
     // 1: horizontal| 2: vertical| 3: arbitrary
     int const line_rep = std::stoi(argv[1]);
-    double const tolerance = std::stod(argv[2]);
+#ifdef USE_SINGLE_PRECISION
+    real const tolerance = std::stof(argv[2]);
+#else
+    real const tolerance = std::stod(argv[2]);
+#endif
     std::string const lines = argv[3];
 
     int n_lines = 0;
@@ -90,7 +94,7 @@ int main(int argc, char* argv[]) {
     Kokkos::Profiling::popRegion();
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
-    std::array<double, 8> x{}, y{};
+    std::array<real, 8> x{}, y{};
     if (line_rep == 1) {
       x = { 0.5, 0.0, 0.6875, 0.5, 0.9375, 0.375, 0.875, 0.5 };
       y = { 0.125, 0.125, 0.125, 0.125, 0.5, 0.5, 0.75, 0.75 };

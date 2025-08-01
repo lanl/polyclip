@@ -38,7 +38,11 @@ int main(int argc, char* argv[]) {
     int const n_lines = 1;
     // (0) goes through nodes (1) doesn't go through nodes
     int line_rep = std::stoi(argv[1]);
-    double const tolerance = std::stod(argv[2]);
+#ifdef USE_SINGLE_PRECISION
+    real const tolerance = std::stof(argv[2]);
+#else
+    real const tolerance = std::stod(argv[2]);
+#endif
     std::string const lines = argv[3];
     std::string output;
 
@@ -63,7 +67,7 @@ int main(int argc, char* argv[]) {
 
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
-    std::vector<double> x, y;
+    std::vector<real> x, y;
     if (line_rep == 0) {
       x = { 0,   0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.5,  0.5,  0.5,
             0.5, 0.5,  0.5,  0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 1.0 };
