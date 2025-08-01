@@ -16,7 +16,8 @@
 using namespace polyclip;
 int main(int argc, char* argv[]) {
   if (argc < 4) {
-    std::cerr << "Usage: test_mesh [MESH_FILE] [LINE_FILE] [TOTAL_LINES] [MATERIAL_FORMAT] [USE_END_POINTS]";
+    std::cerr << "Usage: test_mesh [MESH_FILE] [LINE_FILE] [TOTAL_LINES] "
+                 "[MATERIAL_FORMAT] [USE_END_POINTS]";
     return EXIT_FAILURE;
   }
 
@@ -31,7 +32,7 @@ int main(int argc, char* argv[]) {
     int const max_edges_per_cell = 8;
     int const n_cells = static_cast<int>(mesh.mirror_cells_.extent(0));
     int const n_points = static_cast<int>(mesh.mirror_points_.extent(0));
-    
+
     int n_lines;
     std::istringstream iss(argv[3]);
     iss >> n_lines;
@@ -48,11 +49,11 @@ int main(int argc, char* argv[]) {
     Kokkos::Profiling::popRegion();
 
     Kokkos::Profiling::pushRegion("CLIPPING CELLS");
-    clip(n_cells, n_lines, clipped_part.use_end_points_, mesh.device_points_, mesh.device_cells_,
-         clipped_part.intersect_points_, clipped_part.line_, clipped_part.end_points_,
-         mesh.num_verts_per_cell_, clipped_part.allPoints_,
-         clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-         clipped_part.clipped_cell_);
+    clip(n_cells, n_lines, clipped_part.use_end_points_, mesh.device_points_,
+         mesh.device_cells_, clipped_part.intersect_points_, clipped_part.line_,
+         clipped_part.end_points_, mesh.num_verts_per_cell_,
+         clipped_part.allPoints_, clipped_part.size_output_,
+         clipped_part.output_, mesh.signs_, clipped_part.clipped_cell_);
     Kokkos::Profiling::popRegion();
 
     Kokkos::Profiling::pushRegion("CLIPPED PART: GPU-TO-CPU TRANSFER");

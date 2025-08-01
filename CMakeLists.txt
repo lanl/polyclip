@@ -24,19 +24,23 @@ option(USE_SINGLE_PRECISION "Use single precision float" OFF)
 add_compile_options(-Wno-deprecated-declarations)
 add_subdirectory(external/kokkos)
 
+
+
 # core
 if (Kokkos_ENABLE_CUDA_UVM)
   add_library(polyclip uvm/uvm_mesh.cpp uvm/uvm_clipped_part.cpp uvm/uvm_io.cpp)
   target_include_directories(polyclip PUBLIC uvm)
-elseif (USE_SINGLE_PRECISION)
-  add_library(polyclip sfu/sfu_mesh.cpp sfu/sfu_clipped_part.cpp sfu/sfu_io.cpp)
-  target_include_directories(polyclip PUBLIC sfu)
 else ()
   add_library(polyclip core/mesh.cpp core/clipped_part.cpp gmv/io.cpp)
   target_include_directories(polyclip PUBLIC core gmv)
 endif ()
 
 target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
+
+# use single precision float
+if (USE_SINGLE_PRECISION)
+  target_compile_definitions(polyclip PUBLIC USE_SINGLE_PRECISION=1)
+endif ()
 
 # tests
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
@@ -45,8 +49,6 @@ if (BUILD_TESTS)
   enable_testing()
   if (Kokkos_ENABLE_CUDA_UVM)
     add_subdirectory(uvm)
-  elseif (USE_SINGLE_PRECISION)
-    add_subdirectory(sfu)
   else ()
     add_subdirectory(test)
   endif ()

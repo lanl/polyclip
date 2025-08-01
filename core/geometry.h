@@ -25,6 +25,12 @@
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Vector.hpp>
 
+#ifdef USE_SINGLE_PRECISION
+using real = float;
+#else
+using real = double;
+#endif
+
 /*
     geometry.h Description:
         - Calculates the normal vector of the interface.
@@ -38,8 +44,8 @@ namespace polyclip {
 
 // x and y values ///////////////////////////////////////////////////////////////////////
 struct Point {
-  double x = 0.0;
-  double y = 0.0;
+  real x = 0;
+  real y = 0;
 };
 
 struct Segment {
@@ -48,8 +54,8 @@ struct Segment {
 };
 
 struct Line {
-  Point n;  // normal
-  double d; // distance
+  Point n;    // normal
+  real d = 0; // distance
 };
 
 struct Edge {
@@ -61,8 +67,8 @@ struct Edge {
 KOKKOS_INLINE_FUNCTION
 Point normVec(Point a, Point b) {
   // Direction vec
-  double dx = b.x - a.x; // x2 - x1
-  double dy = b.y - a.y; // y2 - y1
+  real dx = b.x - a.x; // x2 - x1
+  real dy = b.y - a.y; // y2 - y1
 
   // Normal vec
   return { dy, -dx };
@@ -70,18 +76,20 @@ Point normVec(Point a, Point b) {
 
 // Finding the dot product of the direction vector and normal of the line //////////////
 KOKKOS_INLINE_FUNCTION
-double dotProduct(Point const& v, Point const& n) {
-  double const product = (v.x * n.x) + (v.y * n.y);
-
-  double const epsilon = 1.e-15;
-  return std::abs(product) < epsilon ? 0.0 : product;
+real dotProduct(Point const& v, Point const& n) {
+  real const product = (v.x * n.x) + (v.y * n.y);
+#ifdef USE_SINGLE_PRECISION
+  return std::abs(product) < 1.e-10 ? 0.f : product;
+#else
+  return std::abs(product) < 1.e-15 ? 0.0 : product;
+#endif
 }
 
 // Point Vector /////////////////////////////////////////////////////////////////////////
 KOKKOS_INLINE_FUNCTION
 Point pointVec(Point const& p, Point const& middle) {
-  double dx = p.x - middle.x;
-  double dy = p.y - middle.y;
+  real dx = p.x - middle.x;
+  real dy = p.y - middle.y;
 
   // Direction Vector
   return { dx, dy };
@@ -90,8 +98,8 @@ Point pointVec(Point const& p, Point const& middle) {
 // Middile Point of the Interface ////////////////////////////////////////////////////////
 KOKKOS_INLINE_FUNCTION
 Point middle_point(Segment const& points) {
-  double mx = (points.a.x + points.b.x) / 2;
-  double my = (points.a.y + points.b.y) / 2;
+  real mx = (points.a.x + points.b.x) / 2;
+  real my = (points.a.y + points.b.y) / 2;
 
   return { mx, my };
 }
@@ -107,7 +115,7 @@ void orientation_clip(int c,
   // Deduce the normal vector, middle point, and distance of the clipping line
   Point middle =
     middle_point(intersect_points); // 2) Calculate the middle point of the line
-  double dp;
+  real dp;
 
   for (int p = 0; p < n; p++) {
     Point const V = pointVec(allPoints(c, p), middle);
@@ -129,7 +137,7 @@ void orientation_clip(int c,
 // Find the Center Coordinate ///////////////////////////////////////////////////////////
 KOKKOS_INLINE_FUNCTION
 Point center(int c, int n, Kokkos::View<Point**> allPoints) {
-  double sumX = 0, sumY = 0;
+  real sumX = 0, sumY = 0;
 
   // Add up all the coordinates /////
   for (int p = 0; p < n; p++) { //(const auto &p: nodes) {
@@ -161,10 +169,11 @@ void list_of_points(int cell,
 // Compare Points ////////////////////////////////////////////////////////////////////
 KOKKOS_INLINE_FUNCTION
 bool compare_points(const Point p1, const Point p2, Point center_point) {
-  double a1 =
-    (std::atan2(p1.y - center_point.y, p1.x - center_point.x) * (180 / M_PI));
-  double a2 =
-    (std::atan2(p2.y - center_point.y, p2.x - center_point.x) * (180 / M_PI));
+  constexpr real pi = static_cast<real>(M_PI);
+  real a1 =
+    (std::atan2(p1.y - center_point.y, p1.x - center_point.x) * (180 / pi));
+  real a2 =
+    (std::atan2(p2.y - center_point.y, p2.x - center_point.x) * (180 / pi));
   return a1 < a2;
 }
 
