@@ -52,11 +52,11 @@ int main(int argc, char* argv[]) {
     clipped_part.send_to_gpu();
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-    clip(n_cells, n_lines, clipped_part.use_end_points_, mesh.device_points_, mesh.device_cells_,
-         clipped_part.intersect_points_, clipped_part.line_, clipped_part.end_points_,
-         mesh.num_verts_per_cell_, clipped_part.allPoints_,
-         clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-         clipped_part.clipped_cell_);
+    clip(n_cells, n_lines, clipped_part.use_end_points_, mesh.device_points_,
+         mesh.device_cells_, clipped_part.intersect_points_, clipped_part.line_,
+         clipped_part.end_points_, mesh.num_verts_per_cell_,
+         clipped_part.allPoints_, clipped_part.size_output_,
+         clipped_part.output_, mesh.signs_, clipped_part.clipped_cell_);
 
     // Send to CPU
     mesh.send_to_cpu();

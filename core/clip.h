@@ -37,7 +37,8 @@ void clip(int total_cells,
       total_cells, KOKKOS_LAMBDA(int c) {
         if (!clipped_cell_(c)) {
           intersect_points_(c) = intersect_cell_with_line_n_d(
-            device_points_, device_cells_, c, lines(line), end_points_(line), num_verts_per_cell_, use_end_points);
+            device_points_, device_cells_, c, lines(line), end_points_(line),
+            num_verts_per_cell_, use_end_points);
 
           // Check if cell contains intersect points
           if ((intersects(device_points_, device_cells_, c,

@@ -18,9 +18,9 @@
 #include <iomanip>
 
 #ifdef USE_SINGLE_PRECISION
-  constexpr real ZERO = 1.e-15;
+constexpr real ZERO = 1.e-15;
 #else
-  constexpr real ZERO = 1.e-8;
+constexpr real ZERO = 1.e-8;
 #endif
 
 namespace polyclip {
@@ -69,7 +69,6 @@ Segment intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
       y_min = points(a).y;
     }
 
-
     real const& a1 = n1.x;
     real const& b1 = n1.y;
     real const& a2 = n2.x;
@@ -106,7 +105,6 @@ Segment intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
       pts[k] = { x, y };
       k++;
     }
-
   }
 
   // Check if line intersects

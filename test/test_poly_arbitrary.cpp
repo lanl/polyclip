@@ -49,11 +49,11 @@ int main(int argc, char* argv[]) {
     clipped_part.send_to_gpu();
 
     // Clipping below for Every Cell ////////////////////////////////////////////////////////////////////////
-    clip(n_cells, n_lines, clipped_part.use_end_points_, mesh.device_points_, mesh.device_cells_,
-         clipped_part.intersect_points_, clipped_part.line_, clipped_part.end_points_,
-         mesh.num_verts_per_cell_, clipped_part.allPoints_,
-         clipped_part.size_output_, clipped_part.output_, mesh.signs_,
-         clipped_part.clipped_cell_);
+    clip(n_cells, n_lines, clipped_part.use_end_points_, mesh.device_points_,
+         mesh.device_cells_, clipped_part.intersect_points_, clipped_part.line_,
+         clipped_part.end_points_, mesh.num_verts_per_cell_,
+         clipped_part.allPoints_, clipped_part.size_output_,
+         clipped_part.output_, mesh.signs_, clipped_part.clipped_cell_);
 
     // Send to CPU
     mesh.send_to_cpu();
@@ -62,9 +62,9 @@ int main(int argc, char* argv[]) {
     // Compare and Verify Results ////////////////////////////////////////////////////////////////////////////
     // Intersect Points
     real x[12] = { 0.375, 0.375, 0.375, 0.375, 0.625, 0.5,
-                     0.375, 0.375, 0.375, 0.375, 1.0,   0.9375 };
+                   0.375, 0.375, 0.375, 0.375, 1.0,   0.9375 };
     real y[12] = { 0,   0.3125, 0.3125, 0.5,   0.625, 0.75,
-                     0.5, 0.625,  0.625,  0.875, 0.25,  0.3125 };
+                   0.5, 0.625,  0.625,  0.875, 0.25,  0.3125 };
     verify_intersection_points(n_cells, clipped_part, x, y, tolerance);
   }
 

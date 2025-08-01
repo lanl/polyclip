@@ -26,9 +26,9 @@
 #include <Kokkos_Vector.hpp>
 
 #ifdef USE_SINGLE_PRECISION
-  using real = float;
+using real = float;
 #else
-  using real = double;
+using real = double;
 #endif
 
 /*
@@ -54,7 +54,7 @@ struct Segment {
 };
 
 struct Line {
-  Point n;  // normal
+  Point n;    // normal
   real d = 0; // distance
 };
 
