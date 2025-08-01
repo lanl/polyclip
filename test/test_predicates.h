@@ -25,7 +25,7 @@ void assert_eq(int a, int b, std::string const& label) {
   }
 }
 
-void assert_near(double a, double b, double tol, std::string const& label) {
+void assert_near(real a, real b, real tol, std::string const& label) {
   if (std::abs(a - b) > tol) {
     std::cerr << label << " " << std::setprecision(15) << a << " != " << b
               << ", delta: " << std::abs(a - b) << ", tol: " << tol
@@ -37,9 +37,9 @@ void assert_near(double a, double b, double tol, std::string const& label) {
 
 void verify_intersection_points(int total_cells,
                                 Clipped_Part const& clipped_part,
-                                double* x_expected,
-                                double* y_expected,
-                                double tolerance) {
+                                real* x_expected,
+                                real* y_expected,
+                                real tolerance) {
   int counter = 0;
   for (int i = 0; i < total_cells; i++) {
     auto const& a = clipped_part.mirror_intersect_points_(i).a;

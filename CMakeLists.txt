@@ -18,20 +18,28 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(FORMAT_CODE "Use clang-format for formatting" OFF)
 option(BUILD_TESTS "Build tests" ON)
+option(USE_SINGLE_PRECISION "Use single precision float" OFF)
 
 # kokkos
 add_compile_options(-Wno-deprecated-declarations)
 add_subdirectory(external/kokkos)
 
+
+
 # core
 if (Kokkos_ENABLE_CUDA_UVM)
   add_library(polyclip uvm/uvm_mesh.cpp uvm/uvm_clipped_part.cpp uvm/uvm_io.cpp)
   target_include_directories(polyclip PUBLIC uvm)
-  target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
 else ()
   add_library(polyclip core/mesh.cpp core/clipped_part.cpp gmv/io.cpp)
   target_include_directories(polyclip PUBLIC core gmv)
-  target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
+endif ()
+
+target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
+
+# use single precision float
+if (USE_SINGLE_PRECISION)
+  target_compile_definitions(polyclip PUBLIC USE_SINGLE_PRECISION=1)
 endif ()
 
 # tests

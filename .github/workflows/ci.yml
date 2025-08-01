@@ -13,6 +13,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        use_single_precision: [OFF, ON]
+
     steps:
       - name: Checkout repository with submodules
         uses: actions/checkout@v4
@@ -23,6 +27,7 @@ jobs:
         run: |
           cmake -B "${{ github.workspace }}/build" \
                 -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+                -DUSE_SINGLE_PRECISION=${{ matrix.use_single_precision }} \
                 -DKokkos_ENABLE_TESTS=OFF \
                 -DKokkos_ENABLE_CUDA=OFF \
                 -DKokkos_ENABLE_OPENMP=ON
