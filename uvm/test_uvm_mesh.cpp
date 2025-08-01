@@ -16,7 +16,7 @@ using namespace uvm_polyclip;
 
 int main(int argc, char* argv[]) {
   if (argc < 4) {
-    std::cerr << "Usage: test_mesh [MESH_FILE] [LINE_FILE] [TOTAL_LINES] [MATERIAL_FORMAT] [USE_END_POINTS]";
+    std::cerr << "Usage: test_uvm_mesh [MESH_FILE] [LINE_FILE] [TOTAL_LINES] [MATERIAL_FORMAT] [USE_END_POINTS]";
     return EXIT_FAILURE;
   }
 

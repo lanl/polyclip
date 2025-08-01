@@ -20,11 +20,14 @@ Then build the code with CUDA backend:
 git clone --recursive git@github.com:lanl/polyclip.git
 cd polyclip
 cmake -B build \
+  -DENABLE_FORMAT=OFF \          # use clang-format
+  -DBUILD_TESTS=ON \             # build tests
+  -DUSE_SINGLE_PRECISION=OFF \   # use 'float' instead of 'double'
   -DKokkos_ENABLE_TESTS=OFF \
   -DKokkos_ENABLE_SERIAL=ON \
   -DKokkos_ENABLE_OPENMP=ON \
   -DKokkos_ENABLE_CUDA=ON \
-  -DKokkos_ENABLE_CUDA_UVM=OFF   # turn on to use UVM 
+  -DKokkos_ENABLE_CUDA_UVM=OFF   # enable UVM 
 cmake --build build --parallel
 ctest --test-dir build --output-on-failure 
 ```
