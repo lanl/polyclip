@@ -170,11 +170,19 @@ void list_of_points(int cell,
 KOKKOS_INLINE_FUNCTION
 bool compare_points(const Point p1, const Point p2, Point center_point) {
   constexpr real pi = static_cast<real>(M_PI);
+#ifdef USE_SFU
+  real a1 =
+    (atan2(p1.y - center_point.y, p1.x - center_point.x) * (180 / pi));
+  real a2 =
+    (atan2(p2.y - center_point.y, p2.x - center_point.x) * (180 / pi));
+  return a1 < a2;
+#else
   real a1 =
     (std::atan2(p1.y - center_point.y, p1.x - center_point.x) * (180 / pi));
   real a2 =
     (std::atan2(p2.y - center_point.y, p2.x - center_point.x) * (180 / pi));
   return a1 < a2;
+#endif
 }
 
 // Sort all points based on degrees ///////////////////////////////////////////////////

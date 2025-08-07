@@ -19,6 +19,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(FORMAT_CODE "Use clang-format for formatting" OFF)
 option(BUILD_TESTS "Build tests" ON)
 option(USE_SINGLE_PRECISION "Use single precision float" OFF)
+option(USE_SFU "Use special function units" OFF)
 
 # kokkos
 add_compile_options(-Wno-deprecated-declarations)
@@ -37,7 +38,12 @@ target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
 
 # use single precision float
 if (USE_SINGLE_PRECISION)
-  target_compile_definitions(polyclip PUBLIC USE_SINGLE_PRECISION=1)
+  if (USE_SFU)
+    message(STATUS "SINGLE PRECISION ENABLED + SFU ENABLED")
+    target_compile_definitions(polyclip PUBLIC USE_SINGLE_PRECISION=1 USE_SFU=1)
+  else ()
+    target_compile_definitions(polyclip PUBLIC USE_SINGLE_PRECISION=1)
+  endif()  
 endif ()
 
 # tests
