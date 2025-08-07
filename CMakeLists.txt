@@ -24,8 +24,6 @@ option(USE_SINGLE_PRECISION "Use single precision float" OFF)
 add_compile_options(-Wno-deprecated-declarations)
 add_subdirectory(external/kokkos)
 
-
-
 # core
 if (Kokkos_ENABLE_CUDA_UVM)
   add_library(polyclip uvm/uvm_mesh.cpp uvm/uvm_clipped_part.cpp uvm/uvm_io.cpp)
