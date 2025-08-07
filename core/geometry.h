@@ -170,11 +170,29 @@ void list_of_points(int cell,
 KOKKOS_INLINE_FUNCTION
 bool compare_points(const Point p1, const Point p2, Point center_point) {
   constexpr real pi = static_cast<real>(M_PI);
+  real vy_1 = p1.y - center_point.y;
+  real vx_1 = p1.x - center_point.x;
+  real vy_2 = p2.y - center_point.y;
+  real vx_2 = p2.x - center_point.x;
+
+#ifdef USE_CROSS_ORDER
+  real cross = vx_1 * vy_2 - vy_1 * vx_2;
+
+  if (cross != 0.0){
+     return cross > 0.0;
+  }
+
+  real d1 = vx_1 * vx_1 + vy_1 * vy_1;
+  real d2 = vx_2 * vx_2 + vy_2 * vy_2;
+  return d1 < d2;
+#else
   real a1 =
-    (std::atan2(p1.y - center_point.y, p1.x - center_point.x) * (180 / pi));
+    (std::atan2(vy_1, vx_1) * (180 / pi));
   real a2 =
-    (std::atan2(p2.y - center_point.y, p2.x - center_point.x) * (180 / pi));
+    (std::atan2(vy_2, vx_2) * (180 / pi));
+
   return a1 < a2;
+#endif
 }
 
 // Sort all points based on degrees ///////////////////////////////////////////////////
