@@ -20,7 +20,7 @@ Then build the code with CUDA backend:
 git clone --recursive git@github.com:lanl/polyclip.git
 cd polyclip
 cmake -B build \
-  -DENABLE_FORMAT=OFF \          # use clang-format
+  -DFORMAT_CODE=OFF \          # use clang-format
   -DBUILD_TESTS=ON \             # build tests
   -DUSE_SINGLE_PRECISION=OFF \   # use 'float' instead of 'double'
   -DKokkos_ENABLE_TESTS=OFF \
