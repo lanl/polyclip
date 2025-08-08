@@ -23,7 +23,8 @@ cmake -B build \
   -DFORMAT_CODE=OFF \            # use clang-format
   -DBUILD_TESTS=ON \             # build tests
   -DUSE_SINGLE_PRECISION=OFF \   # use 'float' instead of 'double'
-  -DUSE_SFU=ON \		 # use special function units
+  -DUSE_SFU=OFF \		 # use special function units
+  -DUSE_LOOP_UNROLLING=OFF \	 # use loop unrolling
   -DKokkos_ENABLE_TESTS=OFF \
   -DKokkos_ENABLE_SERIAL=ON \
   -DKokkos_ENABLE_OPENMP=ON \

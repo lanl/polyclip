@@ -138,13 +138,20 @@ void orientation_clip(int c,
 KOKKOS_INLINE_FUNCTION
 Point center(int c, int n, Kokkos::View<Point**> allPoints) {
   real sumX = 0, sumY = 0;
-
+#ifdef USE_LOOP_UNROLLING
+  // Add up all the coordinates /////
+  #pragma unroll 5
+  for (int p = 0; p < n; p++) { //(const auto &p: nodes) {
+    sumX += allPoints(c, p).x;
+    sumY += allPoints(c, p).y;
+  }
+#else
   // Add up all the coordinates /////
   for (int p = 0; p < n; p++) { //(const auto &p: nodes) {
     sumX += allPoints(c, p).x;
     sumY += allPoints(c, p).y;
   }
-
+#endif
   // Store middle coordinates ///////
   return { sumX / n, sumY / n };
 }
@@ -158,10 +165,19 @@ void list_of_points(int cell,
                     Kokkos::View<Point**> allPoints,
                     Kokkos::View<int*> num_verts_per_cell) {
   int const m = num_verts_per_cell(cell);
+
+#ifdef USE_LOOP_UNROLLING
+#pragma unroll 3
   for (int i = 0; i < m; i++) {
     int index = cells(cell, i, 0);
     allPoints(cell, i) = points(index);
   }
+#else
+  for (int i = 0; i < m; i++) {
+    int index = cells(cell, i, 0);
+    allPoints(cell, i) = points(index);
+  }
+#endif
   allPoints(cell, m) = intersect_points.a;
   allPoints(cell, (m + 1)) = intersect_points.b;
 }
