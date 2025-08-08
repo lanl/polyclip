@@ -20,6 +20,7 @@ option(FORMAT_CODE "Use clang-format for formatting" OFF)
 option(BUILD_TESTS "Build tests" ON)
 option(USE_SINGLE_PRECISION "Use single precision float" OFF)
 option(USE_SFU "Use special function units" OFF)
+option(USE_LOOP_UNROLLING "Use special function units" OFF)
 
 # kokkos
 add_compile_options(-Wno-deprecated-declarations)
@@ -35,6 +36,12 @@ else ()
 endif ()
 
 target_link_libraries(polyclip PUBLIC Kokkos::kokkos)
+
+# use loop unrolling
+if (USE_LOOP_UNROLLING)
+	message(STATUS "LOOP UNROLLING ENABLED")
+  target_compile_definitions(polyclip PUBLIC USE_LOOP_UNROLLING=1)
+endif ()
 
 # use single precision float
 if (USE_SINGLE_PRECISION)
