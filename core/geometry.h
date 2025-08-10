@@ -44,8 +44,13 @@ namespace polyclip {
 
 // x and y values ///////////////////////////////////////////////////////////////////////
 struct Point {
-  real x = 0;
-  real y = 0;
+#ifdef USE_SINGLE_PRECISION
+  real x = 0.f;
+  real y = 0.f;
+#else
+  real x = 0.0;
+  real y = 0.0;
+#endif
 };
 
 struct Segment {
@@ -55,7 +60,12 @@ struct Segment {
 
 struct Line {
   Point n;    // normal
-  real d = 0; // distance
+
+#ifdef USE_SINGLE_PRECISION
+  real d = 0.f; // distance
+#else
+  real d = 0.0;
+#endif
 };
 
 struct Edge {
@@ -98,9 +108,13 @@ Point pointVec(Point const& p, Point const& middle) {
 // Middile Point of the Interface ////////////////////////////////////////////////////////
 KOKKOS_INLINE_FUNCTION
 Point middle_point(Segment const& points) {
-  real mx = (points.a.x + points.b.x) / 2;
-  real my = (points.a.y + points.b.y) / 2;
-
+#ifdef USE_SINGLE_PRECISION
+  real mx = (points.a.x + points.b.x) / 2.0f;
+  real my = (points.a.y + points.b.y) / 2.0f;
+#else
+  real mx = (points.a.x + points.b.x) / 2.0;
+  real my = (points.a.y + points.b.y) / 2.0;
+#endif
   return { mx, my };
 }
 
@@ -185,18 +199,25 @@ void list_of_points(int cell,
 // Compare Points ////////////////////////////////////////////////////////////////////
 KOKKOS_INLINE_FUNCTION
 bool compare_points(const Point p1, const Point p2, Point center_point) {
-  constexpr real pi = static_cast<real>(M_PI);
+#ifdef USE_SINGLE_PRECISION
+  constexpr real pi = 3.14159265f;
+  real degree = 180.0f;
+#else
+  constexpr real pi = M_PI;
+  real degree = 180.0;
+#endif 
+
 #ifdef USE_SFU
   real a1 =
-    (atan2(p1.y - center_point.y, p1.x - center_point.x) * (180 / pi));
+    (atan2(p1.y - center_point.y, p1.x - center_point.x) * (degree / pi));
   real a2 =
-    (atan2(p2.y - center_point.y, p2.x - center_point.x) * (180 / pi));
+    (atan2(p2.y - center_point.y, p2.x - center_point.x) * (degree / pi));
   return a1 < a2;
 #else
   real a1 =
-    (std::atan2(p1.y - center_point.y, p1.x - center_point.x) * (180 / pi));
+    (std::atan2(p1.y - center_point.y, p1.x - center_point.x) * (degree / pi));
   real a2 =
-    (std::atan2(p2.y - center_point.y, p2.x - center_point.x) * (180 / pi));
+    (std::atan2(p2.y - center_point.y, p2.x - center_point.x) * (degree / pi));
   return a1 < a2;
 #endif
 }

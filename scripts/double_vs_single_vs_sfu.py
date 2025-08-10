@@ -20,13 +20,13 @@ regions = ['CLIPPED PART: \nCPU-TO-GPU TRANSFER',
            'CLIPPED PART: \nGPU-TO-CPU TRANSFER']
 # 0.01 arc 
 #double_precision      = [0.0850, 0.9669, 0.5841, 2.3634]
-#single_precision      = [0.1499, 1.6016, 0.5918, 1.7455]
-#single_precision_sfu  = [0.0835, 1.4340, 0.5325, 1.2882]
+#single_precision      = [0.0980, 1.4039, 0.5439, 1.2921]
+#single_precision_sfu  = [0.0961, 1.4354, 0.5385, 1.2915]
 
 # 0.08 16 lines
-#double_precision      = [0.0597, 0.0847, 0.6108, 0.6585]
-#single_precision      = [0.0804, 0.0982, 0.8058, 0.5875]
-#single_precision_sfu  = [0.0791, 0.0981, 0.7899, 0.3807]
+double_precision      = [0.0597, 0.0847, 0.6108, 0.6585]
+single_precision      = [0.0791, 0.0951, 0.7986, 0.3863]
+single_precision_sfu  = [0.0788, 0.0955, 0.7936, 0.3742]
 
 # 0.08 14 lines
 #double_precision      = [0.0603, 0.0845, 0.5645, 0.6065]
@@ -59,9 +59,9 @@ regions = ['CLIPPED PART: \nCPU-TO-GPU TRANSFER',
 #single_precision_sfu  = [0.0797, 0.0961, 0.4965, 0.2858]
 
 # 0.08 1 lines
-double_precision      = [0.0600, 0.0840, 0.3358, 0.2418]
-single_precision      = [0.0810, 0.0950, 0.4272, 0.2937]
-single_precision_sfu  = [0.0802, 0.0975, 0.4114, 0.2650]
+#double_precision      = [0.0600, 0.0840, 0.3358, 0.2418]
+#single_precision      = [0.0810, 0.0950, 0.4272, 0.2937]
+#single_precision_sfu  = [0.0802, 0.0975, 0.4114, 0.2650]
 
 # X-axis configuration
 x = np.arange(len(regions))  # the label locations
