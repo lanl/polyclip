@@ -34,8 +34,12 @@ Segment intersect_cell_with_line_n_d(Kokkos::View<Point*> points,
                                      bool use_end_points) {
   int const n = num_verts_per_cell(c);
   Point pts[2];
-  constexpr Point const DUMMY = { std::numeric_limits<real>::max(),
-                                  std::numeric_limits<real>::max() };
+
+#ifdef USE_SINGLE_PRECISION
+  constexpr Point const DUMMY = {FLT_MAX, FLT_MAX};
+#else
+  constexpr Point const DUMMY = {DBL_MAX, DBL_MAX};
+#endif
 
   int k = 0;
 
