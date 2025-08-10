@@ -42,6 +42,7 @@ do
     echo "Running iteration $i: generating $output_name"
     nsys profile -t cuda,nvtx --output="output/$output_name" ./test_mesh "$MESH_FILE" "$LINE_FILE" "$N_LINES" "$MATERIAL_FORMAT" "$USE_END_POINTS"
     nsys stats --report nvtxsum --format csv -o "output/${output_name}_summary" "output/${output_name}.nsys-rep"
+    ncu --set full --target-processes all --export output/$output_name ./test_mesh "$MESH_FILE" "$LINE_FILE" "$N_LINES" "$MATERIAL_FORMAT" "$USE_END_POINTS"
 done
 
 output_name="${rootname}_$i"
