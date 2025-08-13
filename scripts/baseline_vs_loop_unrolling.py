@@ -13,14 +13,14 @@ import os
 import matplotlib.pyplot as plt
 
 # Duration at Clipping Cells Kokkos Region
-#values = [0.5841, 0.5558]  # 3 and 5 0.01
-#values = [0.6108, 0.7840]  # 3 and 5 0.08
+#values = [0.5871, 0.5596]  # 5 0.01
+#values = [0.8000, 0.7850]  # 5 0.08
 
-#values = [0.5841, 0.5737]  # 2 and 4 0.01
-#values = [0.6108, 0.7977]  # 2 and 4 0.08
+#values = [0.5871, 0.5520]  # 4 0.01
+values = [0.8000, 0.7869]  # 4 0.08
 
-values = [0.5841, 0.5847]  # 4 and 8 0.01
-#values = [0.6108, 0.7944]  # 4 and 8 0.08
+#values = [0.5871, 0.5974]  # 8 0.01
+#values = [0.8000, 0.7787]  # 8 0.08
 
 # Non-UVM and UVM labels
 labels = ["No Loop Unrolling", "Loop Unrolling"]

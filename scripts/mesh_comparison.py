@@ -15,8 +15,8 @@ import matplotlib.pyplot as plt
 # Data from all meshes
 #timed_values_clipped_transfer_1 = [0.0600, 0.0601, 0.0588, 0.0603, 0.0592, 0.0600, 0.0603, 0.0597]
 #timed_values_mesh_transfer = [0.0840, 0.0852, 0.0852, 0.0851, 0.0887, 0.0829, 0.0845, 0.0847]
-timed_values_clipping = [0.3358, 0.3999, 0.4375, 0.4636, 0.5079, 0.5406, 0.5645, 0.6108]
-timed_values_clipped_transfer_2 = [0.2418, 0.3206, 0.3781, 0.4453, 0.4997, 0.5522, 0.6065, 0.6585]
+timed_values_clipping = [0.4162, 0.5009, 0.5418, 0.6012, 0.6518, 0.6939, 0.7493, 0.8000]
+timed_values_clipped_transfer_2 = [0.2917, 0.3501, 0.4244, 0.4480, 0.4856, 0.5182, 0.5605, 0.5860]
 
 total_cells = [28, 100, 139, 180, 226, 260, 289, 318]
 
