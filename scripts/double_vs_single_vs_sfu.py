@@ -19,14 +19,14 @@ regions = ['CLIPPED PART: \nCPU-TO-GPU TRANSFER',
            'CLIPPING CELLS', 
            'CLIPPED PART: \nGPU-TO-CPU TRANSFER']
 # 0.01 arc 
-double_precision      = [0.1458, 1.4001, 0.5871, 1.7424]
-single_precision      = [0.0980, 1.4039, 0.5439, 1.2921]
-single_precision_sfu  = [0.0961, 1.4354, 0.5385, 1.2915]
+#double_precision      = [0.1458, 1.4001, 0.5871, 1.7424]
+#single_precision      = [0.0980, 1.4039, 0.5439, 1.2921]
+#single_precision_sfu  = [0.0961, 1.4354, 0.5385, 1.2915]
 
 # 0.08 16 lines
-#double_precision      = [0.0802, 0.0955, 0.8000, 0.5860]
-#single_precision      = [0.0804, 0.0982, 0.8058, 0.5875]
-#single_precision_sfu  = [0.0791, 0.0981, 0.7899, 0.3807]
+double_precision      = [0.0802, 0.0955, 0.8000, 0.5860]
+single_precision      = [0.0791, 0.0951, 0.7986, 0.3863]
+single_precision_sfu  = [0.0791, 0.0981, 0.7899, 0.3807]
 
 # 0.08 14 lines
 #double_precision      = [0.0603, 0.0845, 0.5645, 0.6065]
