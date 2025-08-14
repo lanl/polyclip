@@ -12,8 +12,18 @@
 import os
 import matplotlib.pyplot as plt
 
-# Duration at Clipping Cells Kokkos Region
-values = [0.6108, 0.5333]
+###### Duration at Clipping Cells Kokkos Region ######
+# Volta
+#values = [0.5871, 0.4956]  # 0.01
+#values = [0.8000, 0.6419]  # 0.08
+
+# Pascal
+#values = [0.6292, 0.5268]  # 0.01
+values = [0.8819, 0.6969]  # 0.08
+
+# Ampere
+#values = [0.5020, 0.4767]  # 0.01
+#values = [0.5772, 0.5139]  # 0.08
 
 # Non-UVM and UVM labels
 labels = ["Non-UVM", "UVM"]
