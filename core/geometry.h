@@ -156,8 +156,8 @@ Point center(int c, int n, Kokkos::View<Point**> allPoints) {
   // Add up all the coordinates /////
 
 //#pragma unroll 4
-//#pragma unroll 8  
-#pragma unroll 5
+#pragma unroll 8  
+//#pragma unroll 5
   for (int p = 0; p < n; p++) { //(const auto &p: nodes) {
     sumX += allPoints(c, p).x;
     sumY += allPoints(c, p).y;
@@ -183,7 +183,7 @@ void list_of_points(int cell,
                     Kokkos::View<int*> num_verts_per_cell) {
   int const m = num_verts_per_cell(cell);
 
-#ifdef USE_LOOP_UNROLLING
+/*#ifdef USE_LOOP_UNROLLING
 //#pragma unroll 2
 //#pragma unroll 4
 #pragma unroll 3
@@ -191,12 +191,12 @@ void list_of_points(int cell,
     int index = cells(cell, i, 0);
     allPoints(cell, i) = points(index);
   }
-#else
+#else*/
   for (int i = 0; i < m; i++) {
     int index = cells(cell, i, 0);
     allPoints(cell, i) = points(index);
   }
-#endif
+//#endif
   allPoints(cell, m) = intersect_points.a;
   allPoints(cell, (m + 1)) = intersect_points.b;
 }
