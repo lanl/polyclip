@@ -23,6 +23,7 @@ if len(sys.argv) < 2:
     exit(1)
 file_name = sys.argv[1]
 end_index = int(sys.argv[2]) if len(sys.argv) > 2 else 5
+save_path = sys.argv[3]
 
 csv_files = [f"{file_name}_{i}_summary_nvtxsum.csv" for i in range(1, end_index + 1)]
 dictionary_values = {}
@@ -69,7 +70,8 @@ def generate_pie_chart(aggregate_values):
         plt.axis("equal")
         plt.tight_layout()
         base_name = os.path.basename(file_name)
-        output_path = f"output/images/{base_name}_pie.png"
+        
+        output_path = f"{save_path}/{base_name}_pie.png"
         plt.savefig(output_path)
         plt.close()
 
@@ -106,7 +108,9 @@ def generate_bar_chart(aggregate_values):
         #plt.ylim(0, 1)
         plt.tight_layout()
         base_name = os.path.basename(file_name)
-        output_path = f"output/images/{base_name}_bar.png"
+        output_path = f"{save_path}/{base_name}_bar.png"
+
+        # output_path = f"output/images/{base_name}_bar.png"
         plt.savefig(output_path)
         plt.close()
 
