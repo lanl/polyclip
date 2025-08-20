@@ -1,6 +1,21 @@
 import csv
 import os
 import numpy as np
+from collections import defaultdict
+kernel_dictionary = defaultdict()
+class kernal_data:
+    def __init__(self):
+        self.id = None
+        self.name = None
+        self.l1_cache_accesses = None
+        self.l2_cache_accesses = None
+        self.l1_cache_hitrate = None
+        self.l2_cache_hitrate = None
+        self.l1_throughput = None
+        self.l2_throughput = None
+        self.dram_throughout = None
+        self.total_mem_throughput = None
+    
 
 def parse_cache_metrics(csv_path):
     """
@@ -15,12 +30,10 @@ def parse_cache_metrics(csv_path):
     with open(csv_path, newline='') as csvfile:
         reader = csv.reader(csvfile)
         count = 0
+        current_kernal = None
         for row in reader:
             for i, cell in enumerate(row):
                 cell_clean = cell.strip().strip('"')
-
-
-
                 def try_get_value(offset=2):
                     if i + offset < len(row):
                         raw = row[i + offset].strip().strip('"').replace(',', '')
@@ -30,25 +43,64 @@ def parse_cache_metrics(csv_path):
                             return None
                     return None
 
-                if cell_clean == "L1/TEX Hit Rate":
+                if i == 0:
+                    if cell not in kernel_dictionary:
+                        new_kernal_data = kernal_data()
+                        kernel_dictionary[cell] = new_kernal_data
+                        current_kernal = new_kernal_data
+                        current_kernal.id = cell
+
+                elif i == 4:
+                    current_kernal.name = cell
+
+                elif cell_clean == "L1/TEX Hit Rate":
                     val = try_get_value()
                     if val is not None:
                         l1_hit_rates.append(val)
+                        current_kernal.l1_cache_hitrate = val
 
                 elif cell_clean == "L2 Hit Rate":
                     val = try_get_value()
                     if val is not None:
                         l2_hit_rates.append(val)
-
+                        current_kernal.l2_cache_hitrate = val
+                        
                 elif cell_clean == "l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum":
                     val = try_get_value()
                     if val is not None:
                         l1_accesses.append(val)
+                        current_kernal.l1_cache_accesses = val
 
                 elif cell_clean == "lts__t_sectors_op_read.sum":
                     val = try_get_value()
                     if val is not None:
                         l2_accesses.append(val)
+                        current_kernal.l2_cache_accesses = val
+                
+                elif cell_clean == "DRAM Throughput":
+                    val = try_get_value()
+                    if val is not None:
+                        current_kernal.dram_throughout = val
+
+                elif cell_clean == "Memory Throughput":
+                    val = try_get_value()
+                    if val is not None:
+                        current_kernal.total_mem_throughput = val
+
+                elif cell_clean == "L1/TEX Cache Throughput":
+                    val = try_get_value()
+                    if val is not None:
+                        l2_accesses.append(val)
+                        current_kernal.l1_throughput = val
+
+                elif cell_clean == "L2 Cache Throughput":
+                    val = try_get_value()
+                    if val is not None:
+                        l2_accesses.append(val)
+                        current_kernal.l2_throughput = val
+
+                
+
 
     print("Length of l1_accesses:", len(l1_accesses))
     print("Length of l2_accesses:", len(l2_accesses))
@@ -110,5 +162,18 @@ def main():
     print(f"Estimated L1 Hits: {hits_misses['estimated_l1_hits']:.0f}")
     print(f"Estimated L1 Misses: {hits_misses['estimated_l1_misses']:.0f}")
 
+
+    # skip = 0
+    # for key, value in kernel_dictionary.items():
+    #     if skip == 1:
+    #         print("ID - " + value.id) 
+    #         print("L1 Hit Rate: " + str(value.l1_cache_hitrate))
+    #         print("L2 Hit Rate: " + str(value.l2_cache_hitrate))
+    #         print("L1 Accesses: " + str(value.l1_cache_accesses))
+    #         print("L2 Accesses: " + str(value.l2_cache_accesses))
+    #     else:
+    #         skip = 1
+
+        
 if __name__ == "__main__":
     main()
