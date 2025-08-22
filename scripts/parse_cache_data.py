@@ -26,6 +26,7 @@ def parse_cache_metrics(csv_path):
     l2_accesses = []
     l1_hit_rates = []
     l2_hit_rates = []
+    dram_throughput = []
 
     with open(csv_path, newline='') as csvfile:
         reader = csv.reader(csvfile)
@@ -80,6 +81,7 @@ def parse_cache_metrics(csv_path):
                 elif cell_clean == "DRAM Throughput":
                     val = try_get_value()
                     if val is not None:
+                        dram_throughput.append(val)
                         current_kernal.dram_throughout = val
 
                 elif cell_clean == "Memory Throughput":
@@ -90,13 +92,13 @@ def parse_cache_metrics(csv_path):
                 elif cell_clean == "L1/TEX Cache Throughput":
                     val = try_get_value()
                     if val is not None:
-                        l2_accesses.append(val)
+                        # l2_throughput.append(val)
                         current_kernal.l1_throughput = val
 
                 elif cell_clean == "L2 Cache Throughput":
                     val = try_get_value()
                     if val is not None:
-                        l2_accesses.append(val)
+                        # l2_accesses.append(val)
                         current_kernal.l2_throughput = val
 
                 
@@ -109,8 +111,22 @@ def parse_cache_metrics(csv_path):
 
     total_l2_accesses = sum(l2_accesses) if l2_accesses else 0
     total_l1_accesses = sum(l1_accesses) if l1_accesses else 0
-    avg_l2_hit_rate = np.mean(l2_hit_rates) if l2_hit_rates else float('nan')
-    avg_l1_hit_rate = np.mean(l1_hit_rates) if l1_hit_rates else float('nan')
+    avg_l1_hit_rate = (
+        sum(access * (rate / 100) for access, rate in zip(l1_accesses, l1_hit_rates)) / sum(l1_accesses)
+    ) * 100 if l1_accesses else float('nan')
+
+    avg_l2_hit_rate = (
+        sum(access * (rate / 100) for access, rate in zip(l2_accesses, l2_hit_rates)) / sum(l2_accesses)
+    ) * 100 if l2_accesses else float('nan')
+
+    mean_dram_throughput = np.mean(dram_throughput)
+    print("\n--- Debug Output ---")
+    print(f"DRAM Throughput Avg: {mean_dram_throughput}")
+    print(f"Total L1 Accesses: {total_l1_accesses}")
+    print(f"Total L2 Accesses: {total_l2_accesses}")
+    print(f"Weighted Avg L1 Hit Rate: {avg_l1_hit_rate:.2f}%")
+    print(f"Weighted Avg L2 Hit Rate: {avg_l2_hit_rate:.2f}%")
+    print("--- End Debug Output ---\n")
 
     return {
         "total_l2_accesses": total_l2_accesses,
@@ -149,30 +165,18 @@ def main():
         return
 
     metrics = parse_cache_metrics(csv_file)
-    hits_misses = calculate_hits_and_misses(metrics)
+    # hits_misses = calculate_hits_and_misses(metrics)
 
-    print(f"\n--- Cache Analysis Summary ---")
-    print(f"Total L2 Accesses: {metrics['total_l2_accesses']:.0f}")
-    print(f"Average L2 Hit Rate: {metrics['avg_l2_hit_rate']:.2f}%")
-    print(f"Estimated L2 Hits: {hits_misses['estimated_l2_hits']:.0f}")
-    print(f"Estimated L2 Misses: {hits_misses['estimated_l2_misses']:.0f}")
-    print()
-    print(f"Total L1 Accesses: {metrics['total_l1_accesses']:.0f}")
-    print(f"Average L1 Hit Rate: {metrics['avg_l1_hit_rate']:.2f}%")
-    print(f"Estimated L1 Hits: {hits_misses['estimated_l1_hits']:.0f}")
-    print(f"Estimated L1 Misses: {hits_misses['estimated_l1_misses']:.0f}")
-
-
-    # skip = 0
-    # for key, value in kernel_dictionary.items():
-    #     if skip == 1:
-    #         print("ID - " + value.id) 
-    #         print("L1 Hit Rate: " + str(value.l1_cache_hitrate))
-    #         print("L2 Hit Rate: " + str(value.l2_cache_hitrate))
-    #         print("L1 Accesses: " + str(value.l1_cache_accesses))
-    #         print("L2 Accesses: " + str(value.l2_cache_accesses))
-    #     else:
-    #         skip = 1
+    # print(f"\n--- Cache Analysis Summary ---")
+    # print(f"Total L2 Accesses: {metrics['total_l2_accesses']:.0f}")
+    # print(f"Average L2 Hit Rate: {metrics['avg_l2_hit_rate']:.2f}%")
+    # print(f"Estimated L2 Hits: {hits_misses['estimated_l2_hits']:.0f}")
+    # print(f"Estimated L2 Misses: {hits_misses['estimated_l2_misses']:.0f}")
+    # print()
+    # print(f"Total L1 Accesses: {metrics['total_l1_accesses']:.0f}")
+    # print(f"Average L1 Hit Rate: {metrics['avg_l1_hit_rate']:.2f}%")
+    # print(f"Estimated L1 Hits: {hits_misses['estimated_l1_hits']:.0f}")
+    # print(f"Estimated L1 Misses: {hits_misses['estimated_l1_misses']:.0f}")
 
         
 if __name__ == "__main__":

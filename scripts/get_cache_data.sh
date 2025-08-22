@@ -23,6 +23,7 @@ echo $APP
 ncu -f --set full \
 --metrics lts__t_sectors_op_read.sum,l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum,dram__sectors_read.sum \
 --csv \
+--page raw \
 -o test_report \
 $APP $ARGS
 
